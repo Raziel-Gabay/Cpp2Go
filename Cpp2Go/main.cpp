@@ -1,17 +1,40 @@
 #include <iostream>
 #include <vector>
+#include <unordered_set>
+#include <map>
 
-std::string deleteTab(std::string sourceCode)
+
+typedef std::map<std::string, std::string> tokensMap;
+
+
+tokensMap mapOfTokens =
+{
+	{"int", "DATATYPE_INT"},
+	{"identifier", "IDENTIFIER"},
+	{"intLiteral", "INT_LITERAL"}, 
+	{"5", "INT_LITERAL"}, //Temporary until we create a function that handles literals
+	{"(", "LEFT_PARENTHESIS"},      
+	{")", "RIGHT_PARENTHESIS"},     
+	{"{", "LEFT_BRACE"},            
+	{"}", "RIGHT_BRACE"},           
+	{"=", "ASSIGNMENT_OPERATOR"},
+	{";", "SEMICOLON"},
+};
+
+
+
+const std::unordered_set<std::string> standaloneTokens = { "+", "-", "*", "/", "=", "!", "<", ">", "&", "|", "^", "~", "%", "?", ":", ",", ";", ".", "(", ")", "{", "}", "[", "]" };
+
+
+void deleteTab(std::string& sourceCode)
 {
 	sourceCode.erase(std::remove(sourceCode.begin(), sourceCode.end(), '\t'), sourceCode.cend());
-	return sourceCode;
 }
 
-std::string deleteNewLine(std::string sourceCode)
+void deleteNewLine(std::string& sourceCode)
 {
 	sourceCode.erase(std::remove(sourceCode.begin(), sourceCode.end(), '\n'), sourceCode.cend());
-	std::string code = deleteTab(sourceCode);
-	return code;
+	deleteTab(sourceCode);
 }
 
 bool handleIdentifiers(std::string IdetifierToken)
@@ -47,23 +70,104 @@ bool handleIdentifiers(std::string IdetifierToken)
 	return isValidIdentifier;
 }
 
-std::string getWord(std::string& code)
-{
-	std::string word;
-	for (auto it = code.begin(); it != code.end(); ++it)
-	{
-		word += *it;
-        if (*it == ' ')
-		{
-			code = std::string(it + 1, code.end());
-			return word;
-        }
+/*
+input: string that repersent the code
+output: string that reprsent a token
+This function will get the first token of the code and then remove it and spaces that may come afterwards
+*/
+std::string getToken(std::string& code) {
+	std::string token;
+
+	// Check if the input string is empty
+	if (code.empty()) {
+		return token;
 	}
+
+	// Get the first character
+	token = code[0];
+
+	// If the character is a standalone token, return it as a separate token
+	if (standaloneTokens.count(token) > 0) {
+		code.erase(0, 1); // Remove the processed token
+		if (code[0] == ' ')
+		{
+			code.erase(0, 1); // Remove the whitespace that may come afterward
+		}
+		return token;
+	}
+
+	// Find the position of the first separator (including newline characters)
+	auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+
+	// Extract the token up to the first separator (or the end of the string if no separator found)
+	token = code.substr(0, separatorPos);
+
+	// Remove the processed token (including the separator, if any)
+	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
+	{
+		code.erase(0, separatorPos + 1);
+	}
+	else
+	{
+		code.erase(0, separatorPos);
+	}
+
+
+	return token;
+}
+
+tokensMap::iterator searchToken(std::string token)
+{
+	return mapOfTokens.find(token);
+}
+
+bool isTokensEqual(std::string token, tokensMap::iterator tokenFromMap)
+{
+	return (tokenFromMap != mapOfTokens.end());
+}
+
+void insertToken(std::string token, tokensMap::iterator tokenFromMap, tokensMap& codeTokensMap)
+{
+	codeTokensMap[token] = tokenFromMap->second;
+}
+
+tokensMap createTokenStream(std::string& code)
+{
+	tokensMap tokenStream;
+	while (!code.empty())
+	{
+		std::string token = getToken(code);
+		tokensMap::iterator tokenFromMap = searchToken(token);
+		if (isTokensEqual(token, tokenFromMap))
+		{
+			insertToken(token, tokenFromMap, tokenStream);
+		}
+		else if (handleIdentifiers(token))
+		{
+			tokenFromMap = searchToken("identifier");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
+		else
+		{
+			throw std::runtime_error("ERROR: didn't find any token by this name...");
+		}
+	}
+	return tokenStream;
 }
 
 int main()
 {
 	std::string code = "int main()\n{\n\tint a = 5;\n}";
-
+	std::cout << code << std::endl;
+	deleteNewLine(code);
+	std::cout << code << std::endl;
+	try
+	{
+		tokensMap tokenStream = createTokenStream(code);
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what();
+	}
 	return 0;
 }
