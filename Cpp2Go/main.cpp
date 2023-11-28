@@ -2,7 +2,7 @@
 #include <vector>
 #include <unordered_set>
 #include <map>
-
+#include <string>
 
 typedef std::map<std::string, std::string> tokensMap;
 
@@ -68,6 +68,56 @@ bool handleIdentifiers(std::string IdetifierToken)
 		}
 	}
 	return isValidIdentifier;
+}
+
+bool handleIntLiteralValue(std::string intDataTypeToken)
+{
+	int intValueOfToken = std::stoi(intDataTypeToken);
+	//make sure the value is in the range of cpp language
+	if ((intValueOfToken > INT_MAX) || (intValueOfToken < INT_MIN))
+		return false;
+	//make sure the value is numeric
+	for (int i = 0; i < intDataTypeToken.length(); i++)
+	{
+		if (!isdigit(intDataTypeToken[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool handleFloatLiteralValue(std::string floatDataTypeToken)
+{
+	float floatValueOfToken = std::stof(floatDataTypeToken);
+	//make sure the float number is in the range
+	if ((floatValueOfToken > FLT_MAX) || (floatValueOfToken < FLT_MIN))
+		return false;
+	
+	int pointCount = 0;
+	bool isFloat = false;
+	//make sure the value is float
+	for (int i = 0; i < floatDataTypeToken.length(); i++)
+	{
+		if (floatDataTypeToken[i] == '.')
+		{
+			pointCount++;
+			//floatDataTypeToken.erase(floatDataTypeToken[i]);
+		}
+		if(floatDataTypeToken[i] != '.')
+		{
+			if (isdigit(floatDataTypeToken[i]))
+				isFloat = true;
+			
+			else
+				return false;
+		}
+	}
+	if (pointCount != 1)
+	{
+		isFloat = false;
+	}
+	return isFloat;
 }
 
 /*
