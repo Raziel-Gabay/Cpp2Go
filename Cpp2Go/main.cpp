@@ -12,10 +12,13 @@ tokensMap mapOfTokens =
 {
 	{"int", "DATATYPE_INT"},
 	{"float", "DATATYPE_FLOAT"},
+	{"bool", "DATATYPE_BOOL"},
+	{"string", "DATATYPE_STRING"},
 	{"identifier", "IDENTIFIER"},
 	{"intLiteral", "INT_LITERAL"}, 
 	{"floatLiteral", "FLOAT_LITERAL"},
 	{"stringLiteral", "STRING_LITERAL"},
+	{"boolLiteral", "BOOL_LITERAL"},
 	{"(", "LEFT_PARENTHESIS"},      
 	{")", "RIGHT_PARENTHESIS"},     
 	{"{", "LEFT_BRACE"},            
@@ -221,6 +224,11 @@ tokensVector createTokenStream(std::string& code)
 		{
 			insertToken(token, tokenFromMap, tokenStream);
 		}
+		else if (handleBoolLiteralValue(token))
+		{
+			tokenFromMap = searchToken("boolLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
 		else if (handleIdentifiers(token))
 		{
 			tokenFromMap = searchToken("identifier");
@@ -236,6 +244,11 @@ tokensVector createTokenStream(std::string& code)
 			tokenFromMap = searchToken("floatLiteral");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
+		else if (handleStringLiteralValue(token))
+		{
+			tokenFromMap = searchToken("stringLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
 		else
 		{
 			throw std::runtime_error("ERROR: didn't find any token by this name...");
@@ -246,7 +259,7 @@ tokensVector createTokenStream(std::string& code)
 
 int main()
 {
-	std::string code = "int main()\n{\n\tint a = 5;\n\tfloat b = 2.71;}";
+	std::string code = "int main()\n{\n\tint a = 5;\n\tfloat b = 2.71;\n\tbool c = true;\n}";
 	std::cout << code << std::endl;
 	deleteNewLine(code);
 	std::cout << code << std::endl;
