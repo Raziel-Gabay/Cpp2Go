@@ -4,15 +4,18 @@
 #include <map>
 #include <string>
 
-typedef std::map<std::string, std::string> tokensMap;
-
+typedef std::multimap<std::string, std::string> tokensMap;
+typedef std::vector<std::pair<std::string, std::string>> tokensVector;
+#define FLOAT_POINT '.'
 
 tokensMap mapOfTokens =
 {
 	{"int", "DATATYPE_INT"},
+	{"float", "DATATYPE_FLOAT"},
 	{"identifier", "IDENTIFIER"},
 	{"intLiteral", "INT_LITERAL"}, 
-	{"5", "INT_LITERAL"}, //Temporary until we create a function that handles literals
+	{"floatLiteral", "FLOAT_LITERAL"},
+	{"stringLiteral", "STRING_LITERAL"},
 	{"(", "LEFT_PARENTHESIS"},      
 	{")", "RIGHT_PARENTHESIS"},     
 	{"{", "LEFT_BRACE"},            
@@ -152,6 +155,14 @@ std::string getToken(std::string& code) {
 	// Extract the token up to the first separator (or the end of the string if no separator found)
 	token = code.substr(0, separatorPos);
 
+	//handling float
+	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
+	{
+		token += FLOAT_POINT;
+		code.erase(0, separatorPos + 1);
+		separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+		token += code.substr(0, separatorPos); 
+	}
 	// Remove the processed token (including the separator, if any)
 	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
 	{
@@ -176,14 +187,14 @@ bool isTokensEqual(std::string token, tokensMap::iterator tokenFromMap)
 	return (tokenFromMap != mapOfTokens.end());
 }
 
-void insertToken(std::string token, tokensMap::iterator tokenFromMap, tokensMap& codeTokensMap)
+void insertToken(std::string token, tokensMap::iterator tokenFromMap, tokensVector& codeTokensMap)
 {
-	codeTokensMap[token] = tokenFromMap->second;
+	codeTokensMap.push_back({token, tokenFromMap->second});
 }
 
-tokensMap createTokenStream(std::string& code)
+tokensVector createTokenStream(std::string& code)
 {
-	tokensMap tokenStream;
+	tokensVector tokenStream;
 	while (!code.empty())
 	{
 		std::string token = getToken(code);
@@ -197,6 +208,16 @@ tokensMap createTokenStream(std::string& code)
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
+		else if (handleIntLiteralValue(token))
+		{
+			tokenFromMap = searchToken("intLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
+		else if (handleFloatLiteralValue(token))
+		{
+			tokenFromMap = searchToken("floatLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
 		else
 		{
 			throw std::runtime_error("ERROR: didn't find any token by this name...");
@@ -207,13 +228,14 @@ tokensMap createTokenStream(std::string& code)
 
 int main()
 {
-	std::string code = "int main()\n{\n\tint a = 5;\n}";
+	std::string code = "int main()\n{\n\tint a = 5;\n\tfloat b = 2.71;}";
 	std::cout << code << std::endl;
 	deleteNewLine(code);
 	std::cout << code << std::endl;
+	tokensVector tokenStream;
 	try
 	{
-		tokensMap tokenStream = createTokenStream(code);
+		 tokenStream = createTokenStream(code);
 	}
 	catch (const std::exception& e)
 	{
