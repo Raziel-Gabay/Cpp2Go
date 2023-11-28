@@ -123,6 +123,24 @@ bool handleFloatLiteralValue(std::string floatDataTypeToken)
 	return isFloat;
 }
 
+bool handleStringLiteralValue(std::string stringDataTypeToken)
+{
+	bool isValidString = true;
+	if (stringDataTypeToken[0] != '"' || (stringDataTypeToken[stringDataTypeToken.length() - 1]) != '"')
+	{
+		if (stringDataTypeToken[0] != '\'' || (stringDataTypeToken[stringDataTypeToken.length() - 1]) != '\'')
+			return false;
+	}
+	return true;
+}
+
+bool handleBoolLiteralValue(std::string boolDataTypeToken)
+{
+	if (boolDataTypeToken != "false" && boolDataTypeToken != "true")
+		return false;
+	return true;
+}
+
 /*
 input: string that repersent the code
 output: string that reprsent a token
