@@ -127,11 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ASTNode.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ASTNode.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
