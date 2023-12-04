@@ -66,6 +66,7 @@ token parser::getCurrentToken()
 
 void parser::consumeToken()
 {
+	++_currentPosition;
 }
 
 void parser::unconsumeToken()
@@ -78,5 +79,21 @@ void parser::unconsumeToken()
 
 bool parser::isBinaryOperator(token t)
 {
+	//here we define a list of all binary operators in cpp
+	std::list<std::string> listOfBinaryOperators = 
+	{
+		"+", "-", "*", "/", "%",    // Arithmetic Operators
+		"==", "!=", "<", ">", "<=", ">=",    // Relational Operators
+		"&&", "||",    // Logical Operators
+		"&", "|", "^", "<<", ">>",    // Bitwise Operators
+		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
+		",", "->", ".", "[]",    // Other Operators
+	};
+	//define an iterator that going over the list and check if the operator is binary or not
+	std::list<std::string>::iterator iter = std::find(listOfBinaryOperators.begin(), listOfBinaryOperators.end(), t.first);
+	//if the iterator isn't getting to the last node int he list, it means the operator is binary, and we will return true
+	if (iter != listOfBinaryOperators.end())
+		return true;
+	//else return false
 	return false;
 }
