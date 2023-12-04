@@ -50,6 +50,44 @@ void parser::parseStatement()
 
 void parser::parseExpression()
 {
+	if (getCurrentToken().second == IDENTIFIER)
+	{
+		consumeToken();
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expecting an identifier token...");
+	}
+	while (isBinaryOperator(getCurrentToken()))
+	{
+		std::string op = getCurrentToken().first;
+		consumeToken();
+		
+		if (ArithmeticOperators.find(op) != ArithmeticOperators.end())
+		{
+
+		}
+		else if (RelationalOperators.find(op) != RelationalOperators.end())
+		{
+
+		}
+		else if (LogicalOperators.find(op) != LogicalOperators.end())
+		{
+
+		}
+		else if (BitwiseOperators.find(op) != BitwiseOperators.end())
+		{
+
+		}
+		else if (AssignmentOperators.find(op) != AssignmentOperators.end())
+		{
+
+		}
+		else if (AccessOperators.find(op) != AccessOperators.end())
+		{
+
+		}
+	}
 }
 
 void parser::parseType()
@@ -87,7 +125,7 @@ bool parser::isBinaryOperator(token t)
 		"&&", "||",    // Logical Operators
 		"&", "|", "^", "<<", ">>",    // Bitwise Operators
 		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
-		",", "->", ".", "[]",    // Other Operators
+		",", "->", ".", "[]",    // Access Operators
 	};
 	//define an iterator that going over the list and check if the operator is binary or not
 	std::list<std::string>::iterator iter = std::find(listOfBinaryOperators.begin(), listOfBinaryOperators.end(), t.first);
