@@ -5,6 +5,10 @@
 #include <unordered_set>
 #include <string>
 
+#define IDENTIFIER "IDENTIFIER"
+#define ASSIGNMENT_OPERATOR "ASSIGNMENT_OPERATOR"
+#define SEMICOLON "SEMICOLON"
+
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 typedef std::pair<std::string, std::string> token;
 
@@ -24,12 +28,15 @@ public:
 	void parseExpression();
 	void parseType();
 
+
+private:
+	tokensVector _tokensStream;
+	size_t _currentPosition;
+
 	// Help Methods
 	token getCurrentToken();
 	void consumeToken();
+	void unconsumeToken();
 	bool isBinaryOperator(token t);
-private:
-	tokensVector _tokensStream;
-	size_t _currentToken;
 };
 
