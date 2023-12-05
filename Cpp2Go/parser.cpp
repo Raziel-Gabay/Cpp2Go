@@ -65,27 +65,27 @@ void parser::parseExpression()
 		
 		if (ArithmeticOperators.find(op) != ArithmeticOperators.end())
 		{
-
+			parseArithmeticOperator(op);
 		}
 		else if (RelationalOperators.find(op) != RelationalOperators.end())
 		{
-
+			parseRelationalOperator(op);
 		}
 		else if (LogicalOperators.find(op) != LogicalOperators.end())
 		{
-
+			parseLogicalOperator(op);
 		}
 		else if (BitwiseOperators.find(op) != BitwiseOperators.end())
 		{
-
+			parseBitwiseOperator(op);
 		}
 		else if (AssignmentOperators.find(op) != AssignmentOperators.end())
 		{
-
+			parseAssignmentOperator(op);
 		}
 		else if (AccessOperators.find(op) != AccessOperators.end())
 		{
-
+			parseAccessOperator(op);
 		}
 	}
 }
@@ -134,4 +134,42 @@ bool parser::isBinaryOperator(token t)
 		return true;
 	//else return false
 	return false;
+}
+
+void parser::parseArithmeticOperator(const std::string& op)
+{
+	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	{
+
+	}
+}
+
+void parser::parseRelationalOperator(const std::string& op)
+{
+	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	{
+
+	}
+}
+
+void parser::parseLogicalOperator(const std::string& op)
+{
+	// Parsing logic for logical operators
+}
+
+void parser::parseBitwiseOperator(const std::string& op)
+{
+	// Parsing logic for bitwise operators
+}
+
+void parser::parseAssignmentOperator(const std::string& op)
+{
+	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	{
+
+	}
+}
+
+void parser::parseAccessOperator(const std::string& op) {
+	// Parsing logic for access operators
 }

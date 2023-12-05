@@ -8,6 +8,8 @@
 #define IDENTIFIER "IDENTIFIER"
 #define ASSIGNMENT_OPERATOR "ASSIGNMENT_OPERATOR"
 #define SEMICOLON "SEMICOLON"
+#define LITERAL "LITERAL"
+
 
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 typedef std::pair<std::string, std::string> token;
@@ -38,6 +40,13 @@ public:
 	void parseStatement();
 	void parseExpression();
 	void parseType();
+	void parseArithmeticOperator(const std::string& op);
+
+	void parseRelationalOperator(const std::string& op);
+	void parseLogicalOperator(const std::string& op);
+	void parseBitwiseOperator(const std::string& op);
+	void parseAssignmentOperator(const std::string& op);
+	void parseAccessOperator(const std::string& op);
 
 
 private:
