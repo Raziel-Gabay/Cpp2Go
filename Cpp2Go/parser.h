@@ -38,6 +38,10 @@ public:
 	void parseProgram();
 	void parseDeclaration();
 	void parseStatement();
+	void parseIfStatment();
+	void parseWhileStatement();
+	void parseForStatement();
+
 	void parseExpression();
 	void parseType();
 	void parseArithmeticOperator(const std::string& op);
@@ -47,7 +51,7 @@ public:
 	void parseBitwiseOperator(const std::string& op);
 	void parseAssignmentOperator(const std::string& op);
 	void parseAccessOperator(const std::string& op);
-
+	void parseModifyOperator();
 
 private:
 	tokensVector _tokensStream;

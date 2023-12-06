@@ -16,5 +16,6 @@ int main()
 	{
 		std::cerr << e.what();
 	}
+	parser p();
 	return 0;
 }

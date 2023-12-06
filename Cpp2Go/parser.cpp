@@ -46,6 +46,67 @@ void parser::parseDeclaration()
 
 void parser::parseStatement()
 {
+	token currToken = getCurrentToken();
+	if (currToken.second == "IF_STATEMENT")
+	{
+		consumeToken();
+		parseIfStatment();
+	}
+	else if (currToken.second == "WHILE_STATEMENT")
+	{
+		consumeToken();
+		parseWhileStatement();
+	}
+	else if (currToken.second == "FOR_STATEMENT")
+	{
+		consumeToken();
+		parseForStatement();
+	}
+}
+
+void parser::parseIfStatment()
+{
+	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
+		throw "excepcted LEFT_PARENTHESIS";
+
+	consumeToken();
+	parseExpression(); //we expect an expression tp come
+
+	if (getCurrentToken().second != "RIGHT_PARENTHESIS") ////check that the token is ')'
+		throw "excepcted RIGHT_PARENTHESIS";
+	consumeToken();
+	//check - if body
+}
+
+void parser::parseWhileStatement()
+{
+	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
+		throw "excepcted LEFT_PARENTHESIS";
+
+	consumeToken();
+	parseExpression(); //we expect an expression tp come
+
+	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
+		throw "excepcted RIGHT_PARENTHESIS";
+	consumeToken();
+	//check - while body
+}
+
+void parser::parseForStatement()
+{
+	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
+		throw "excepcted LEFT_PARENTHESIS";
+
+	consumeToken();
+	parseDeclaration(); // we expect decleration to come (for example: 'int i = 0;')
+
+	parseExpression(); //we expect an expression tp come
+	parseModifyOperator(); //we expect modify operator to come 
+
+	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
+		throw "excepcted RIGHT_PARENTHESIS";
+	consumeToken();
+	//check - for body
 }
 
 void parser::parseExpression()
@@ -62,7 +123,7 @@ void parser::parseExpression()
 	{
 		std::string op = getCurrentToken().first;
 		consumeToken();
-		
+
 		if (ArithmeticOperators.find(op) != ArithmeticOperators.end())
 		{
 			parseArithmeticOperator(op);
@@ -92,6 +153,13 @@ void parser::parseExpression()
 
 void parser::parseType()
 {
+	token currToken = getCurrentToken();
+	if (currToken.second == "DATATYPE")
+		consumeToken();
+	else
+	{
+		throw "error, expected a datatype token";
+	}
 }
 
 token parser::getCurrentToken()
@@ -118,7 +186,7 @@ void parser::unconsumeToken()
 bool parser::isBinaryOperator(token t)
 {
 	//here we define a list of all binary operators in cpp
-	std::list<std::string> listOfBinaryOperators = 
+	std::list<std::string> listOfBinaryOperators =
 	{
 		"+", "-", "*", "/", "%",    // Arithmetic Operators
 		"==", "!=", "<", ">", "<=", ">=",    // Relational Operators
@@ -126,6 +194,7 @@ bool parser::isBinaryOperator(token t)
 		"&", "|", "^", "<<", ">>",    // Bitwise Operators
 		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
 		",", "->", ".", "[]",    // Access Operators
+		"++", "--", // Modify Operators 
 	};
 	//define an iterator that going over the list and check if the operator is binary or not
 	std::list<std::string>::iterator iter = std::find(listOfBinaryOperators.begin(), listOfBinaryOperators.end(), t.first);
@@ -172,4 +241,20 @@ void parser::parseAssignmentOperator(const std::string& op)
 
 void parser::parseAccessOperator(const std::string& op) {
 	// Parsing logic for access operators
+}
+
+void parser::parseModifyOperator()
+{
+	if (getCurrentToken().second == "IDENTIFIER")
+	{
+		consumeToken();
+		if (getCurrentToken().first == "++" || getCurrentToken().first == "--")
+		{
+			consumeToken();
+		}
+	}
+	else
+	{
+		throw "excpected a modify operator"; 
+	}
 }
