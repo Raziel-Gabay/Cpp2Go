@@ -2,7 +2,7 @@
 
 
 parser::parser(tokensVector tokenStream)
-	: _tokensStream(tokenStream), _currentPosition(0)
+	: _tokensStream(tokenStream), _currentPosition(0), _identifiersTypes({})
 {
 }
 
@@ -16,10 +16,11 @@ void parser::parseProgram()
 
 void parser::parseDeclaration()
 {
-	parseType();
+	std::string datatype = parseType();
 
 	if (getCurrentToken().second == IDENTIFIER)
 	{
+		_identifiersTypes.insert(getCurrentToken().first, datatype );
 		consumeToken();
 	}
 	else
@@ -67,13 +68,13 @@ void parser::parseStatement()
 void parser::parseIfStatment()
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
-		throw "excepcted LEFT_PARENTHESIS";
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
 	parseExpression(); //we expect an expression tp come
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") ////check that the token is ')'
-		throw "excepcted RIGHT_PARENTHESIS";
+		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
 	consumeToken();
 	//check - if body
 }
@@ -81,13 +82,13 @@ void parser::parseIfStatment()
 void parser::parseWhileStatement()
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
-		throw "excepcted LEFT_PARENTHESIS";
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
 	parseExpression(); //we expect an expression tp come
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
-		throw "excepcted RIGHT_PARENTHESIS";
+		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
 	consumeToken();
 	//check - while body
 }
@@ -95,7 +96,7 @@ void parser::parseWhileStatement()
 void parser::parseForStatement()
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
-		throw "excepcted LEFT_PARENTHESIS";
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
 	parseDeclaration(); // we expect decleration to come (for example: 'int i = 0;')
@@ -104,7 +105,7 @@ void parser::parseForStatement()
 	parseModifyOperator(); //we expect modify operator to come 
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
-		throw "excepcted RIGHT_PARENTHESIS";
+		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
 	consumeToken();
 	//check - for body
 }
@@ -119,10 +120,15 @@ void parser::parseExpression()
 	{
 		throw std::runtime_error("ERROR: expecting an identifier token...");
 	}
+	if (!isBinaryOperator(getCurrentToken()))
+	{
+		throw std::runtime_error("ERROR: expecting an binary operator...");
+
+	}
 	while (isBinaryOperator(getCurrentToken()))
 	{
 		std::string op = getCurrentToken().first;
-		consumeToken();
+		unconsumeToken();
 
 		if (ArithmeticOperators.find(op) != ArithmeticOperators.end())
 		{
@@ -148,17 +154,26 @@ void parser::parseExpression()
 		{
 			parseAccessOperator(op);
 		}
+		consumeToken();
+		
+		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS")
+		{
+			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
+		}
 	}
 }
 
-void parser::parseType()
+std::string parser::parseType()
 {
 	token currToken = getCurrentToken();
 	if (currToken.second == "DATATYPE")
+	{
 		consumeToken();
+		return currToken.second.substr(currToken.second.find("_") + 1);
+	}
 	else
 	{
-		throw "error, expected a datatype token";
+		throw std::runtime_error("ERROR: expected a datatype token");
 	}
 }
 
@@ -172,7 +187,18 @@ token parser::getCurrentToken()
 
 void parser::consumeToken()
 {
-	++_currentPosition;
+	if (_currentPosition < _tokensStream.size())
+	{
+		++_currentPosition;
+	}
+}
+
+void parser::consumeToken(size_t n)
+{
+	if ((_currentPosition + n) < _tokensStream.size())
+	{
+		_currentPosition += n;
+	}
 }
 
 void parser::unconsumeToken()
@@ -206,41 +232,97 @@ bool parser::isBinaryOperator(token t)
 }
 
 void parser::parseArithmeticOperator(const std::string& op)
-{
-	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+{	
+	std::string datatype = getCurrentToken().second;
+	if (getCurrentToken().second == IDENTIFIER)
 	{
-
+		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+	}
+	else if (!getCurrentToken().second.find(LITERAL))
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal...");
+	}
+	consumeToken(2);
+	if (!getCurrentToken().second.find(datatype))
+	{
+		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 }
 
 void parser::parseRelationalOperator(const std::string& op)
 {
-	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	std::string datatype = getCurrentToken().second;
+	if (getCurrentToken().second == IDENTIFIER)
 	{
-
+		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+	}
+	else if (!getCurrentToken().second.find(LITERAL))
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal...");
+	}
+	consumeToken(2);
+	if (!getCurrentToken().second.find(datatype))
+	{
+		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 }
 
 void parser::parseLogicalOperator(const std::string& op)
 {
-	// Parsing logic for logical operators
+	if (getCurrentToken().second != IDENTIFIER && !getCurrentToken().second.find(LITERAL))
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal before Logical Operator...");
+	}
+	consumeToken(2);
+	if (getCurrentToken().second != IDENTIFIER && !getCurrentToken().second.find(LITERAL))
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal after Logical Operator...");
+	}
+
 }
 
 void parser::parseBitwiseOperator(const std::string& op)
 {
-	// Parsing logic for bitwise operators
+	if (getCurrentToken().second != INT_LITERAL)
+	{
+		throw std::runtime_error("ERROR: Expected an integer operand before bitwise operator.");
+	}
+	consumeToken(2);
+	if (getCurrentToken().second != INT_LITERAL)
+	{
+		throw std::runtime_error("ERROR: Expected an integer operand after bitwise operator.");
+	}
 }
 
 void parser::parseAssignmentOperator(const std::string& op)
 {
-	if (getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	std::string datatype;
+	if (getCurrentToken().second == IDENTIFIER)
 	{
-
+		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expected an identifier...");
+	}
+	consumeToken(2);
+	if (!getCurrentToken().second.find(datatype))
+	{
+		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 }
 
-void parser::parseAccessOperator(const std::string& op) {
-	// Parsing logic for access operators
+void parser::parseAccessOperator(const std::string& op)
+{
+	if (getCurrentToken().second != IDENTIFIER)
+	{
+		throw std::runtime_error("ERROR: expected an identifier before Access Operator...");
+	}
+	consumeToken(2);
+	if (getCurrentToken().second != IDENTIFIER)
+	{
+		throw std::runtime_error("ERROR: expected an identifier after Access Operator...");
+	}
 }
 
 void parser::parseModifyOperator()
@@ -255,6 +337,6 @@ void parser::parseModifyOperator()
 	}
 	else
 	{
-		throw "excpected a modify operator"; 
+		throw std::runtime_error("excpected a modify operator"); 
 	}
 }
