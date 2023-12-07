@@ -12,8 +12,11 @@
 #define LITERAL "LITERAL"
 #define BOOL "BOOL"
 #define INT_LITERAL "INT_LITERAL"
+#define IF_STATEMENT "IF_STATEMENT"
+#define WHILE_STATEMENT "WHILE_STATEMENT"
+#define FOR_STATEMENT "FOR_STATEMENT"
 
-
+typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 typedef std::pair<std::string, std::string> token;
@@ -56,6 +59,7 @@ public:
 	void parseAssignmentOperator(const std::string& op);
 	void parseAccessOperator(const std::string& op);
 	void parseModifyOperator();
+	bool isUnaryOperator(const token& t);
 
 private:
 	tokensVector _tokensStream;

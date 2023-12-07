@@ -12,6 +12,23 @@ parser::~parser()
 
 void parser::parseProgram()
 {
+	while (_currentPosition != _tokensStream.size())
+	{
+		token currToken = getCurrentToken();
+		if (currToken.second.find("DATATYPE"))
+		{
+			parseDeclaration();
+		}
+		else if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+		{
+			parseStatement();
+		}
+		else
+		{
+			parseExpression();
+		}
+
+	}
 }
 
 void parser::parseDeclaration()
@@ -48,17 +65,17 @@ void parser::parseDeclaration()
 void parser::parseStatement()
 {
 	token currToken = getCurrentToken();
-	if (currToken.second == "IF_STATEMENT")
+	if (currToken.second == IF_STATEMENT)
 	{
 		consumeToken();
 		parseIfStatment();
 	}
-	else if (currToken.second == "WHILE_STATEMENT")
+	else if (currToken.second == WHILE_STATEMENT)
 	{
 		consumeToken();
 		parseWhileStatement();
 	}
-	else if (currToken.second == "FOR_STATEMENT")
+	else if (currToken.second == FOR_STATEMENT)
 	{
 		consumeToken();
 		parseForStatement();
@@ -112,19 +129,28 @@ void parser::parseForStatement()
 
 void parser::parseExpression()
 {
-	if (getCurrentToken().second == IDENTIFIER)
+	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
 	{
 		consumeToken();
 	}
-	else
+	else if (getCurrentToken().second == "LEFT_PARENTHESIS")
 	{
-		throw std::runtime_error("ERROR: expecting an identifier token...");
+		consumeToken(); // Consume the '('
+		parseExpression();
+		if (getCurrentToken().second == "RIGHT_PARENTHESIS")
+		{
+			consumeToken(); // Consume the ')'
+		}
+		else
+		{
+			throw std::runtime_error("ERROR: expected a right parenthesis");
+		}
 	}
-	if (!isBinaryOperator(getCurrentToken()))
+	else 
 	{
-		throw std::runtime_error("ERROR: expecting an binary operator...");
+		throw std::runtime_error("ERROR: invalid start of expression");
+	}
 
-	}
 	while (isBinaryOperator(getCurrentToken()))
 	{
 		std::string op = getCurrentToken().first;
@@ -166,7 +192,7 @@ void parser::parseExpression()
 std::string parser::parseType()
 {
 	token currToken = getCurrentToken();
-	if (currToken.second == "DATATYPE")
+	if (currToken.second.find("DATATYPE"))
 	{
 		consumeToken();
 		return currToken.second.substr(currToken.second.find("_") + 1);
@@ -339,4 +365,10 @@ void parser::parseModifyOperator()
 	{
 		throw std::runtime_error("excpected a modify operator"); 
 	}
+}
+
+bool parser::isUnaryOperator(const token& t)
+{
+	const std::unordered_set<std::string> unaryOperators = { "+", "-", "!" /* Add other unary operators as needed */ };
+	return (t.second.find("OPERATOR") && unaryOperators.find(t.first) != unaryOperators.end());
 }

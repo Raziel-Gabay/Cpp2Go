@@ -6,6 +6,7 @@
 #include <string>
 
 #define FLOAT_POINT '.'
+typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> tokensMap;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 const std::unordered_set<std::string> standaloneTokens = { "+", "-", "*", "/", "=", "!", "<", ">", "&", "|", "^", "~", "%", "?", ":", ",", ";", ".", "(", ")", "{", "}", "[", "]" };
