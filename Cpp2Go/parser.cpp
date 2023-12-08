@@ -203,62 +203,8 @@ std::string parser::parseType()
 	}
 }
 
-token parser::getCurrentToken()
-{
-	if (_currentPosition <= _tokensStream.size()) {
-		return _tokensStream[_currentPosition];
-	}
-	return token("", "");
-}
-
-void parser::consumeToken()
-{
-	if (_currentPosition < _tokensStream.size())
-	{
-		++_currentPosition;
-	}
-}
-
-void parser::consumeToken(size_t n)
-{
-	if ((_currentPosition + n) < _tokensStream.size())
-	{
-		_currentPosition += n;
-	}
-}
-
-void parser::unconsumeToken()
-{
-	if (_currentPosition > 0)
-	{
-		--_currentPosition;
-	}
-}
-
-bool parser::isBinaryOperator(token t)
-{
-	//here we define a list of all binary operators in cpp
-	std::list<std::string> listOfBinaryOperators =
-	{
-		"+", "-", "*", "/", "%",    // Arithmetic Operators
-		"==", "!=", "<", ">", "<=", ">=",    // Relational Operators
-		"&&", "||",    // Logical Operators
-		"&", "|", "^", "<<", ">>",    // Bitwise Operators
-		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
-		",", "->", ".", "[]",    // Access Operators
-		"++", "--", // Modify Operators 
-	};
-	//define an iterator that going over the list and check if the operator is binary or not
-	std::list<std::string>::iterator iter = std::find(listOfBinaryOperators.begin(), listOfBinaryOperators.end(), t.first);
-	//if the iterator isn't getting to the last node int he list, it means the operator is binary, and we will return true
-	if (iter != listOfBinaryOperators.end())
-		return true;
-	//else return false
-	return false;
-}
-
 void parser::parseArithmeticOperator(const std::string& op)
-{	
+{
 	std::string datatype = getCurrentToken().second;
 	if (getCurrentToken().second == IDENTIFIER)
 	{
@@ -363,8 +309,62 @@ void parser::parseModifyOperator()
 	}
 	else
 	{
-		throw std::runtime_error("excpected a modify operator"); 
+		throw std::runtime_error("excpected a modify operator");
 	}
+}
+
+token parser::getCurrentToken()
+{
+	if (_currentPosition <= _tokensStream.size()) {
+		return _tokensStream[_currentPosition];
+	}
+	return token("", "");
+}
+
+void parser::consumeToken()
+{
+	if (_currentPosition < _tokensStream.size())
+	{
+		++_currentPosition;
+	}
+}
+
+void parser::consumeToken(size_t n)
+{
+	if ((_currentPosition + n) < _tokensStream.size())
+	{
+		_currentPosition += n;
+	}
+}
+
+void parser::unconsumeToken()
+{
+	if (_currentPosition > 0)
+	{
+		--_currentPosition;
+	}
+}
+
+bool parser::isBinaryOperator(token t)
+{
+	//here we define a list of all binary operators in cpp
+	std::list<std::string> listOfBinaryOperators =
+	{
+		"+", "-", "*", "/", "%",    // Arithmetic Operators
+		"==", "!=", "<", ">", "<=", ">=",    // Relational Operators
+		"&&", "||",    // Logical Operators
+		"&", "|", "^", "<<", ">>",    // Bitwise Operators
+		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
+		",", "->", ".", "[]",    // Access Operators
+		"++", "--", // Modify Operators 
+	};
+	//define an iterator that going over the list and check if the operator is binary or not
+	std::list<std::string>::iterator iter = std::find(listOfBinaryOperators.begin(), listOfBinaryOperators.end(), t.first);
+	//if the iterator isn't getting to the last node int he list, it means the operator is binary, and we will return true
+	if (iter != listOfBinaryOperators.end())
+		return true;
+	//else return false
+	return false;
 }
 
 bool parser::isUnaryOperator(const token& t)
