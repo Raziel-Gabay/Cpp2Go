@@ -37,7 +37,7 @@ void parser::parseDeclaration()
 
 	if (getCurrentToken().second == IDENTIFIER)
 	{
-		_identifiersTypes.insert(getCurrentToken().first, datatype );
+		_identifiersTypes.emplace(getCurrentToken().first, datatype);
 		consumeToken();
 	}
 	else
