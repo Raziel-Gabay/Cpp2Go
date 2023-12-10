@@ -4,6 +4,7 @@
 parser::parser(tokensVector tokenStream)
 	: _tokensStream(tokenStream), _currentPosition(0), _identifiersTypes({})
 {
+	parseProgram();
 }
 
 parser::~parser()
@@ -15,7 +16,7 @@ void parser::parseProgram()
 	while (_currentPosition != _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
-		if (currToken.second.find("DATATYPE"))
+		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
 			parseDeclaration();
 		}
@@ -192,7 +193,7 @@ void parser::parseExpression()
 std::string parser::parseType()
 {
 	token currToken = getCurrentToken();
-	if (currToken.second.find("DATATYPE"))
+	if (currToken.second.find("DATATYPE") != std::string::npos)
 	{
 		consumeToken();
 		return currToken.second.substr(currToken.second.find("_") + 1);
@@ -278,7 +279,7 @@ void parser::parseAssignmentOperator(const std::string& op)
 		throw std::runtime_error("ERROR: expected an identifier...");
 	}
 	consumeToken(2);
-	if (!getCurrentToken().second.find(datatype))
+	if (getCurrentToken().second.find(datatype) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}

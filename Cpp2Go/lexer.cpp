@@ -20,6 +20,10 @@ tokensMap mapOfTokens =
 	{"}", "RIGHT_BRACE"},
 	{"=", "ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
+	{"!=", "NOT_EQUAL_OPERATOR"},
+	{"==", "EQUAL_OPERATOR"},
+	{"<", "LESS_THAN_OPERATOR"},
+	{">", "MORE_THAN_OPERATOR"}
 };
 
 void lexer::preproccesing(std::string& sourceCode)
