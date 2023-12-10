@@ -13,7 +13,7 @@ parser::~parser()
 
 void parser::parseProgram()
 {
-	while (_currentPosition != _tokensStream.size())
+	while (_currentPosition < _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
 		if (currToken.second.find("DATATYPE") != std::string::npos)
@@ -211,12 +211,12 @@ void parser::parseArithmeticOperator(const std::string& op)
 	{
 		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
 	}
-	else if (!getCurrentToken().second.find(LITERAL))
+	else if (getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
 	consumeToken(2);
-	if (!getCurrentToken().second.find(datatype))
+	if (getCurrentToken().second.find(datatype) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
@@ -229,12 +229,12 @@ void parser::parseRelationalOperator(const std::string& op)
 	{
 		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
 	}
-	else if (!getCurrentToken().second.find(LITERAL))
+	else if (getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
 	consumeToken(2);
-	if (!getCurrentToken().second.find(datatype))
+	if (getCurrentToken().second.find(datatype) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
@@ -242,12 +242,12 @@ void parser::parseRelationalOperator(const std::string& op)
 
 void parser::parseLogicalOperator(const std::string& op)
 {
-	if (getCurrentToken().second != IDENTIFIER && !getCurrentToken().second.find(LITERAL))
+	if (getCurrentToken().second != IDENTIFIER && getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal before Logical Operator...");
 	}
 	consumeToken(2);
-	if (getCurrentToken().second != IDENTIFIER && !getCurrentToken().second.find(LITERAL))
+	if (getCurrentToken().second != IDENTIFIER && getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal after Logical Operator...");
 	}
@@ -316,7 +316,7 @@ void parser::parseModifyOperator()
 
 token parser::getCurrentToken()
 {
-	if (_currentPosition <= _tokensStream.size()) {
+	if (_currentPosition < _tokensStream.size()) {
 		return _tokensStream[_currentPosition];
 	}
 	return token("", "");

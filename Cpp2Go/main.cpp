@@ -4,7 +4,7 @@
 int main()
 {
 	//std::string code = "int main()\n{\n\tint a = 5;\n\tfloat b = 2.71;\n\tbool c = true;\n}";
-	//std::string code = "int main()\n{\n\tfor(int i = 0; i < 10; i++)\n\t{\n\t\tstd::cout << i;\n\t}\n\tretrun 0;\n}";
+	//std::string code = "for(int i = 0; i < 10; i++)\n\t{}";
 	std::string code = "int i = 0;\nif(i == 0)\n{\n\ti = 10;\n}";
 	std::cout << code << std::endl;
 	lexer::preproccesing(code);

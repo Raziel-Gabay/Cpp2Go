@@ -156,6 +156,17 @@ std::string lexer::getToken(std::string& code)
 		return token;
 	}
 
+	// Get the 2 first characters
+	token = code.substr(0, 2);
+	if (operatorWithTwoCharsTokens.count(token) > 0)
+	{
+		code.erase(0, 2); // Remove the processed token
+		if (code[0] == ' ')
+		{
+			code.erase(0, 1); // Remove the whitespace that may come afterward
+		}
+		return token;
+	}
 	// Get the first character
 	token = code[0];
 
