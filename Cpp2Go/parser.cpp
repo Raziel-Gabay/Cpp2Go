@@ -34,7 +34,8 @@ void parser::parseProgram()
 
 void parser::parseDeclaration()
 {
-	std::string datatype = parseType();
+	std::string datatype;
+	parseType(datatype);
 
 	if (getCurrentToken().second == IDENTIFIER)
 	{
@@ -190,13 +191,16 @@ void parser::parseExpression()
 	}
 }
 
-std::string parser::parseType()
+void parser::parseType(std::string&  datatype, ASTNode* head)
 {
 	token currToken = getCurrentToken();
 	if (currToken.second.find("DATATYPE") != std::string::npos)
 	{
 		consumeToken();
-		return currToken.second.substr(currToken.second.find("_") + 1);
+		datatype = currToken.second.substr(currToken.second.find("_") + 1);
+		//create ast node
+		ASTNode* dataTypeNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(dataTypeNode);
 	}
 	else
 	{

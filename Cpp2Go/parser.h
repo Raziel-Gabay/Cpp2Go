@@ -1,4 +1,5 @@
 #pragma once
+#include "ASTNode.h"
 
 #include <iostream>
 #include <vector>
@@ -50,7 +51,7 @@ public:
 	void parseForStatement();
 
 	void parseExpression();
-	std::string parseType();
+	void parseType(std::string& datatype, ASTNode* head);
 	void parseArithmeticOperator(const std::string& op);
 
 	void parseRelationalOperator(const std::string& op);
