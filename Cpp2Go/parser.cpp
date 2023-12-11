@@ -11,31 +11,33 @@ parser::~parser()
 {
 }
 
-void parser::parseProgram()
+ASTNode* parser::parseProgram()
 {
+	ASTNode* programNode = new ASTNode("PROGRAM");
 	while (_currentPosition < _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
 		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
-			parseDeclaration();
+			parseDeclaration(programNode);
 		}
 		else if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
-			parseStatement();
+			parseStatement(programNode);
 		}
 		else
 		{
-			parseExpression();
+			parseExpression(programNode);
 		}
 
 	}
+	return programNode;
 }
 
-void parser::parseDeclaration()
+void parser::parseDeclaration(ASTNode* head)
 {
 	std::string datatype;
-	parseType(datatype);
+	parseType(datatype, head);
 
 	if (getCurrentToken().second == IDENTIFIER)
 	{
@@ -49,7 +51,7 @@ void parser::parseDeclaration()
 	if (getCurrentToken().second == ASSIGNMENT_OPERATOR)
 	{
 		unconsumeToken();
-		parseExpression();
+		parseExpression(head);
 	}
 	else
 	{
@@ -64,33 +66,33 @@ void parser::parseDeclaration()
 	}
 }
 
-void parser::parseStatement()
+void parser::parseStatement(ASTNode* head)
 {
 	token currToken = getCurrentToken();
 	if (currToken.second == IF_STATEMENT)
 	{
 		consumeToken();
-		parseIfStatment();
+		parseIfStatment(head);
 	}
 	else if (currToken.second == WHILE_STATEMENT)
 	{
 		consumeToken();
-		parseWhileStatement();
+		parseWhileStatement(head);
 	}
 	else if (currToken.second == FOR_STATEMENT)
 	{
 		consumeToken();
-		parseForStatement();
+		parseForStatement(head);
 	}
 }
 
-void parser::parseIfStatment()
+void parser::parseIfStatment(ASTNode* head)
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
-	parseExpression(); //we expect an expression tp come
+	parseExpression(head); //we expect an expression tp come
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") ////check that the token is ')'
 		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
@@ -98,13 +100,13 @@ void parser::parseIfStatment()
 	//check - if body
 }
 
-void parser::parseWhileStatement()
+void parser::parseWhileStatement(ASTNode* head)
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
-	parseExpression(); //we expect an expression tp come
+	parseExpression(head); //we expect an expression tp come
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
 		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
@@ -112,15 +114,15 @@ void parser::parseWhileStatement()
 	//check - while body
 }
 
-void parser::parseForStatement()
+void parser::parseForStatement(ASTNode* head)
 {
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
-	parseDeclaration(); // we expect decleration to come (for example: 'int i = 0;')
+	parseDeclaration(head); // we expect decleration to come (for example: 'int i = 0;')
 
-	parseExpression(); //we expect an expression tp come
+	parseExpression(head); //we expect an expression tp come
 	parseModifyOperator(); //we expect modify operator to come 
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
@@ -129,7 +131,7 @@ void parser::parseForStatement()
 	//check - for body
 }
 
-void parser::parseExpression()
+void parser::parseExpression(ASTNode* head)
 {
 	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
 	{
@@ -138,7 +140,7 @@ void parser::parseExpression()
 	else if (getCurrentToken().second == "LEFT_PARENTHESIS")
 	{
 		consumeToken(); // Consume the '('
-		parseExpression();
+		parseExpression(head);
 		if (getCurrentToken().second == "RIGHT_PARENTHESIS")
 		{
 			consumeToken(); // Consume the ')'
@@ -156,31 +158,35 @@ void parser::parseExpression()
 	while (isBinaryOperator(getCurrentToken()))
 	{
 		std::string op = getCurrentToken().first;
+		// create op node and assign it to the head node
+		ASTNode* opNode = new ASTNode(getCurrentToken().second);
+		head->addChild(opNode);
+
 		unconsumeToken();
 
 		if (ArithmeticOperators.find(op) != ArithmeticOperators.end())
 		{
-			parseArithmeticOperator(op);
+			parseArithmeticOperator(op, opNode);
 		}
 		else if (RelationalOperators.find(op) != RelationalOperators.end())
 		{
-			parseRelationalOperator(op);
+			parseRelationalOperator(op, opNode);
 		}
 		else if (LogicalOperators.find(op) != LogicalOperators.end())
 		{
-			parseLogicalOperator(op);
+			parseLogicalOperator(op, opNode);
 		}
 		else if (BitwiseOperators.find(op) != BitwiseOperators.end())
 		{
-			parseBitwiseOperator(op);
+			parseBitwiseOperator(op, opNode);
 		}
 		else if (AssignmentOperators.find(op) != AssignmentOperators.end())
 		{
-			parseAssignmentOperator(op);
+			parseAssignmentOperator(op, opNode);
 		}
 		else if (AccessOperators.find(op) != AccessOperators.end())
 		{
-			parseAccessOperator(op);
+			parseAccessOperator(op, opNode);
 		}
 		consumeToken();
 		
@@ -208,43 +214,93 @@ void parser::parseType(std::string&  datatype, ASTNode* head)
 	}
 }
 
-void parser::parseArithmeticOperator(const std::string& op)
+void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 {
-	std::string datatype = getCurrentToken().second;
-	if (getCurrentToken().second == IDENTIFIER)
+	token currToken = getCurrentToken();
+	std::string datatype = currToken.second;
+	if (currToken.second == IDENTIFIER)
 	{
-		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+		datatype = _identifiersTypes.find(currToken.first)->second;
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(identifierNode);
 	}
-	else if (getCurrentToken().second.find(LITERAL) == std::string::npos)
+	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
+	{
+		// create literal node and add it to the head node
+		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(literalNode);
+	}
+	else
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
 	consumeToken(2);
-	if (getCurrentToken().second.find(datatype) == std::string::npos)
+	currToken = getCurrentToken();
+
+	if (currToken.second.find(datatype) == std::string::npos)
 	{
+		if (currToken.second == IDENTIFIER)
+		{
+			if (datatype == _identifiersTypes.find(currToken.first)->second)
+			{
+				// create idetifier node and add it to the head node
+				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				head->addChild(identifierNode);
+				return;
+			}
+		}
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
+
+	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(literalNode);
 }
 
-void parser::parseRelationalOperator(const std::string& op)
+void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 {
-	std::string datatype = getCurrentToken().second;
-	if (getCurrentToken().second == IDENTIFIER)
+	token currToken = getCurrentToken();
+	std::string datatype = currToken.second;
+	if (currToken.second == IDENTIFIER)
 	{
-		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+		datatype = _identifiersTypes.find(currToken.first)->second;
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(identifierNode);
 	}
-	else if (getCurrentToken().second.find(LITERAL) == std::string::npos)
+	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
+	{
+		// create literal node and add it to the head node
+		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(literalNode);
+	}
+	else
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
 	consumeToken(2);
-	if (getCurrentToken().second.find(datatype) == std::string::npos)
+	currToken = getCurrentToken();
+
+	if (currToken.second.find(datatype) == std::string::npos)
 	{
+		if (currToken.second == IDENTIFIER)
+		{
+			if (datatype == _identifiersTypes.find(currToken.first)->second)
+			{
+				// create idetifier node and add it to the head node
+				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				head->addChild(identifierNode);
+				return;
+			}
+		}
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
+
+	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(literalNode);
 }
 
-void parser::parseLogicalOperator(const std::string& op)
+void parser::parseLogicalOperator(const std::string& op, ASTNode* head)
 {
 	if (getCurrentToken().second != IDENTIFIER && getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
@@ -258,47 +314,90 @@ void parser::parseLogicalOperator(const std::string& op)
 
 }
 
-void parser::parseBitwiseOperator(const std::string& op)
+void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 {
-	if (getCurrentToken().second != INT_LITERAL)
+	token currToken = getCurrentToken();
+	if (currToken.second != INT_LITERAL)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand before bitwise operator.");
 	}
+	else
+	{
+		ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(intLiteralNode);
+	}
 	consumeToken(2);
+	currToken = getCurrentToken();
 	if (getCurrentToken().second != INT_LITERAL)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand after bitwise operator.");
 	}
+	else
+	{
+		ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(intLiteralNode);
+	}
 }
 
-void parser::parseAssignmentOperator(const std::string& op)
+void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 {
-	std::string datatype;
-	if (getCurrentToken().second == IDENTIFIER)
+	token currToken = getCurrentToken();
+	std::string datatype = currToken.second;
+	if (currToken.second == IDENTIFIER)
 	{
-		datatype = _identifiersTypes.find(getCurrentToken().first)->second;
+		datatype = _identifiersTypes.find(currToken.first)->second;
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(identifierNode);
 	}
 	else
 	{
 		throw std::runtime_error("ERROR: expected an identifier...");
 	}
 	consumeToken(2);
-	if (getCurrentToken().second.find(datatype) == std::string::npos)
+	currToken = getCurrentToken();
+
+	if (currToken.second.find(datatype) == std::string::npos)
 	{
+		if (currToken.second == IDENTIFIER)
+		{
+			if (datatype == _identifiersTypes.find(currToken.first)->second)
+			{
+				// create idetifier node and add it to the head node
+				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				head->addChild(identifierNode);
+				return;
+			}
+		}
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
+
+	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(literalNode);
 }
 
-void parser::parseAccessOperator(const std::string& op)
+void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 {
-	if (getCurrentToken().second != IDENTIFIER)
+	token currToken = getCurrentToken();
+	if (currToken.second != IDENTIFIER)
 	{
 		throw std::runtime_error("ERROR: expected an identifier before Access Operator...");
 	}
+	else
+	{
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(identifierNode);
+	}
 	consumeToken(2);
+	currToken = getCurrentToken();
 	if (getCurrentToken().second != IDENTIFIER)
 	{
 		throw std::runtime_error("ERROR: expected an identifier after Access Operator...");
+	}
+	else
+	{
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		head->addChild(identifierNode);
 	}
 }
 

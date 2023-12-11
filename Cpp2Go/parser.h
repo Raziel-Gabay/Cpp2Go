@@ -43,22 +43,22 @@ public:
 	~parser();
 
 	// Parse Functions
-	void parseProgram();
-	void parseDeclaration();
-	void parseStatement();
-	void parseIfStatment();
-	void parseWhileStatement();
-	void parseForStatement();
+	ASTNode* parseProgram();
+	void parseDeclaration(ASTNode* head);
+	void parseStatement(ASTNode* head);
+	void parseIfStatment(ASTNode* head);
+	void parseWhileStatement(ASTNode* head);
+	void parseForStatement(ASTNode* head);
 
-	void parseExpression();
+	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
-	void parseArithmeticOperator(const std::string& op);
 
-	void parseRelationalOperator(const std::string& op);
-	void parseLogicalOperator(const std::string& op);
-	void parseBitwiseOperator(const std::string& op);
-	void parseAssignmentOperator(const std::string& op);
-	void parseAccessOperator(const std::string& op);
+	void parseArithmeticOperator(const std::string& op, ASTNode* head);
+	void parseRelationalOperator(const std::string& op, ASTNode* head);
+	void parseLogicalOperator(const std::string& op, ASTNode* head);
+	void parseBitwiseOperator(const std::string& op, ASTNode* head);
+	void parseAssignmentOperator(const std::string& op, ASTNode* head);
+	void parseAccessOperator(const std::string& op, ASTNode* head);
 	void parseModifyOperator();
 	bool isUnaryOperator(const token& t);
 
