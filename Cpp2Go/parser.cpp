@@ -88,16 +88,22 @@ void parser::parseStatement(ASTNode* head)
 
 void parser::parseIfStatment(ASTNode* head)
 {
-	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
+	//create an if statement node
+	ASTNode* ifStatementNode = new ASTNode("ifStatement");
+	head->addChild(ifStatementNode);
+	if (getCurrentToken().second != LEFT_PARENTHESIS) //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
 	consumeToken();
-	parseExpression(head); //we expect an expression tp come
+	parseExpression(ifStatementNode); //we expect an expression to come
 
-	if (getCurrentToken().second != "RIGHT_PARENTHESIS") ////check that the token is ')'
+	if (getCurrentToken().second != RIGHT_PARENTHESIS) //check that the token is ')'
 		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
 	consumeToken();
 	//check - if body
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
 }
 
 void parser::parseWhileStatement(ASTNode* head)
@@ -197,7 +203,7 @@ void parser::parseExpression(ASTNode* head)
 	}
 }
 
-void parser::parseType(std::string&  datatype, ASTNode* head)
+void parser::parseType(std::string& datatype, ASTNode* head)
 {
 	token currToken = getCurrentToken();
 	if (currToken.second.find("DATATYPE") != std::string::npos)
@@ -456,7 +462,7 @@ bool parser::isBinaryOperator(token t)
 	{
 		"+", "-", "*", "/", "%",    // Arithmetic Operators
 		"==", "!=", "<", ">", "<=", ">=",    // Relational Operators
-		"&&", "||",    // Logical Operators
+		"&&", "||", "!"  // Logical Operators
 		"&", "|", "^", "<<", ">>",    // Bitwise Operators
 		"=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=",    // Assignment Operators
 		",", "->", ".", "[]",    // Access Operators

@@ -16,6 +16,10 @@
 #define IF_STATEMENT "IF_STATEMENT"
 #define WHILE_STATEMENT "WHILE_STATEMENT"
 #define FOR_STATEMENT "FOR_STATEMENT"
+#define LEFT_BRACE "LEFT_BRACE"
+#define RIGHT_BRACE "RIGHT_BRACE"
+#define LEFT_PARENTHESIS "LEFT_PARENTHESIS"
+#define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
@@ -24,7 +28,7 @@ typedef std::pair<std::string, std::string> token;
 
 const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/"};
 const std::unordered_set<std::string> RelationalOperators = { "==", "!=", "<", ">", "<=", ">="};
-const std::unordered_set<std::string> LogicalOperators = { "&&", "||"};
+const std::unordered_set<std::string> LogicalOperators = { "&&", "||", "!"};
 const std::unordered_set<std::string> BitwiseOperators = { "&", "|", "^", "<<", ">>" };
 const std::unordered_set<std::string> AssignmentOperators = { "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=" };
 const std::unordered_set<std::string> AccessOperators = { ",", "->", ".", "[]" };
