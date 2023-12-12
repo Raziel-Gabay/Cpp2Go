@@ -36,26 +36,37 @@ ASTNode* parser::parseProgram()
 
 void parser::parseDeclaration(ASTNode* head)
 {
-	std::string datatype;
-	parseType(datatype, head);
+	ASTNode* declarationNode = new ASTNode("DECLARATION");
+	head->addChild(declarationNode);
 
-	if (getCurrentToken().second == IDENTIFIER)
+	std::string datatype;
+	parseType(datatype, declarationNode);
+
+	token currToken = getCurrentToken();
+
+	if (currToken.second == IDENTIFIER)
 	{
-		_identifiersTypes.emplace(getCurrentToken().first, datatype);
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		declarationNode->addChild(identifierNode);
+
+		_identifiersTypes.emplace(currToken.first, datatype);
 		consumeToken();
+		currToken = getCurrentToken();
 	}
 	else
 	{
 		throw std::runtime_error("ERROR: expecting an identifier token...");
 	}
-	if (getCurrentToken().second == ASSIGNMENT_OPERATOR)
+	if (currToken.second == ASSIGNMENT_OPERATOR)
 	{
 		unconsumeToken();
-		parseExpression(head);
+		declarationNode->children.pop_back();
+		parseExpression(declarationNode);
 	}
 	else
 	{
-		if (getCurrentToken().second == SEMICOLON)
+		if (currToken.second == SEMICOLON)
 		{
 			consumeToken();
 		}
