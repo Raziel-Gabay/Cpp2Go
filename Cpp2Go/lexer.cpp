@@ -23,7 +23,9 @@ tokensMap mapOfTokens =
 	{"!=", "NOT_EQUAL_OPERATOR"},
 	{"==", "EQUAL_OPERATOR"},
 	{"<", "LESS_THAN_OPERATOR"},
-	{">", "MORE_THAN_OPERATOR"}
+	{">", "MORE_THAN_OPERATOR"},
+	{"&&", "AND_OPERATOR"},
+	{"||", "OR_OPERATOR"}
 };
 
 void lexer::preproccesing(std::string& sourceCode)

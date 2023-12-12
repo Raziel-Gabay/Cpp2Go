@@ -165,8 +165,19 @@ void parser::parseExpression(ASTNode* head)
 	{
 		std::string op = getCurrentToken().first;
 		// create op node and assign it to the head node
-		ASTNode* opNode = new ASTNode(getCurrentToken().second);
-		head->addChild(opNode);
+		ASTNode* opNode = new ASTNode(getCurrentToken().second, getCurrentToken().first);
+
+		if (LogicalOperators.find(op) != LogicalOperators.end()) //if the current node is logical operator add up the last one as a child of the current node
+		{
+			parseLogicalOperator(op, opNode);
+			opNode->addChild(head->children.back());
+			head->children.pop_back();
+			head->addChild(opNode);
+		}
+		else if (LogicalOperators.find(head->children.back()->value) != LogicalOperators.end()) // if the last node is logical operator add up the current one as a child of the last node
+		{
+			head->children.back()->addChild(opNode);
+		}
 
 		unconsumeToken();
 
@@ -177,10 +188,6 @@ void parser::parseExpression(ASTNode* head)
 		else if (RelationalOperators.find(op) != RelationalOperators.end())
 		{
 			parseRelationalOperator(op, opNode);
-		}
-		else if (LogicalOperators.find(op) != LogicalOperators.end())
-		{
-			parseLogicalOperator(op, opNode);
 		}
 		else if (BitwiseOperators.find(op) != BitwiseOperators.end())
 		{
