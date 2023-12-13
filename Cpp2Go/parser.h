@@ -63,7 +63,7 @@ public:
 	void parseBitwiseOperator(const std::string& op, ASTNode* head);
 	void parseAssignmentOperator(const std::string& op, ASTNode* head);
 	void parseAccessOperator(const std::string& op, ASTNode* head);
-	void parseModifyOperator();
+	void parseModifyOperator(ASTNode* head);
 	bool isUnaryOperator(const token& t);
 
 private:
