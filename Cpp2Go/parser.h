@@ -70,6 +70,7 @@ private:
 	tokensVector _tokensStream;
 	identifiersVector _identifiersTypes;
 	size_t _currentPosition;
+	ASTNode* _astRoot;
 
 	// Help Methods
 	token getCurrentToken();

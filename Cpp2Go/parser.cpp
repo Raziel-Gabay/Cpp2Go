@@ -4,7 +4,7 @@
 parser::parser(tokensVector tokenStream)
 	: _tokensStream(tokenStream), _currentPosition(0), _identifiersTypes({})
 {
-	parseProgram();
+	_astRoot = parseProgram();
 }
 
 parser::~parser()
