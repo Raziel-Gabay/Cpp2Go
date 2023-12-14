@@ -65,18 +65,18 @@ void parser::parseDeclaration(ASTNode* head)
 		unconsumeToken();
 		declarationNode->children.pop_back();
 		parseExpression(declarationNode);
+		currToken = getCurrentToken();
+	}
+
+	if (currToken.second == SEMICOLON)
+	{
+		consumeToken();
 	}
 	else
 	{
-		if (currToken.second == SEMICOLON)
-		{
-			consumeToken();
-		}
-		else
-		{
-			throw std::runtime_error("ERROR: expecting an semicolon token...");
-		}
+		throw std::runtime_error("ERROR: expecting an semicolon token...");
 	}
+	
 }
 
 void parser::parseStatement(ASTNode* head)
@@ -213,6 +213,10 @@ void parser::parseExpression(ASTNode* head)
 			throw std::runtime_error("ERROR: expected a right parenthesis");
 		}
 	}
+	else if (getCurrentToken().second == RIGHT_BRACE)
+	{
+		return;
+	}
 	else 
 	{
 		throw std::runtime_error("ERROR: invalid start of expression");
@@ -277,8 +281,11 @@ void parser::parseExpression(ASTNode* head)
 		}
 		else if (getCurrentToken().second == SEMICOLON)
 		{
-			consumeToken();
-			if (getCurrentToken().second == IDENTIFIER && head->name != "initialization" && head->name != "condition")
+			if (head->name != "DECLARATION")
+			{
+				consumeToken();
+			}
+			if (getCurrentToken().second == IDENTIFIER && head->name != "INITIALIZATION" && head->name != "CONDITION" && head->name != "DECLARATION")
 			{
 				consumeToken();
 			}
@@ -495,6 +502,8 @@ void parser::parseModifyOperator(ASTNode* head)
 {
 	if (getCurrentToken().second == "IDENTIFIER")
 	{
+		ASTNode* identifierNode = new ASTNode(getCurrentToken().second, getCurrentToken().first);
+		head->addChild(identifierNode);
 		consumeToken();
 		if (getCurrentToken().first == "++" || getCurrentToken().first == "--")
 		{

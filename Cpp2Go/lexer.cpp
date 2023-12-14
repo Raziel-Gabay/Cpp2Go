@@ -25,7 +25,9 @@ tokensMap mapOfTokens =
 	{"<", "LESS_THAN_OPERATOR"},
 	{">", "MORE_THAN_OPERATOR"},
 	{"&&", "AND_OPERATOR"},
-	{"||", "OR_OPERATOR"}
+	{"||", "OR_OPERATOR"},
+	{"++", "INCREMENT_OPERATOR"},
+	{"--", "DECREMENT_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)
