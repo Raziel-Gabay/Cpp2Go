@@ -28,7 +28,7 @@ tokensMap mapOfTokens =
 	{"||", "OR_OPERATOR"}
 };
 
-void lexer::preproccesing(std::string& sourceCode)
+void lexer::preprocessing(std::string& sourceCode)
 {
 	deleteTab(sourceCode);
 	deleteNewLine(sourceCode);

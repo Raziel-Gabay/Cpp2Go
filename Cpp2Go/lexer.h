@@ -15,7 +15,7 @@ const std::unordered_set<std::string> standaloneTokens = { "+", "-", "*", "/", "
 class lexer
 {
 public:
-	static void preproccesing(std::string &sourceCode);
+	static void preprocessing(std::string &sourceCode);
 	static void deleteTab(std::string& sourceCode);
 	static void deleteNewLine(std::string& sourceCode);
 	static bool handleIdentifiers(std::string IdetifierToken);
