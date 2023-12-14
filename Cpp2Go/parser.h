@@ -66,6 +66,9 @@ public:
 	void parseModifyOperator(ASTNode* head);
 	bool isUnaryOperator(const token& t);
 
+	//get functions
+	token getCurrentToken();
+	ASTNode* getAST();
 private:
 	tokensVector _tokensStream;
 	identifiersVector _identifiersTypes;
@@ -73,7 +76,6 @@ private:
 	ASTNode* _astRoot;
 
 	// Help Methods
-	token getCurrentToken();
 	void consumeToken();
 	void consumeToken(size_t n);
 	void unconsumeToken();

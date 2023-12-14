@@ -109,15 +109,14 @@ bool lexer::handleFloatLiteralValue(std::string floatDataTypeToken)
 		if (floatDataTypeToken[i] == '.')
 		{
 			pointCount++;
-			//floatDataTypeToken.erase(floatDataTypeToken[i]);
 		}
-		if (floatDataTypeToken[i] != '.')
+		else if (isdigit(floatDataTypeToken[i]))
 		{
-			if (isdigit(floatDataTypeToken[i]))
-				isFloat = true;
-
-			else
-				return false;
+			isFloat = true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 	if (pointCount != 1)
@@ -129,7 +128,6 @@ bool lexer::handleFloatLiteralValue(std::string floatDataTypeToken)
 
 bool lexer::handleStringLiteralValue(std::string stringDataTypeToken)
 {
-	bool isValidString = true;
 	if (stringDataTypeToken[0] != '"' || (stringDataTypeToken[stringDataTypeToken.length() - 1]) != '"')
 	{
 		if (stringDataTypeToken[0] != '\'' || (stringDataTypeToken[stringDataTypeToken.length() - 1]) != '\'')

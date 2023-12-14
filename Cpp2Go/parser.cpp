@@ -14,20 +14,22 @@ parser::~parser()
 ASTNode* parser::parseProgram()
 {
 	ASTNode* programNode = new ASTNode("PROGRAM");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+	programNode->addChild(blockNode);
 	while (_currentPosition < _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
 		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
-			parseDeclaration(programNode);
+			parseDeclaration(blockNode);
 		}
 		else if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
-			parseStatement(programNode);
+			parseStatement(blockNode);
 		}
 		else
 		{
-			parseExpression(programNode);
+			parseExpression(blockNode);
 		}
 
 	}
@@ -100,9 +102,9 @@ void parser::parseStatement(ASTNode* head)
 void parser::parseIfStatment(ASTNode* head)
 {
 	//create an if statement node
-	ASTNode* ifStatementNode = new ASTNode("ifStatement");
-	ASTNode* conditionNode = new ASTNode("condition");
-	ASTNode* blockNode = new ASTNode("block");
+	ASTNode* ifStatementNode = new ASTNode("IF_STATEMENT");
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	ASTNode* blockNode = new ASTNode("BLOCK");
 
 	head->addChild(ifStatementNode);
 	//create children for the if statement
@@ -112,12 +114,8 @@ void parser::parseIfStatment(ASTNode* head)
 	if (getCurrentToken().second != LEFT_PARENTHESIS) //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
-	consumeToken();
 	parseExpression(conditionNode); //we expect an expression to come
 
-	if (getCurrentToken().second != RIGHT_PARENTHESIS) //check that the token is ')'
-		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
-	consumeToken();
 	//check - if body
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
@@ -126,14 +124,15 @@ void parser::parseIfStatment(ASTNode* head)
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
 }
 
 void parser::parseWhileStatement(ASTNode* head)
 {
 	//create a while statement node
-	ASTNode* whileStatementNode = new ASTNode("whileStatement");
-	ASTNode* conditionNode = new ASTNode("condition");
-	ASTNode* blockNode = new ASTNode("block");
+	ASTNode* whileStatementNode = new ASTNode("WHILE_STATEMENT");
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	ASTNode* blockNode = new ASTNode("BLOCK");
 
 	head->addChild(whileStatementNode);
 	//create children for the while statement
@@ -143,12 +142,8 @@ void parser::parseWhileStatement(ASTNode* head)
 	if (getCurrentToken().second != "LEFT_PARENTHESIS") //check that the token is '('
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 
-	consumeToken();
 	parseExpression(conditionNode); //we expect an expression to come
 
-	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
-		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
-	consumeToken();
 	//check - while body
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
@@ -157,16 +152,17 @@ void parser::parseWhileStatement(ASTNode* head)
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
 }
 
 void parser::parseForStatement(ASTNode* head)
 {
 	//create a for statement node
-	ASTNode* forStatementNode = new ASTNode("forStatement");
-	ASTNode* initializationNode = new ASTNode("initialization");
-	ASTNode* conditionNode = new ASTNode("condition");
-	ASTNode* iterationNode = new ASTNode("iteration");
-	ASTNode* blockNode = new ASTNode("block");
+	ASTNode* forStatementNode = new ASTNode("FOR_STATEMENT");
+	ASTNode* initializationNode = new ASTNode("INITIALIZATION");
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	ASTNode* iterationNode = new ASTNode("ITERATION");
+	ASTNode* blockNode = new ASTNode("BLOCK");
 
 	head->addChild(forStatementNode);
 	//create children for the for statement
@@ -190,17 +186,17 @@ void parser::parseForStatement(ASTNode* head)
 	//check - for body
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
-
 	consumeToken();
 	parseExpression(blockNode); //the block part of the tree 
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
 }
 
 void parser::parseExpression(ASTNode* head)
 {
-	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL))
+	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
 		consumeToken();
 	}
@@ -235,9 +231,20 @@ void parser::parseExpression(ASTNode* head)
 			head->children.pop_back();
 			head->addChild(opNode);
 		}
-		else if (LogicalOperators.find(head->children.back()->value) != LogicalOperators.end()) // if the last node is logical operator add up the current one as a child of the last node
+		else if (!head->children.empty()) 
 		{
-			head->children.back()->addChild(opNode);
+			if (LogicalOperators.find(head->children.back()->value) != LogicalOperators.end())
+			{
+				head->children.back()->addChild(opNode);
+			}
+			else
+			{
+				head->addChild(opNode);
+			}
+		}
+		else
+		{
+			head->addChild(opNode);
 		}
 
 		unconsumeToken();
@@ -268,6 +275,15 @@ void parser::parseExpression(ASTNode* head)
 		{
 			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
 		}
+		else if (getCurrentToken().second == SEMICOLON)
+		{
+			consumeToken();
+			if (getCurrentToken().second == IDENTIFIER && head->name != "initialization" && head->name != "condition")
+			{
+				consumeToken();
+			}
+		}
+
 	}
 }
 
@@ -499,6 +515,11 @@ token parser::getCurrentToken()
 		return _tokensStream[_currentPosition];
 	}
 	return token("", "");
+}
+
+ASTNode* parser::getAST()
+{
+	return _astRoot;
 }
 
 void parser::consumeToken()
