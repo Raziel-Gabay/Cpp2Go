@@ -1,5 +1,15 @@
 #include "AstTranslator.h"
 
+AstTranslator::AstTranslator(ASTNode* cppRoot)
+    :_cppRoot(cppRoot)
+{
+    this->_astRoot = translateProgram(_cppRoot);
+}
+
+AstTranslator::~AstTranslator()
+{
+}
+
 ASTNode* AstTranslator::translateProgram(ASTNode* node)
 {
     return nullptr;

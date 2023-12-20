@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "parser.h"
+#include "AstTranslator.h"
 
 void printAST(const ASTNode* node, int depth = 0) {
 	if (node) {
@@ -27,9 +28,10 @@ int main()
 	tokensVector tokenStream;
 	try
 	{
-		 tokenStream = lexer::createTokenStream(code);
-		 parser p = parser(tokenStream);
-		 printAST(p.getAST());
+		 tokenStream = lexer::createTokenStream(code); 
+		 parser p = parser(tokenStream); 
+		 printAST(p.getAST());  
+		 AstTranslator translator = AstTranslator(p.getAST());
 	}
 	catch (const std::exception& e)
 	{
