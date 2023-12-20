@@ -28,12 +28,12 @@ int main()
 	try
 	{
 		 tokenStream = lexer::createTokenStream(code);
+		 parser p = parser(tokenStream);
+		 printAST(p.getAST());
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what();
 	}
-	parser p = parser(tokenStream);
-	printAST(p.getAST());
 	return 0;
 }
