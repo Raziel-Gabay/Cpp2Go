@@ -1,6 +1,7 @@
 #pragma once
 
 #include"ASTNode.h"
+#include <iostream>
 
 #define IDENTIFIER "IDENTIFIER"
 #define ASSIGNMENT_OPERATOR "ASSIGNMENT_OPERATOR"
@@ -15,6 +16,8 @@
 #define RIGHT_BRACE "RIGHT_BRACE"
 #define LEFT_PARENTHESIS "LEFT_PARENTHESIS"
 #define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
+#define PROGRAM "PROGRAM"
+#define BLOCK "BLOCK"
 
 class AstTranslator
 {
@@ -26,6 +29,7 @@ public:
 	~AstTranslator();
 
 	ASTNode* translateProgram(ASTNode* node);
+	void recursiveTranslate(ASTNode* cppNode, ASTNode* node);
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	ASTNode* translateIfStatement(std::string ifConditionPart, std::string ifBlockPart);
