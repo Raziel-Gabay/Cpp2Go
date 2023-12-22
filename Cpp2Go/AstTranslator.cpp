@@ -68,11 +68,66 @@ ASTNode* AstTranslator::translateWhileStatement(std::string whileConditionPart, 
     return nullptr;
 }
 
-ASTNode* AstTranslator::translateForStatement(std::string forInitializationPart, std::string forConditionPart, std::string forPostPart, std::string forBlockPart)
+ASTNode* AstTranslator::translateForStatement(ASTNode* sourceNode, ASTNode*& destNode)
 {
-    return nullptr;
+	if (sourceNode)
+	{
+		if (sourceNode->name == FOR_STATEMENT)
+		{
+		}
+		else if (sourceNode->name == "INITIALIZATION")
+		{
+			translateDeclaration(destNode ,sourceNode->children.front());
+		}
+		else if (sourceNode->name == "CONDITION" || sourceNode->name == "ITERATION")
+		{
+			translateExpression(destNode, sourceNode->children.front());
+		}
+		else if (sourceNode->name == BLOCK)
+		{
+			translateBlock(destNode, sourceNode->children.front());
+		}
+
+		for (ASTNode* cppChild : sourceNode->children) {
+
+			ASTNode* child = 0;
+			destNode->addChild(child);
+			recursiveTranslate(cppChild, child);
+		}
+	}
+}
+
+ASTNode* AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	if (sourceNode)
+	{
+		if (sourceNode->name == BLOCK)
+		{
+		}
+		else 
+		{
+			translateExpression(destNode, sourceNode->children.front());
+		}
+
+		for (ASTNode* cppChild : sourceNode->children) {
+
+			ASTNode* child = 0;
+			destNode->addChild(child);
+			recursiveTranslate(cppChild, child);
+		}
+	}
 }
 
 void AstTranslator::translateExpression(ASTNode* sourceNode, ASTNode*& destNode)
 {
+	if (sourceNode->value == "~")
+	{
+		ASTNode* opNode = sourceNode;
+		opNode->value = "^";
+		destNode->addChild(opNode);
+	}
+	else
+	{
+		destNode->addChild(sourceNode);
+	}
 }

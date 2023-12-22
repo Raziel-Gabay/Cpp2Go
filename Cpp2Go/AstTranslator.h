@@ -34,7 +34,8 @@ public:
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	ASTNode* translateIfStatement(std::string ifConditionPart, std::string ifBlockPart);
 	ASTNode* translateWhileStatement(std::string whileConditionPart, std::string whileBlockPart);
-	ASTNode* translateForStatement(std::string forInitializationPart,std::string forConditionPart, std::string forPostPart, std::string forBlockPart);
+	ASTNode* translateForStatement(ASTNode* sourceNode, ASTNode*& destNode);
+	ASTNode* translateBlock(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateExpression(ASTNode* sourceNode, ASTNode*& destNode);
 private:
 	ASTNode* _astRoot; //this is the go ast
