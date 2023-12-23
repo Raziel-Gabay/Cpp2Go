@@ -92,7 +92,28 @@ ASTNode* AstTranslator::translateIfStatement(ASTNode* sourceNode, ASTNode* &dest
 
 ASTNode* AstTranslator::translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode)
 {
-    return nullptr;
+	if (sourceNode)
+	{
+		if (sourceNode->name == WHILE_STATEMENT)
+		{
+		}
+		else if (sourceNode->name == CONDITION)
+		{
+			translateExpression(destNode, sourceNode->children.front());
+		}
+		else if (sourceNode->name == BLOCK)
+		{
+			translateBlock(destNode, sourceNode->children.front());
+		}
+
+		for (ASTNode* cppChild : sourceNode->children)
+		{
+
+			ASTNode* child = 0;
+			destNode->addChild(child);
+			recursiveTranslate(cppChild, child);
+		}
+	}
 }
 
 ASTNode* AstTranslator::translateForStatement(ASTNode* sourceNode, ASTNode* &destNode)
