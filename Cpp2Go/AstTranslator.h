@@ -18,6 +18,10 @@
 #define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
 #define PROGRAM "PROGRAM"
 #define BLOCK "BLOCK"
+#define CONDITION "CONDITION"
+#define INITIALIZATION "INITIALIZATION"
+#define ITERATION "ITERATION"
+#define DATATYPE "DATATYPE"
 
 class AstTranslator
 {
@@ -32,11 +36,11 @@ public:
 	void recursiveTranslate(ASTNode* cppNode, ASTNode* node);
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	ASTNode* translateIfStatement(std::string ifConditionPart, std::string ifBlockPart);
-	ASTNode* translateWhileStatement(std::string whileConditionPart, std::string whileBlockPart);
-	ASTNode* translateForStatement(ASTNode* sourceNode, ASTNode*& destNode);
-	ASTNode* translateBlock(ASTNode* sourceNode, ASTNode*& destNode);
-	void translateExpression(ASTNode* sourceNode, ASTNode*& destNode);
+	ASTNode* translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	ASTNode* translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	ASTNode* translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	ASTNode* translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
 private:
 	ASTNode* _astRoot; //this is the go ast
 	ASTNode* _cppRoot; //this is the cpp ast
