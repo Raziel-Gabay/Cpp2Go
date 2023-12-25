@@ -22,6 +22,7 @@
 #define INITIALIZATION "INITIALIZATION"
 #define ITERATION "ITERATION"
 #define DATATYPE "DATATYPE"
+#define DECLARATION "DECLARATION"
 
 class AstTranslator
 {
@@ -33,14 +34,16 @@ public:
 	~AstTranslator();
 
 	ASTNode* translateProgram(ASTNode* node);
-	void recursiveTranslate(ASTNode* cppNode, ASTNode* node);
+	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	ASTNode* translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	ASTNode* translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	ASTNode* translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	ASTNode* translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+
+	ASTNode* getAST();
 private:
 	ASTNode* _astRoot; //this is the go ast
 	ASTNode* _cppRoot; //this is the cpp ast
