@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="ASTNode.cpp" />
     <ClCompile Include="AstTranslator.cpp" />
+    <ClCompile Include="codeGenerator.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="ASTNode.h" />
     <ClInclude Include="AstTranslator.h" />
+    <ClInclude Include="codeGenerator.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="parser.h" />
   </ItemGroup>
