@@ -12,7 +12,7 @@ public:
 
 	void iterativeGenerate(ASTNode* node);
 	
-	std::string generateCode(ASTNode* node);
+	void generateCode(ASTNode* node);
 	void generateDeclaration(ASTNode* node);
 	void generateStatement(ASTNode* node);
 	void generateIfStatement(ASTNode* node);

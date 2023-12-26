@@ -47,9 +47,9 @@ void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode
 {
 	ASTNode* declarationNode = new ASTNode("DECLARATION");
 	destNode->addChild(declarationNode);
-	if (sourceNode->children.back()->value == "=")
+	if (sourceNode->children.back()->name == ASSIGNMENT_OPERATOR)
 	{
-		ASTNode* varNode = new ASTNode("VAR_KEYWORD", "var");
+		ASTNode* varNode = new ASTNode(VAR_KEYWORD, "var");
 		declarationNode->addChild(varNode);
 		declarationNode->addChild(sourceNode->children.back());
 	}

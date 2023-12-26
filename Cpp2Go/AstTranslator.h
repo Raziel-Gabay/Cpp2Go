@@ -23,6 +23,7 @@
 #define ITERATION "ITERATION"
 #define DATATYPE "DATATYPE"
 #define DECLARATION "DECLARATION"
+#define VAR_KEYWORD "VAR_KEYWORD"
 
 class AstTranslator
 {
