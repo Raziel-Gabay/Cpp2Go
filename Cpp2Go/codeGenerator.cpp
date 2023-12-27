@@ -38,6 +38,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 
 void codeGenerator::generateCode(ASTNode* node)
 {
+	iterativeGenerate(node);
 }
 
 void codeGenerator::generateDeclaration(ASTNode* node)
@@ -53,24 +54,55 @@ void codeGenerator::generateDeclaration(ASTNode* node)
 			_code += child->value;
 		}
 	}
-
 }
 
 void codeGenerator::generateStatement(ASTNode* node)
 {
+	if (node->name == IF_STATEMENT)
+		generateIfStatement(node);
+	else if (node->name == WHILE_STATEMENT)
+		generateWhileStatement(node);
+	else
+		generateForStatement(node);
 }
 
 void codeGenerator::generateIfStatement(ASTNode* node)
 {
+	_code += "if ";
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == CONDITION)
+		{
+			generateExpression(child->children.front());
+		}
+		else if (child->name == BLOCK)
+		{
+			_code += "\n";
+			generateBlock(child);
+		}
+	}
 }
 
 void codeGenerator::generateWhileStatement(ASTNode* node)
 {
+	_code += "for "; //in go, the while loop is represented by the 'for' keyword
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == CONDITION)
+		{
+			generateExpression(child->children.front());
+		}
+		else if (child->name == BLOCK)
+		{
+			_code += "\n";
+			generateBlock(child);
+		}
+	}
 }
 
 void codeGenerator::generateForStatement(ASTNode* node)
 {
-	_code = "for ";
+	_code += "for ";
 	for (ASTNode* child : node->children)
 	{
 		if (child->name == INITIALIZATION)
