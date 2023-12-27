@@ -5,7 +5,7 @@ tokensMap mapOfTokens =
 	{"int", "DATATYPE_INT"},
 	{"float", "DATATYPE_FLOAT"},
 	{"bool", "DATATYPE_BOOL"},
-	{"string", "DATATYPE_STRING"},
+	{"std::string", "DATATYPE_STRING"},
 	{"identifier", "IDENTIFIER"},
 	{"intLiteral", "INT_LITERAL"},
 	{"floatLiteral", "FLOAT_LITERAL"},
@@ -158,6 +158,15 @@ std::string lexer::getToken(std::string& code)
 		return token;
 	}
 
+	// check if the token is string
+	token = code.substr(0, STR_LEN);
+	if ( token == STR)
+	{
+		code.erase(0, STR_LEN + 1);
+		return token;
+	}
+
+
 	// Get the 2 first characters
 	token = code.substr(0, 2);
 	if (operatorWithTwoCharsTokens.count(token) > 0)
@@ -171,6 +180,15 @@ std::string lexer::getToken(std::string& code)
 	}
 	// Get the first character
 	token = code[0];
+	
+	if (token == "\"")
+	{
+		code.erase(0, 1);
+		auto separatorPos = code.find_first_of("\"");
+		token += code.substr(0, separatorPos + 1);
+		code.erase(0, separatorPos + 1);
+		return token;
+	}
 
 	// If the character is a standalone token, return it as a separate token
 	if (standaloneTokens.count(token) > 0) {
@@ -244,6 +262,11 @@ tokensVector lexer::createTokenStream(std::string& code)
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
+		else if (handleStringLiteralValue(token))
+		{
+			tokenFromMap = searchToken("stringLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
 		else if (handleIntLiteralValue(token))
 		{
 			tokenFromMap = searchToken("intLiteral");
@@ -252,11 +275,6 @@ tokensVector lexer::createTokenStream(std::string& code)
 		else if (handleFloatLiteralValue(token))
 		{
 			tokenFromMap = searchToken("floatLiteral");
-			insertToken(token, tokenFromMap, tokenStream);
-		}
-		else if (handleStringLiteralValue(token))
-		{
-			tokenFromMap = searchToken("stringLiteral");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
 		else

@@ -6,6 +6,9 @@
 #include <string>
 
 #define FLOAT_POINT '.'
+#define STR "std::string"
+#define STR_LEN 11
+
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> tokensMap;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
