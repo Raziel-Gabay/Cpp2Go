@@ -78,6 +78,10 @@ void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode
 		declarationNode->addChild(varNode);
 		declarationNode->addChild(sourceNode->children.back());
 		declarationNode->addChild(sourceNode->children.front());
+		if (sourceNode->children.front()->name == DATATYPE_STRING)
+		{
+			declarationNode->children.back()->value = "string";
+		}
 		_identifiers.insert(sourceNode->children.back()->value);
 	}
 }
