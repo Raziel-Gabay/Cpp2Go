@@ -53,6 +53,7 @@ public:
 	void parseIfStatment(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
+	void parseBlock(ASTNode* head);
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);

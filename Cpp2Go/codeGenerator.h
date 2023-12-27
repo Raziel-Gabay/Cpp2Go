@@ -21,7 +21,9 @@ public:
 	void generateBlock(ASTNode* node);
 	void generateExpression(ASTNode* node);
 
+	std::string getCode();
 private:
 	ASTNode* _destNode;
 	std::string _code;
+	int _countTab;
 };

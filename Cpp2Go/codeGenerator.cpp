@@ -1,7 +1,7 @@
 #include "codeGenerator.h"
 
 codeGenerator::codeGenerator(ASTNode* destNode)
-	:_destNode(destNode)
+	:_destNode(destNode), _countTab(0)
 {
 	generateCode(destNode);
 }
@@ -21,7 +21,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateBlock(child);
 		}
-		else if (child->name.find(DATATYPE) != std::string::npos)
+		else if (child->name == DECLARATION)
 		{
 			generateDeclaration(child);
 		}
@@ -45,13 +45,13 @@ void codeGenerator::generateDeclaration(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
-		if (child->name == ASSIGNMENT_OPERATOR)
+		if (child->name == ASSIGNMENT_OPERATOR || child->name == SHORT_ASSIGNMENT_OPERATOR)
 		{
 			generateExpression(child);
 		}
 		else
 		{
-			_code += child->value;
+			_code += child->value + " ";
 		}
 	}
 }
@@ -77,7 +77,6 @@ void codeGenerator::generateIfStatement(ASTNode* node)
 		}
 		else if (child->name == BLOCK)
 		{
-			_code += "\n";
 			generateBlock(child);
 		}
 	}
@@ -94,7 +93,6 @@ void codeGenerator::generateWhileStatement(ASTNode* node)
 		}
 		else if (child->name == BLOCK)
 		{
-			_code += "\n";
 			generateBlock(child);
 		}
 	}
@@ -117,11 +115,10 @@ void codeGenerator::generateForStatement(ASTNode* node)
 		}
 		else if (child->name == ITERATION)
 		{
-			generateExpression(child->children.front());
+			_code += child->children.front()->value + child->children.back()->value;
 		}
 		else if (child->name == BLOCK)
 		{
-			_code += "\n";
 			generateBlock(child);
 		}
 	}
@@ -129,16 +126,17 @@ void codeGenerator::generateForStatement(ASTNode* node)
 
 void codeGenerator::generateBlock(ASTNode* node)
 {
-	_code += "{\n";
+	_code += " {\n";
 	for (ASTNode* child : node->children)
 	{
-		_code += "\t";
-		if (child->name.find(DATATYPE) != std::string::npos)
+		_code += "\t" + std::string(_countTab, '\t');
+		if (child->name == DECLARATION)
 		{
 			generateDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
 		{
+			_countTab++;
 			generateStatement(child);
 		}
 		else
@@ -147,10 +145,17 @@ void codeGenerator::generateBlock(ASTNode* node)
 		}
 		_code += "\n";
 	}
-	_code += "}\n";
+	_code += std::string(_countTab, '\t') + "}\n";
+	if (_countTab > 0)
+		_countTab--;
 }
 
 void codeGenerator::generateExpression(ASTNode* node)
 {
 	_code += node->children.front()->value + " " +  node->value + " " + node->children.back()->value;
+}
+
+std::string codeGenerator::getCode()
+{
+	return _code;
 }

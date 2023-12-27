@@ -2,9 +2,11 @@
 
 #include"ASTNode.h"
 #include <iostream>
+#include <unordered_set>
 
 #define IDENTIFIER "IDENTIFIER"
 #define ASSIGNMENT_OPERATOR "ASSIGNMENT_OPERATOR"
+#define SHORT_ASSIGNMENT_OPERATOR "SHORT_ASSIGNMENT_OPERATOR"
 #define SEMICOLON "SEMICOLON"
 #define LITERAL "LITERAL"
 #define BOOL "BOOL"
@@ -48,4 +50,5 @@ public:
 private:
 	ASTNode* _astRoot; //this is the go ast
 	ASTNode* _cppRoot; //this is the cpp ast
+	std::unordered_set<std::string> _identifiers;
 };
