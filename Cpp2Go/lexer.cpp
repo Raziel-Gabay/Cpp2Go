@@ -206,6 +206,17 @@ std::string lexer::getToken(std::string& code)
 	// Extract the token up to the first separator (or the end of the string if no separator found)
 	token = code.substr(0, separatorPos);
 
+	//handling unary operator
+	if (token.length() > 2)
+	{
+		if (UnaryOperators.count(token.substr(token.length() - 2)) > 0)
+		{
+			token = code.substr(0, separatorPos - 2);
+			code.erase(0, separatorPos - 2);
+			return token;
+		}
+	}
+	
 	//handling float
 	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
 	{
