@@ -16,6 +16,8 @@ public:
 	void generateDeclaration(ASTNode* node);
 	void generateStatement(ASTNode* node);
 	void generateIfStatement(ASTNode* node);
+	void generateElseIfStatement(ASTNode* node);
+	void generateElseStatement(ASTNode* node);
 	void generateWhileStatement(ASTNode* node);
 	void generateForStatement(ASTNode* node);
 	void generateBlock(ASTNode* node);

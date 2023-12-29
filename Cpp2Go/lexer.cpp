@@ -14,6 +14,8 @@ tokensMap mapOfTokens =
 	{"while", "WHILE_STATEMENT"},
 	{"for", "FOR_STATEMENT"},
 	{"if", "IF_STATEMENT"},
+	{"else if", "ELSE_IF_STATEMENT"},
+	{"else", "ELSE_STATEMENT"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -217,6 +219,30 @@ std::string lexer::getToken(std::string& code)
 		}
 	}
 	
+	if (token == ELSE)
+	{
+		if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
+		{
+			code.erase(0, separatorPos + 1);
+		}
+		else
+		{
+			code.erase(0, separatorPos);
+		}
+		auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+		std::string next_token = code.substr(0, separatorPos);
+		if (next_token == IF)
+		{
+			token += " " + next_token;
+			code.erase(0, separatorPos + 1);
+			return token;
+		}
+		else
+		{
+			return token;
+		}
+
+	}
 	//handling float
 	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
 	{

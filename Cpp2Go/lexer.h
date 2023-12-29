@@ -8,6 +8,8 @@
 #define FLOAT_POINT '.'
 #define STR "std::string"
 #define STR_LEN 11
+#define IF "if"
+#define ELSE "else"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> tokensMap;

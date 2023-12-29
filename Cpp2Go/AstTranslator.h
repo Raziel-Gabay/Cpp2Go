@@ -12,6 +12,8 @@
 #define BOOL "BOOL"
 #define INT_LITERAL "INT_LITERAL"
 #define IF_STATEMENT "IF_STATEMENT"
+#define ELSE_IF_STATEMENT "ELSE_IF_STATEMENT"
+#define ELSE_STATEMENT "ELSE_STATEMENT"
 #define WHILE_STATEMENT "WHILE_STATEMENT"
 #define FOR_STATEMENT "FOR_STATEMENT"
 #define LEFT_BRACE "LEFT_BRACE"
@@ -42,6 +44,8 @@ public:
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);

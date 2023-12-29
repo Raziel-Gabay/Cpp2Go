@@ -25,7 +25,8 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateDeclaration(child);
 		}
-		else if (child->name == IF_STATEMENT || child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
+				child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
 		{
 			generateStatement(child);
 		}
@@ -60,6 +61,20 @@ void codeGenerator::generateStatement(ASTNode* node)
 {
 	if (node->name == IF_STATEMENT)
 		generateIfStatement(node);
+	else if(node->name == ELSE_IF_STATEMENT)
+	{ 
+		_code.erase(_code.size() - _countTab);
+		_code.pop_back();
+		_code += " ";
+		generateElseIfStatement(node);
+	}
+	else if (node->name == ELSE_STATEMENT)
+	{
+		_code.erase(_code.size() - _countTab);
+		_code.pop_back();
+		_code += " ";
+		generateElseStatement(node);
+	}
 	else if (node->name == WHILE_STATEMENT)
 		generateWhileStatement(node);
 	else
@@ -80,6 +95,28 @@ void codeGenerator::generateIfStatement(ASTNode* node)
 			generateBlock(child);
 		}
 	}
+}
+
+void codeGenerator::generateElseIfStatement(ASTNode* node)
+{
+	_code += "else if ";
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == CONDITION)
+		{
+			generateExpression(child->children.front());
+		}
+		else if (child->name == BLOCK)
+		{
+			generateBlock(child);
+		}
+	}
+}
+
+void codeGenerator::generateElseStatement(ASTNode* node)
+{
+	_code += "else ";
+	generateBlock(node->children.front());
 }
 
 void codeGenerator::generateWhileStatement(ASTNode* node)
@@ -134,7 +171,8 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateDeclaration(child);
 		}
-		else if (child->name == IF_STATEMENT || child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
 		{
 			_countTab++;
 			generateStatement(child);
@@ -145,7 +183,7 @@ void codeGenerator::generateBlock(ASTNode* node)
 		}
 		_code += "\n";
 	}
-	_code += std::string(_countTab, '\t') + "}\n";
+	_code += std::string(_countTab, '\t') + "}";
 	if (_countTab > 0)
 		_countTab--;
 }

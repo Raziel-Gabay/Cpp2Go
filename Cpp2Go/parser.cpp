@@ -23,7 +23,8 @@ ASTNode* parser::parseProgram()
 		{
 			parseDeclaration(blockNode);
 		}
-		else if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+		else if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
+				currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
 			parseStatement(blockNode);
 		}
@@ -97,6 +98,26 @@ void parser::parseStatement(ASTNode* head)
 		consumeToken();
 		parseForStatement(head);
 	}
+	else if (currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT && !head->children.empty())
+	{
+		if (head->children.back()->name == IF_STATEMENT)
+		{
+			if (currToken.second == ELSE_IF_STATEMENT)
+			{
+				consumeToken();
+				parseElseIfStatment(head);
+			}
+			else if (currToken.second == ELSE_STATEMENT)
+			{
+				consumeToken();
+				parseElseStatment(head);
+			}
+		}
+		else
+		{
+			throw std::runtime_error("excepcted If statement before...");
+		}
+	}
 }
 
 void parser::parseIfStatment(ASTNode* head)
@@ -117,6 +138,55 @@ void parser::parseIfStatment(ASTNode* head)
 	parseExpression(conditionNode); //we expect an expression to come
 
 	//check - if body
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	parseExpression(blockNode); //the block part of the tree
+
+	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
+		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
+}
+
+void parser::parseElseIfStatment(ASTNode* head)
+{
+	//create an else if statement node
+	ASTNode* elseIfStatementNode = new ASTNode("ELSE_IF_STATEMENT");
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(elseIfStatementNode);
+	//create children for the else if statement
+	elseIfStatementNode->addChild(conditionNode);
+	elseIfStatementNode->addChild(blockNode);
+
+	if (getCurrentToken().second != LEFT_PARENTHESIS) //check that the token is '('
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+
+	parseExpression(conditionNode); //we expect an expression to come
+
+	//check - else if body
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	parseExpression(blockNode); //the block part of the tree
+
+	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
+		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
+}
+
+
+void parser::parseElseStatment(ASTNode* head)
+{
+	//create an if statement node
+	ASTNode* elseStatementNode = new ASTNode("ELSE_STATEMENT");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(elseStatementNode);
+	elseStatementNode->addChild(blockNode);
+
+	//check - else body
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
@@ -199,7 +269,8 @@ void parser::parseBlock(ASTNode* head)
 	while (true)
 	{
 		token currToken = getCurrentToken();
-		if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+		if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
+			currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
 			parseStatement(head);
 		}

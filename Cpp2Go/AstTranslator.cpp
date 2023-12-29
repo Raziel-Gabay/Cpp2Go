@@ -32,7 +32,8 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateDeclaration(cppChild, node);
 		}
-		else if (cppChild->name == IF_STATEMENT || cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
+		else if (cppChild->name == IF_STATEMENT || cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT ||
+				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
 		{
 			translateStatement(cppChild, node);
 		}
@@ -90,6 +91,11 @@ void AstTranslator::translateStatement(ASTNode* sourceNode, ASTNode* &destNode)
 {
 	if (sourceNode->name == IF_STATEMENT)
 		translateIfStatement(sourceNode, destNode);
+	else if (sourceNode->name == ELSE_IF_STATEMENT)
+		translateElseIfStatement(sourceNode, destNode);
+	else if (sourceNode->name == ELSE_STATEMENT)
+		translateElseStatement(sourceNode, destNode);
+	
 	else if (sourceNode->name == WHILE_STATEMENT)
 		translateWhileStatement(sourceNode, destNode);
 	else
@@ -111,6 +117,30 @@ void AstTranslator::translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode
 			translateBlock(cppChild, ifStatementNode);
 		}
 	}
+}
+
+void AstTranslator::translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* elseIfStatementNode = new ASTNode(ELSE_IF_STATEMENT);
+	destNode->addChild(elseIfStatementNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == CONDITION)
+		{
+			translateExpression(cppChild, elseIfStatementNode);
+		}
+		else if (cppChild->name == BLOCK)
+		{
+			translateBlock(cppChild, elseIfStatementNode);
+		}
+	}
+}
+
+void AstTranslator::translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* elseIfStatementNode = new ASTNode(ELSE_STATEMENT);
+	destNode->addChild(elseIfStatementNode);
+	translateBlock(sourceNode->children.front(), elseIfStatementNode);
 }
 
 void AstTranslator::translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode)
@@ -165,7 +195,8 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			translateDeclaration(cppChild, blockNode);
 		}
-		else if (cppChild->name == IF_STATEMENT || cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
+		else if (cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT || cppChild->name == IF_STATEMENT ||
+				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
 		{
 			translateStatement(cppChild, blockNode);
 		}

@@ -14,6 +14,8 @@
 #define BOOL "BOOL"
 #define INT_LITERAL "INT_LITERAL"
 #define IF_STATEMENT "IF_STATEMENT"
+#define ELSE_IF_STATEMENT "ELSE_IF_STATEMENT"
+#define ELSE_STATEMENT "ELSE_STATEMENT"
 #define WHILE_STATEMENT "WHILE_STATEMENT"
 #define FOR_STATEMENT "FOR_STATEMENT"
 #define LEFT_BRACE "LEFT_BRACE"
@@ -51,6 +53,8 @@ public:
 	void parseDeclaration(ASTNode* head);
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
+	void parseElseIfStatment(ASTNode* head);
+	void parseElseStatment(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
 	void parseBlock(ASTNode* head);
