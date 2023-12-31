@@ -14,23 +14,35 @@ parser::~parser()
 ASTNode* parser::parseProgram()
 {
 	ASTNode* programNode = new ASTNode("PROGRAM");
-	ASTNode* blockNode = new ASTNode("BLOCK");
-	programNode->addChild(blockNode);
 	while (_currentPosition < _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
 		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
-			parseDeclaration(blockNode);
+			consumeToken(2);
+			currToken = getCurrentToken();
+			unconsumeToken();
+			unconsumeToken();
+
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				currToken = getCurrentToken();
+				parseFunctionDeclaration(programNode);
+			}
+			else
+			{
+				currToken = getCurrentToken();
+				parseDeclaration(programNode);
+			}
 		}
 		else if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
 				currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
-			parseStatement(blockNode);
+			parseStatement(programNode);
 		}
 		else
 		{
-			parseExpression(blockNode);
+			parseExpression(programNode);
 		}
 
 	}
@@ -54,6 +66,8 @@ void parser::parseDeclaration(ASTNode* head)
 		declarationNode->addChild(identifierNode);
 
 		_identifiersTypes.emplace(currToken.first, datatype);
+		if (head->name == "BLOCK")
+			_localsVariables.emplace(currToken.first, datatype);
 		consumeToken();
 		currToken = getCurrentToken();
 	}
@@ -78,6 +92,96 @@ void parser::parseDeclaration(ASTNode* head)
 		throw std::runtime_error("ERROR: expecting an semicolon token...");
 	}
 	
+}
+
+void parser::parseFunctionDeclaration(ASTNode* head)
+{
+	ASTNode* functionDeclarationNode = new ASTNode("FUNCTION_DECLARATION");
+	ASTNode* returnValueNode = new ASTNode("RETURN_VALUE");
+
+	head->addChild(functionDeclarationNode);
+	functionDeclarationNode->addChild(returnValueNode);
+
+	std::string datatype;
+	parseType(datatype, returnValueNode);
+
+	token currToken = getCurrentToken();
+
+	if (currToken.second == IDENTIFIER)
+	{
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		functionDeclarationNode->addChild(identifierNode);
+		consumeToken();
+		currToken = getCurrentToken();
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expecting an identifier token...");
+	}
+	if (currToken.second == LEFT_PARENTHESIS)
+	{
+		int num_of_parameters = 0;
+
+		consumeToken();
+		while (currToken.second != RIGHT_PARENTHESIS)
+		{
+			if (currToken.second.find("DATATYPE") != std::string::npos)
+			{
+				ASTNode* parameterNode;
+				functionDeclarationNode->addChild(parameterNode);
+
+				parseType(datatype, parameterNode);
+				_identifiersTypes.emplace(currToken.first, datatype);
+				_localsVariables.emplace(currToken.first, datatype);
+				num_of_parameters++;
+
+				consumeToken();
+				currToken = getCurrentToken();
+
+				if (currToken.second == IDENTIFIER)
+				{
+					ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+					parameterNode->addChild(identifierNode);
+				}
+				else
+				{
+					throw std::runtime_error("ERROR: expecting an parameter name token...");
+				}
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			else
+			{
+				throw std::runtime_error("ERROR: expecting an parameter name or right parenthsis token......");
+			}
+
+		}
+
+		if (currToken.second == RIGHT_PARENTHESIS) //check that the token is ')'
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+		}
+		else
+			throw std::runtime_error("excepcted RIGHT PARENTHESIS");
+
+		if (currToken.second == SEMICOLON)
+		{
+			consumeToken();
+		}
+		else if (currToken.second == "BLOCK")
+		{
+			parseBlock(functionDeclarationNode, num_of_parameters);
+		}
+		else
+		{
+			throw std::runtime_error("ERROR: expecting an block or semicolon token...");
+		}
+		
+	}
+	else
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
 }
 
 void parser::parseStatement(ASTNode* head)
@@ -264,7 +368,7 @@ void parser::parseForStatement(ASTNode* head)
 	consumeToken();
 }
 
-void parser::parseBlock(ASTNode* head)
+void parser::parseBlock(ASTNode* head, int num_of_locals)
 {
 	while (true)
 	{
@@ -274,8 +378,35 @@ void parser::parseBlock(ASTNode* head)
 		{
 			parseStatement(head);
 		}
+		else if (currToken.second.find("DATATYPE") != std::string::npos)
+		{
+			consumeToken(2);
+			currToken = getCurrentToken();
+			unconsumeToken();
+			unconsumeToken();
+
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				throw std::runtime_error("You Cannot declare a function in a block!");
+			}
+			else
+			{
+				currToken = getCurrentToken();
+				parseDeclaration(head);
+				num_of_locals++;
+			}
+			
+		}
 		else if (currToken.second == RIGHT_BRACE)
 		{
+
+			for(token var : _localsVariables)
+			{
+				_localsVariables.erase(var.first);
+				num_of_locals--;
+				if (!num_of_locals)
+					return;
+			}
 			return;
 		}
 		else

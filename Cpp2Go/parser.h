@@ -51,13 +51,14 @@ public:
 	// Parse Functions
 	ASTNode* parseProgram();
 	void parseDeclaration(ASTNode* head);
+	void parseFunctionDeclaration(ASTNode* head);
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
 	void parseElseIfStatment(ASTNode* head);
 	void parseElseStatment(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
-	void parseBlock(ASTNode* head);
+	void parseBlock(ASTNode* head, int num_of_locals=0);
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
@@ -77,6 +78,7 @@ public:
 private:
 	tokensVector _tokensStream;
 	identifiersVector _identifiersTypes;
+	identifiersVector _localsVariables;
 	size_t _currentPosition;
 	ASTNode* _astRoot;
 
