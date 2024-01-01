@@ -29,6 +29,7 @@
 #define DECLARATION "DECLARATION"
 #define VAR_KEYWORD "VAR_KEYWORD"
 #define DATATYPE_STRING "DATATYPE_STRING"
+#define PARAMETER "PARAMETER"
 
 class AstTranslator
 {
@@ -42,6 +43,7 @@ public:
 	ASTNode* translateProgram(ASTNode* node);
 	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode);

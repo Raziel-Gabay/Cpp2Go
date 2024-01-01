@@ -22,6 +22,7 @@
 #define RIGHT_BRACE "RIGHT_BRACE"
 #define LEFT_PARENTHESIS "LEFT_PARENTHESIS"
 #define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
+#define PARAMETER "PARAMETER"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;

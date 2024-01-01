@@ -87,6 +87,28 @@ void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode
 	}
 }
 
+void AstTranslator::translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* functionDeclarationNode = new ASTNode("FUNCTION_DECLARATION");
+	ASTNode* funcNode = new ASTNode("FUNC_KEYWORD", "func");
+	ASTNode* returnValueNode = sourceNode->children.front();
+	destNode->addChild(functionDeclarationNode);
+	functionDeclarationNode->addChild(funcNode);
+
+
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == IDENTIFIER || cppChild->name == PARAMETER)
+			functionDeclarationNode->addChild(cppChild);
+		else if (cppChild->name == BLOCK)
+		{
+			if (returnValueNode->value != "void" && sourceNode->children.begin()[1]->value != "main")
+				functionDeclarationNode->addChild(returnValueNode);
+			translateBlock(cppChild, functionDeclarationNode);
+		}
+	}
+}
+
 void AstTranslator::translateStatement(ASTNode* sourceNode, ASTNode* &destNode)
 {
 	if (sourceNode->name == IF_STATEMENT)

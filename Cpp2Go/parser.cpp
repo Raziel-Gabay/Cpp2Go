@@ -128,7 +128,7 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 		{
 			if (currToken.second.find("DATATYPE") != std::string::npos)
 			{
-				ASTNode* parameterNode;
+				ASTNode* parameterNode = new ASTNode(PARAMETER);
 				functionDeclarationNode->addChild(parameterNode);
 
 				parseType(datatype, parameterNode);
