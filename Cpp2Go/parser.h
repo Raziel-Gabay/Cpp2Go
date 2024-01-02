@@ -23,13 +23,14 @@
 #define LEFT_PARENTHESIS "LEFT_PARENTHESIS"
 #define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
 #define PARAMETER "PARAMETER"
+#define RETURN_VALUE "RETURN_VALUE"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 typedef std::pair<std::string, std::string> token;
 
-const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/"};
+const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/", "%"};
 const std::unordered_set<std::string> RelationalOperators = { "==", "!=", "<", ">", "<=", ">="};
 const std::unordered_set<std::string> LogicalOperators = { "&&", "||", "!"};
 const std::unordered_set<std::string> BitwiseOperators = { "&", "|", "^", "<<", ">>" };

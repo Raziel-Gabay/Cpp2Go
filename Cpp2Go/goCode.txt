@@ -1,7 +1,18 @@
-int i = 0if i == 0 {
-	i = 10
-	i = 20
- else  {
-	i = 5
-	i = 8
-}i = 7
+func main () {
+	i := 0
+	if i == 0 {
+		i = 10
+		i = 20
+	} else  {
+		i = 5
+		i = 8
+	}
+	i = 7
+}
+func checkEvenOdd (num int) {
+	if num % 2 == 0 {
+		f := 100
+	} else  {
+		k := 400
+	}
+}

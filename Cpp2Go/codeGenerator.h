@@ -1,6 +1,9 @@
 #pragma once
 #include "AstTranslator.h"
 
+#define WHITESPACE ' '
+#define COMMA ','
+
 class codeGenerator
 {
 public:
@@ -14,6 +17,7 @@ public:
 	
 	void generateCode(ASTNode* node);
 	void generateDeclaration(ASTNode* node);
+	void generateFunctionDeclaration(ASTNode* node);
 	void generateStatement(ASTNode* node);
 	void generateIfStatement(ASTNode* node);
 	void generateElseIfStatement(ASTNode* node);
@@ -22,6 +26,7 @@ public:
 	void generateForStatement(ASTNode* node);
 	void generateBlock(ASTNode* node);
 	void generateExpression(ASTNode* node);
+	void generateExpression(std::vector<ASTNode*> nodes);
 
 	std::string getCode();
 private:

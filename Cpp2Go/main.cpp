@@ -38,7 +38,6 @@ std::string readCodeFromFile()
 
 void writeToDestFile(std::string goCode)
 {
-	std::cout << goCode;
 	std::ofstream goTextFile("goCode.txt");
 	if (goTextFile.is_open())
 	{

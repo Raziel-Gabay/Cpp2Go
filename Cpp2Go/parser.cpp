@@ -98,6 +98,7 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 {
 	ASTNode* functionDeclarationNode = new ASTNode("FUNCTION_DECLARATION");
 	ASTNode* returnValueNode = new ASTNode("RETURN_VALUE");
+	ASTNode* blockNode = new ASTNode("BLOCK");
 
 	head->addChild(functionDeclarationNode);
 	functionDeclarationNode->addChild(returnValueNode);
@@ -124,25 +125,24 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 		int num_of_parameters = 0;
 
 		consumeToken();
+		currToken = getCurrentToken();
 		while (currToken.second != RIGHT_PARENTHESIS)
 		{
 			if (currToken.second.find("DATATYPE") != std::string::npos)
-			{
+			{	
 				ASTNode* parameterNode = new ASTNode(PARAMETER);
 				functionDeclarationNode->addChild(parameterNode);
 
 				parseType(datatype, parameterNode);
-				_identifiersTypes.emplace(currToken.first, datatype);
-				_localsVariables.emplace(currToken.first, datatype);
-				num_of_parameters++;
-
-				consumeToken();
 				currToken = getCurrentToken();
 
 				if (currToken.second == IDENTIFIER)
 				{
 					ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
 					parameterNode->addChild(identifierNode);
+					_identifiersTypes.emplace(currToken.first, datatype);
+					_localsVariables.emplace(currToken.first, datatype);
+					num_of_parameters++;
 				}
 				else
 				{
@@ -168,15 +168,22 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 
 		if (currToken.second == SEMICOLON)
 		{
-			consumeToken();
+			throw std::runtime_error("ERROR: GO dosen't support function declartion without block...");
 		}
-		else if (currToken.second == "BLOCK")
+		else if (currToken.second == LEFT_BRACE)
 		{
-			parseBlock(functionDeclarationNode, num_of_parameters);
+			consumeToken();
+			functionDeclarationNode->addChild(blockNode);
+			parseBlock(blockNode, num_of_parameters);
+			currToken = getCurrentToken();
+			if (currToken.second == RIGHT_BRACE)
+			{
+				consumeToken();
+			}
 		}
 		else
 		{
-			throw std::runtime_error("ERROR: expecting an block or semicolon token...");
+			throw std::runtime_error("ERROR: expecting an block...");
 		}
 		
 	}
@@ -245,7 +252,7 @@ void parser::parseIfStatment(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
@@ -273,7 +280,7 @@ void parser::parseElseIfStatment(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
@@ -294,7 +301,7 @@ void parser::parseElseStatment(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
@@ -322,7 +329,7 @@ void parser::parseWhileStatement(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree 
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
@@ -400,10 +407,13 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		else if (currToken.second == RIGHT_BRACE)
 		{
 
-			for(token var : _localsVariables)
+			for (token var : _localsVariables)
 			{
-				_localsVariables.erase(var.first);
-				num_of_locals--;
+				if (num_of_locals)
+				{
+					_localsVariables.erase(var.first);
+					num_of_locals--;
+				}
 				if (!num_of_locals)
 					return;
 			}
@@ -498,7 +508,7 @@ void parser::parseExpression(ASTNode* head)
 		}
 		consumeToken();
 		
-		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS")
+		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS" && !isBinaryOperator(getCurrentToken()))
 		{
 			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
 		}

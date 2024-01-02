@@ -24,7 +24,11 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 	}
 	for (ASTNode* cppChild : cppNode->children)
 	{
-		if (cppChild->name == BLOCK)
+		if (cppChild->name == FUNCTION_DECLARATION)
+		{
+			translateFunctionDeclaration(cppChild, node);
+		}
+		else if (cppChild->name == BLOCK)
 		{
 			translateBlock(cppChild, node);
 		}
@@ -102,7 +106,7 @@ void AstTranslator::translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& 
 			functionDeclarationNode->addChild(cppChild);
 		else if (cppChild->name == BLOCK)
 		{
-			if (returnValueNode->value != "void" && sourceNode->children.begin()[1]->value != "main")
+			if (returnValueNode->children.front()->value != "void" && sourceNode->children.begin()[1]->value != "main")
 				functionDeclarationNode->addChild(returnValueNode);
 			translateBlock(cppChild, functionDeclarationNode);
 		}
