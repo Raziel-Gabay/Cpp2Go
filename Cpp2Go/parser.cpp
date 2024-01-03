@@ -489,6 +489,19 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 
 }
 
+void parser::parseIncludeDirective(ASTNode* head)
+{
+	//create an include directive node
+	ASTNode* includeDirectiveNode = new ASTNode("INCLUDE_DIRECTIVE");
+	head->addChild(includeDirectiveNode);
+
+	if(getCurrentToken().second != HASHTAG)
+		throw std::runtime_error("excepcted hashtag");
+
+	consumeToken();
+
+}
+
 void parser::parseExpression(ASTNode* head)
 {
 	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL) != std::string::npos)
