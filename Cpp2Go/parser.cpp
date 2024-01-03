@@ -308,6 +308,68 @@ void parser::parseElseStatment(ASTNode* head)
 	consumeToken();
 }
 
+void parser::parseStruct(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+	ASTNode* structNode = new ASTNode("STRUCT");
+	ASTNode* membersNode = new ASTNode("MEMBERS");
+	ASTNode* structKeywordNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(structNode);
+	structNode->addChild(membersNode);
+	structNode->addChild(structKeywordNode);
+
+	consumeToken();
+	token currToken = getCurrentToken();
+	if (currToken.second == IDENTIFIER)
+	{
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		structNode->addChild(identifierNode);
+		consumeToken();
+		currToken = getCurrentToken();
+	}
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	currToken = getCurrentToken();
+	while (currToken.second != RIGHT_BRACE)
+	{
+		if (currToken.second.find("DATATYPE") != std::string::npos)
+		{
+			ASTNode* declarationNode = new ASTNode("DECLARATION");
+			membersNode->addChild(declarationNode);
+			//add the type to the declartion
+			std::string datatype;
+			parseType(datatype, declarationNode);
+			currToken = getCurrentToken();
+			//add the identfier to the declaration
+			if (currToken.second == IDENTIFIER)
+			{
+				// create idetifier node and add it to the head node
+				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				declarationNode->addChild(identifierNode);
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			if (currToken.second == SEMICOLON)
+			{
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			else
+				throw std::runtime_error("ERROR: expecting an semicolon token...");
+		}
+		else
+			throw std::runtime_error("ERROR: excepcted declaration...");
+	}
+	consumeToken();
+	currToken = getCurrentToken();
+	if (currToken.second == SEMICOLON)
+		consumeToken();
+	else
+		throw std::runtime_error("ERROR: excepcted declaration...");
+}
+
 void parser::parseWhileStatement(ASTNode* head)
 {
 	//create a while statement node

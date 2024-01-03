@@ -24,6 +24,7 @@
 #define RIGHT_PARENTHESIS "RIGHT_PARENTHESIS"
 #define PARAMETER "PARAMETER"
 #define RETURN_VALUE "RETURN_VALUE"
+#define STRUCT_KEYWORD "STRUCT_KEYWORD"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
@@ -58,6 +59,7 @@ public:
 	void parseIfStatment(ASTNode* head);
 	void parseElseIfStatment(ASTNode* head);
 	void parseElseStatment(ASTNode* head);
+	void parseStruct(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
 	void parseBlock(ASTNode* head, int num_of_locals=0);

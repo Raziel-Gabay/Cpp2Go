@@ -17,6 +17,7 @@ tokensMap mapOfTokens =
 	{"if", "IF_STATEMENT"},
 	{"else if", "ELSE_IF_STATEMENT"},
 	{"else", "ELSE_STATEMENT"},
+	{"struct", "STRUCT_KEYWORD"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
