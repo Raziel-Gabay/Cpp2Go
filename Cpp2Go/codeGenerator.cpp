@@ -30,13 +30,17 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 			generateDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
-				child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
 		{
 			generateStatement(child);
 		}
 		else if (child->name == STRUCT)
 		{
 			generateStruct(child);
+		}
+		else if (child->name == IMPORT_DIRECTIVE)
+		{
+			generateIncludeDirective(child);
 		}
 		else
 		{
@@ -286,6 +290,23 @@ void codeGenerator::generateExpression(std::vector<ASTNode*> nodes)
 		else
 			generateExpression(node);
 		last_value = node->children.back()->value;
+	}
+}
+
+void codeGenerator::generateIncludeDirective(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == IMPORT)
+		{
+			_code += "import ";
+		}
+		else if (child->name == IDENTIFIER)
+		{
+			_code += '"';
+			_code += child->value;
+			_code += '"';
+		}
 	}
 }
 

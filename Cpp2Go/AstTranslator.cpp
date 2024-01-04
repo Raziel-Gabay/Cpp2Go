@@ -37,13 +37,17 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 			translateDeclaration(cppChild, node);
 		}
 		else if (cppChild->name == IF_STATEMENT || cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT ||
-				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
+			cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
 		{
 			translateStatement(cppChild, node);
 		}
 		else if (cppChild->name == STRUCT)
 		{
 			translateStruct(cppChild, node);
+		}
+		else if (cppChild->name == INCLUDE_DIRECTIVE)
+		{
+			translateIncludeDirective(cppChild, node);
 		}
 		else
 		{
@@ -283,6 +287,25 @@ void AstTranslator::translateExpression(ASTNode* sourceNode, ASTNode*& destNode)
 	else
 	{
 		destNode->addChild(sourceNode);
+	}
+}
+
+void AstTranslator::translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* includeNode = new ASTNode(IMPORT_DIRECTIVE);
+	destNode->addChild(includeNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == INCLUDE_KEYWORD)
+		{
+			ASTNode* importNode = new ASTNode(IMPORT);
+			includeNode->addChild(importNode);
+		}
+		else if (cppChild->name == IDENTIFIER)
+		{
+			ASTNode* libaryName = new ASTNode(IDENTIFIER, "fmt");
+			includeNode->addChild(libaryName);
+		}
 	}
 }
 

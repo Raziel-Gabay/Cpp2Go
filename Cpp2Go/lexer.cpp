@@ -18,6 +18,7 @@ tokensMap mapOfTokens =
 	{"else if", "ELSE_IF_STATEMENT"},
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
+	{"include", "INCLUDE_KEYWORD"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -25,6 +26,7 @@ tokensMap mapOfTokens =
 	{"=", "ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
 	{"%", "MODULO_OPERATOR"},
+	{"#", "HASHTAG_OPERATOR"},
 	{"!=", "NOT_EQUAL_OPERATOR"},
 	{"==", "EQUAL_OPERATOR"},
 	{"<", "LESS_THAN_OPERATOR"},
@@ -196,9 +198,9 @@ std::string lexer::getToken(std::string& code)
 	}
 
 	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) > 0) {
+	if (standaloneTokens.count(token) > 0 || token == HASHTAG) {
 		code.erase(0, 1); // Remove the processed token
-		if (code[0] == ' ')
+		if (code[0] == ' ' )
 		{
 			code.erase(0, 1); // Remove the whitespace that may come afterward
 		}
@@ -221,7 +223,7 @@ std::string lexer::getToken(std::string& code)
 			return token;
 		}
 	}
-	
+
 	if (token == ELSE)
 	{
 		if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())

@@ -1,3 +1,4 @@
+import "fmt"
 type car struct {
 	brand string
 	model string

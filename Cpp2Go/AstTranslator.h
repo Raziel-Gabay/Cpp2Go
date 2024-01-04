@@ -35,6 +35,11 @@
 #define MEMBERS "MEMBERS"
 #define STRUCT_KEYWORD "STRUCT_KEYWORD"
 #define STRUCT "STRUCT"
+#define INCLUDE_DIRECTIVE "INCLUDE_DIRECTIVE"
+#define INCLUDE_KEYWORD "INCLUDE_KEYWORD"
+#define IMPORT "IMPORT"
+#define IMPORT_DIRECTIVE "IMPORT_DIRECTIVE"
+#define IOSTREAM "iostream"
 
 class AstTranslator
 {
@@ -58,6 +63,7 @@ public:
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
 
 	ASTNode* getAST();
 private:

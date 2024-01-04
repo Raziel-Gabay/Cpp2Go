@@ -25,7 +25,12 @@
 #define PARAMETER "PARAMETER"
 #define RETURN_VALUE "RETURN_VALUE"
 #define STRUCT_KEYWORD "STRUCT_KEYWORD"
-#define HASHTAG "HASHTAG"
+#define HASHTAG_OPERATOR "HASHTAG_OPERATOR"
+#define HASHTAG "#"
+#define INCLUDE "INCLUDE"
+#define INCLUDE_DIRECTIVE "INCLUDE_DIRECTIVE"
+#define LESS_THAN_OPERATOR "LESS_THAN_OPERATOR"
+#define MORE_THAN_OPERATOR "MORE_THAN_OPERATOR"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;

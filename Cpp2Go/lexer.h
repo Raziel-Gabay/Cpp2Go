@@ -10,6 +10,7 @@
 #define STR_LEN 11
 #define IF "if"
 #define ELSE "else"
+#define HASHTAG "#"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> tokensMap;

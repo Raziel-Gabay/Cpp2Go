@@ -44,6 +44,15 @@ ASTNode* parser::parseProgram()
 		{
 			parseStruct(programNode);
 		}
+		else if (currToken.second == HASHTAG_OPERATOR)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == INCLUDE)
+				consumeToken();
+				currToken = getCurrentToken();
+				parseIncludeDirective(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -498,12 +507,31 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 void parser::parseIncludeDirective(ASTNode* head)
 {
 	//create an include directive node
+	token currToken = getCurrentToken();
 	ASTNode* includeDirectiveNode = new ASTNode("INCLUDE_DIRECTIVE");
+	
+	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
+	
 	head->addChild(includeDirectiveNode);
+	includeDirectiveNode->addChild(includeKeyWordNode);
 
-	if(getCurrentToken().second != HASHTAG)
-		throw std::runtime_error("excepcted hashtag");
+	consumeToken();
+	currToken = getCurrentToken();
 
+	if(getCurrentToken().second != LESS_THAN_OPERATOR)
+		throw std::runtime_error("excepcted the char: '<'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* libaryNameNode = new ASTNode(currToken.second, currToken.first);
+	includeDirectiveNode->addChild(libaryNameNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != MORE_THAN_OPERATOR)
+		throw std::runtime_error("excepcted the char: '>'");
 	consumeToken();
 
 }

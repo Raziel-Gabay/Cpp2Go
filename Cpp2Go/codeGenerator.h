@@ -28,6 +28,7 @@ public:
 	void generateBlock(ASTNode* node);
 	void generateExpression(ASTNode* node);
 	void generateExpression(std::vector<ASTNode*> nodes);
+	void generateIncludeDirective(ASTNode* node);
 
 	std::string getCode();
 private:
