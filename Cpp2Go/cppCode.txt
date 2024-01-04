@@ -1,3 +1,10 @@
+struct car
+{
+	std::string brand;
+	std::string model;
+	int year;
+};
+
 int main()
 {
 	int i = 0;

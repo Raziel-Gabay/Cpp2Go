@@ -32,6 +32,9 @@
 #define PARAMETER "PARAMETER"
 #define RETURN_VALUE "RETURN_VALUE"
 #define FUNCTION_DECLARATION "FUNCTION_DECLARATION"
+#define MEMBERS "MEMBERS"
+#define STRUCT_KEYWORD "STRUCT_KEYWORD"
+#define STRUCT "STRUCT"
 
 class AstTranslator
 {
@@ -46,6 +49,7 @@ public:
 	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
 	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode);

@@ -41,6 +41,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateStatement(cppChild, node);
 		}
+		else if (cppChild->name == STRUCT)
+		{
+			translateStruct(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -109,6 +113,41 @@ void AstTranslator::translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& 
 			if (returnValueNode->children.front()->value != "void" && sourceNode->children.begin()[1]->value != "main")
 				functionDeclarationNode->addChild(returnValueNode);
 			translateBlock(cppChild, functionDeclarationNode);
+		}
+	}
+}
+
+void AstTranslator::translateStruct(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* structNode = new ASTNode("STRUCT");
+	ASTNode* typeNode = new ASTNode("TYPE_KEYWORD", "type");
+	destNode->addChild(structNode);
+	structNode->addChild(typeNode);
+
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == IDENTIFIER)
+		{
+			structNode->addChild(cppChild);
+			structNode->addChild(sourceNode->children.front());
+		}
+		else if (cppChild->name == MEMBERS)
+		{
+			ASTNode* membersNode = new ASTNode("MEMBERS");
+			structNode->addChild(membersNode);
+			for (ASTNode* member : cppChild->children)
+			{
+				if (member->name == DECLARATION)
+				{
+					ASTNode* goMember = member;
+					if (goMember->children.front()->name == DATATYPE_STRING)
+					{
+						goMember->children.front()->value = "string";
+					}
+					std::reverse(goMember->children.begin(), goMember->children.end());
+					membersNode->addChild(goMember);
+				}
+			}
 		}
 	}
 }

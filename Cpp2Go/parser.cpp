@@ -40,6 +40,10 @@ ASTNode* parser::parseProgram()
 		{
 			parseStatement(programNode);
 		}
+		else if (currToken.second == STRUCT_KEYWORD)
+		{
+			parseStruct(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -310,21 +314,23 @@ void parser::parseElseStatment(ASTNode* head)
 
 void parser::parseStruct(ASTNode* head)
 {
+	if (head->name == "BLOCK")
+		throw std::runtime_error("cannot create struct inside block");
 	token currToken = getCurrentToken();
 	ASTNode* structNode = new ASTNode("STRUCT");
 	ASTNode* membersNode = new ASTNode("MEMBERS");
 	ASTNode* structKeywordNode = new ASTNode(currToken.second, currToken.first);
 	head->addChild(structNode);
-	structNode->addChild(membersNode);
 	structNode->addChild(structKeywordNode);
 
 	consumeToken();
-	token currToken = getCurrentToken();
+	currToken = getCurrentToken();
 	if (currToken.second == IDENTIFIER)
 	{
 		// create idetifier node and add it to the head node
 		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
 		structNode->addChild(identifierNode);
+		structNode->addChild(membersNode);
 		consumeToken();
 		currToken = getCurrentToken();
 	}

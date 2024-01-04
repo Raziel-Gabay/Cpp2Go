@@ -18,6 +18,7 @@ public:
 	void generateCode(ASTNode* node);
 	void generateDeclaration(ASTNode* node);
 	void generateFunctionDeclaration(ASTNode* node);
+	void generateStruct(ASTNode* node);
 	void generateStatement(ASTNode* node);
 	void generateIfStatement(ASTNode* node);
 	void generateElseIfStatement(ASTNode* node);

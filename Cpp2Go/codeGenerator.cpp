@@ -34,6 +34,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateStatement(child);
 		}
+		else if (child->name == STRUCT)
+		{
+			generateStruct(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -111,6 +115,28 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 		{
 			_code += child->value + " ";
 		}
+	}
+}
+
+void codeGenerator::generateStruct(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == STRUCT_KEYWORD)
+		{
+			_code += child->value + " {\n";
+		}
+		else if (child->name == MEMBERS)
+		{
+			for (ASTNode* member : child->children)
+			{
+				_code += "\t";
+				_code += member->children.front()->value + " " + member->children.back()->value + "\n";
+			}
+			_code += "}";
+		}
+		else
+			_code += child->value + " ";
 	}
 }
 
