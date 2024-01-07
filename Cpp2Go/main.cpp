@@ -1,5 +1,9 @@
 #include "lexer.h"
 #include "parser.h"
+#include "AstTranslator.h"
+#include "codeGenerator.h"
+
+#include <fstream>
 
 void printAST(const ASTNode* node, int depth = 0) {
 	if (node) {
@@ -15,25 +19,54 @@ void printAST(const ASTNode* node, int depth = 0) {
 		}
 	}
 }
+std::string readCodeFromFile()
+{
+	std::string code = "";
+	std::fstream cppTextFile;
+	cppTextFile.open("cppCode.txt", std::ios::in); //open the file to read
+	if (cppTextFile.is_open())
+	{	//checking whether the file is open
+		std::string data;
+		while (getline(cppTextFile, data)) //read data from the text file
+		{
+			code += data + "\n";
+		}
+		cppTextFile.close(); //close the file object
+	}
+	return code;
+}
+
+void writeToDestFile(std::string goCode)
+{
+	std::ofstream goTextFile("goCode.txt");
+	if (goTextFile.is_open())
+	{
+		goTextFile << goCode;
+		goTextFile.close(); //close the file object
+	}
+}
 
 int main()
 {
-	//std::string code = "int a = 5;\n\tfloat b = 2.71;\n\tbool c = true;\n";
-	std::string code = "for(int i = 0; i < 10; i ++)\n\t{}";
-	//std::string code = "int i = 0;\nif(i == 0)\n{\n\ti = 10;\n\ti = 20;\n}";
+	std::string code = readCodeFromFile();
 	std::cout << code << std::endl;
 	lexer::preprocessing(code);
 	std::cout << code << std::endl;
 	tokensVector tokenStream;
 	try
 	{
-		 tokenStream = lexer::createTokenStream(code);
+		 tokenStream = lexer::createTokenStream(code); 
+		 parser p = parser(tokenStream); 
+		 printAST(p.getAST());  
+		 AstTranslator translator = AstTranslator(p.getAST());
+		 printAST(translator.getAST());
+		 codeGenerator goCode = codeGenerator(translator.getAST());
+		 std::cout << goCode.getCode() << std::endl;
+		 writeToDestFile(goCode.getCode());
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << e.what();
 	}
-	parser p = parser(tokenStream);
-	printAST(p.getAST());
 	return 0;
 }

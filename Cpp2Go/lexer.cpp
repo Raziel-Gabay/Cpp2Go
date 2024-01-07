@@ -5,7 +5,8 @@ tokensMap mapOfTokens =
 	{"int", "DATATYPE_INT"},
 	{"float", "DATATYPE_FLOAT"},
 	{"bool", "DATATYPE_BOOL"},
-	{"string", "DATATYPE_STRING"},
+	{"void", "DATATYPE_VOID"},
+	{"std::string", "DATATYPE_STRING"},
 	{"identifier", "IDENTIFIER"},
 	{"intLiteral", "INT_LITERAL"},
 	{"floatLiteral", "FLOAT_LITERAL"},
@@ -14,12 +15,18 @@ tokensMap mapOfTokens =
 	{"while", "WHILE_STATEMENT"},
 	{"for", "FOR_STATEMENT"},
 	{"if", "IF_STATEMENT"},
+	{"else if", "ELSE_IF_STATEMENT"},
+	{"else", "ELSE_STATEMENT"},
+	{"struct", "STRUCT_KEYWORD"},
+	{"include", "INCLUDE_KEYWORD"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
 	{"}", "RIGHT_BRACE"},
 	{"=", "ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
+	{"%", "MODULO_OPERATOR"},
+	{"#", "HASHTAG_OPERATOR"},
 	{"!=", "NOT_EQUAL_OPERATOR"},
 	{"==", "EQUAL_OPERATOR"},
 	{"<", "LESS_THAN_OPERATOR"},
@@ -158,6 +165,15 @@ std::string lexer::getToken(std::string& code)
 		return token;
 	}
 
+	// check if the token is string
+	token = code.substr(0, STR_LEN);
+	if ( token == STR)
+	{
+		code.erase(0, STR_LEN + 1);
+		return token;
+	}
+
+
 	// Get the 2 first characters
 	token = code.substr(0, 2);
 	if (operatorWithTwoCharsTokens.count(token) > 0)
@@ -171,11 +187,20 @@ std::string lexer::getToken(std::string& code)
 	}
 	// Get the first character
 	token = code[0];
+	
+	if (token == "\"")
+	{
+		code.erase(0, 1);
+		auto separatorPos = code.find_first_of("\"");
+		token += code.substr(0, separatorPos + 1);
+		code.erase(0, separatorPos + 1);
+		return token;
+	}
 
 	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) > 0) {
+	if (standaloneTokens.count(token) > 0 || token == HASHTAG) {
 		code.erase(0, 1); // Remove the processed token
-		if (code[0] == ' ')
+		if (code[0] == ' ' )
 		{
 			code.erase(0, 1); // Remove the whitespace that may come afterward
 		}
@@ -188,6 +213,41 @@ std::string lexer::getToken(std::string& code)
 	// Extract the token up to the first separator (or the end of the string if no separator found)
 	token = code.substr(0, separatorPos);
 
+	//handling unary operator
+	if (token.length() > 2)
+	{
+		if (UnaryOperators.count(token.substr(token.length() - 2)) > 0)
+		{
+			token = code.substr(0, separatorPos - 2);
+			code.erase(0, separatorPos - 2);
+			return token;
+		}
+	}
+
+	if (token == ELSE)
+	{
+		if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
+		{
+			code.erase(0, separatorPos + 1);
+		}
+		else
+		{
+			code.erase(0, separatorPos);
+		}
+		auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+		std::string next_token = code.substr(0, separatorPos);
+		if (next_token == IF)
+		{
+			token += " " + next_token;
+			code.erase(0, separatorPos + 1);
+			return token;
+		}
+		else
+		{
+			return token;
+		}
+
+	}
 	//handling float
 	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
 	{
@@ -244,6 +304,11 @@ tokensVector lexer::createTokenStream(std::string& code)
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
+		else if (handleStringLiteralValue(token))
+		{
+			tokenFromMap = searchToken("stringLiteral");
+			insertToken(token, tokenFromMap, tokenStream);
+		}
 		else if (handleIntLiteralValue(token))
 		{
 			tokenFromMap = searchToken("intLiteral");
@@ -252,11 +317,6 @@ tokensVector lexer::createTokenStream(std::string& code)
 		else if (handleFloatLiteralValue(token))
 		{
 			tokenFromMap = searchToken("floatLiteral");
-			insertToken(token, tokenFromMap, tokenStream);
-		}
-		else if (handleStringLiteralValue(token))
-		{
-			tokenFromMap = searchToken("stringLiteral");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
 		else

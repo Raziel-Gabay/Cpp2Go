@@ -14,22 +14,48 @@ parser::~parser()
 ASTNode* parser::parseProgram()
 {
 	ASTNode* programNode = new ASTNode("PROGRAM");
-	ASTNode* blockNode = new ASTNode("BLOCK");
-	programNode->addChild(blockNode);
 	while (_currentPosition < _tokensStream.size())
 	{
 		token currToken = getCurrentToken();
 		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
-			parseDeclaration(blockNode);
+			consumeToken(2);
+			currToken = getCurrentToken();
+			unconsumeToken();
+			unconsumeToken();
+
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				currToken = getCurrentToken();
+				parseFunctionDeclaration(programNode);
+			}
+			else
+			{
+				currToken = getCurrentToken();
+				parseDeclaration(programNode);
+			}
 		}
-		else if (currToken.second == IF_STATEMENT || currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+		else if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
+				currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
-			parseStatement(blockNode);
+			parseStatement(programNode);
+		}
+		else if (currToken.second == STRUCT_KEYWORD)
+		{
+			parseStruct(programNode);
+		}
+		else if (currToken.second == HASHTAG_OPERATOR)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == INCLUDE)
+				consumeToken();
+				currToken = getCurrentToken();
+				parseIncludeDirective(programNode);
 		}
 		else
 		{
-			parseExpression(blockNode);
+			parseExpression(programNode);
 		}
 
 	}
@@ -53,6 +79,8 @@ void parser::parseDeclaration(ASTNode* head)
 		declarationNode->addChild(identifierNode);
 
 		_identifiersTypes.emplace(currToken.first, datatype);
+		if (head->name == "BLOCK")
+			_localsVariables.emplace(currToken.first, datatype);
 		consumeToken();
 		currToken = getCurrentToken();
 	}
@@ -79,6 +107,103 @@ void parser::parseDeclaration(ASTNode* head)
 	
 }
 
+void parser::parseFunctionDeclaration(ASTNode* head)
+{
+	ASTNode* functionDeclarationNode = new ASTNode("FUNCTION_DECLARATION");
+	ASTNode* returnValueNode = new ASTNode("RETURN_VALUE");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(functionDeclarationNode);
+	functionDeclarationNode->addChild(returnValueNode);
+
+	std::string datatype;
+	parseType(datatype, returnValueNode);
+
+	token currToken = getCurrentToken();
+
+	if (currToken.second == IDENTIFIER)
+	{
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		functionDeclarationNode->addChild(identifierNode);
+		consumeToken();
+		currToken = getCurrentToken();
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expecting an identifier token...");
+	}
+	if (currToken.second == LEFT_PARENTHESIS)
+	{
+		int num_of_parameters = 0;
+
+		consumeToken();
+		currToken = getCurrentToken();
+		while (currToken.second != RIGHT_PARENTHESIS)
+		{
+			if (currToken.second.find("DATATYPE") != std::string::npos)
+			{	
+				ASTNode* parameterNode = new ASTNode(PARAMETER);
+				functionDeclarationNode->addChild(parameterNode);
+
+				parseType(datatype, parameterNode);
+				currToken = getCurrentToken();
+
+				if (currToken.second == IDENTIFIER)
+				{
+					ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+					parameterNode->addChild(identifierNode);
+					_identifiersTypes.emplace(currToken.first, datatype);
+					_localsVariables.emplace(currToken.first, datatype);
+					num_of_parameters++;
+				}
+				else
+				{
+					throw std::runtime_error("ERROR: expecting an parameter name token...");
+				}
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			else
+			{
+				throw std::runtime_error("ERROR: expecting an parameter name or right parenthsis token......");
+			}
+
+		}
+
+		if (currToken.second == RIGHT_PARENTHESIS) //check that the token is ')'
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+		}
+		else
+			throw std::runtime_error("excepcted RIGHT PARENTHESIS");
+
+		if (currToken.second == SEMICOLON)
+		{
+			throw std::runtime_error("ERROR: GO dosen't support function declartion without block...");
+		}
+		else if (currToken.second == LEFT_BRACE)
+		{
+			consumeToken();
+			functionDeclarationNode->addChild(blockNode);
+			parseBlock(blockNode, num_of_parameters);
+			currToken = getCurrentToken();
+			if (currToken.second == RIGHT_BRACE)
+			{
+				consumeToken();
+			}
+		}
+		else
+		{
+			throw std::runtime_error("ERROR: expecting an block...");
+		}
+		
+	}
+	else
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+}
+
 void parser::parseStatement(ASTNode* head)
 {
 	token currToken = getCurrentToken();
@@ -96,6 +221,26 @@ void parser::parseStatement(ASTNode* head)
 	{
 		consumeToken();
 		parseForStatement(head);
+	}
+	else if (currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT && !head->children.empty())
+	{
+		if (head->children.back()->name == IF_STATEMENT)
+		{
+			if (currToken.second == ELSE_IF_STATEMENT)
+			{
+				consumeToken();
+				parseElseIfStatment(head);
+			}
+			else if (currToken.second == ELSE_STATEMENT)
+			{
+				consumeToken();
+				parseElseStatment(head);
+			}
+		}
+		else
+		{
+			throw std::runtime_error("excepcted If statement before...");
+		}
 	}
 }
 
@@ -120,11 +265,124 @@ void parser::parseIfStatment(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
 	consumeToken();
+}
+
+void parser::parseElseIfStatment(ASTNode* head)
+{
+	//create an else if statement node
+	ASTNode* elseIfStatementNode = new ASTNode("ELSE_IF_STATEMENT");
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(elseIfStatementNode);
+	//create children for the else if statement
+	elseIfStatementNode->addChild(conditionNode);
+	elseIfStatementNode->addChild(blockNode);
+
+	if (getCurrentToken().second != LEFT_PARENTHESIS) //check that the token is '('
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+
+	parseExpression(conditionNode); //we expect an expression to come
+
+	//check - else if body
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	parseBlock(blockNode); //the block part of the tree
+
+	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
+		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
+}
+
+
+void parser::parseElseStatment(ASTNode* head)
+{
+	//create an if statement node
+	ASTNode* elseStatementNode = new ASTNode("ELSE_STATEMENT");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(elseStatementNode);
+	elseStatementNode->addChild(blockNode);
+
+	//check - else body
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	parseBlock(blockNode); //the block part of the tree
+
+	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
+		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
+}
+
+void parser::parseStruct(ASTNode* head)
+{
+	if (head->name == "BLOCK")
+		throw std::runtime_error("cannot create struct inside block");
+	token currToken = getCurrentToken();
+	ASTNode* structNode = new ASTNode("STRUCT");
+	ASTNode* membersNode = new ASTNode("MEMBERS");
+	ASTNode* structKeywordNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(structNode);
+	structNode->addChild(structKeywordNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+	if (currToken.second == IDENTIFIER)
+	{
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		structNode->addChild(identifierNode);
+		structNode->addChild(membersNode);
+		consumeToken();
+		currToken = getCurrentToken();
+	}
+	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	currToken = getCurrentToken();
+	while (currToken.second != RIGHT_BRACE)
+	{
+		if (currToken.second.find("DATATYPE") != std::string::npos)
+		{
+			ASTNode* declarationNode = new ASTNode("DECLARATION");
+			membersNode->addChild(declarationNode);
+			//add the type to the declartion
+			std::string datatype;
+			parseType(datatype, declarationNode);
+			currToken = getCurrentToken();
+			//add the identfier to the declaration
+			if (currToken.second == IDENTIFIER)
+			{
+				// create idetifier node and add it to the head node
+				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				declarationNode->addChild(identifierNode);
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			if (currToken.second == SEMICOLON)
+			{
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			else
+				throw std::runtime_error("ERROR: expecting an semicolon token...");
+		}
+		else
+			throw std::runtime_error("ERROR: excepcted declaration...");
+	}
+	consumeToken();
+	currToken = getCurrentToken();
+	if (currToken.second == SEMICOLON)
+		consumeToken();
+	else
+		throw std::runtime_error("ERROR: excepcted declaration...");
 }
 
 void parser::parseWhileStatement(ASTNode* head)
@@ -148,7 +406,7 @@ void parser::parseWhileStatement(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree 
+	parseBlock(blockNode); //the block part of the tree
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
@@ -187,11 +445,95 @@ void parser::parseForStatement(ASTNode* head)
 	if (getCurrentToken().second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseExpression(blockNode); //the block part of the tree 
+	parseBlock(blockNode); //the block part of the tree 
 
 	if (getCurrentToken().second != RIGHT_BRACE) //check that the token is '}'
 		throw std::runtime_error("excepcted RIGHT BRACE");
 	consumeToken();
+}
+
+void parser::parseBlock(ASTNode* head, int num_of_locals)
+{
+	while (true)
+	{
+		token currToken = getCurrentToken();
+		if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
+			currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+		{
+			parseStatement(head);
+		}
+		else if (currToken.second.find("DATATYPE") != std::string::npos)
+		{
+			consumeToken(2);
+			currToken = getCurrentToken();
+			unconsumeToken();
+			unconsumeToken();
+
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				throw std::runtime_error("You Cannot declare a function in a block!");
+			}
+			else
+			{
+				currToken = getCurrentToken();
+				parseDeclaration(head);
+				num_of_locals++;
+			}
+			
+		}
+		else if (currToken.second == RIGHT_BRACE)
+		{
+
+			for (token var : _localsVariables)
+			{
+				if (num_of_locals)
+				{
+					_localsVariables.erase(var.first);
+					num_of_locals--;
+				}
+				if (!num_of_locals)
+					return;
+			}
+			return;
+		}
+		else
+		{
+			parseExpression(head);
+		}
+	}
+
+}
+
+void parser::parseIncludeDirective(ASTNode* head)
+{
+	//create an include directive node
+	token currToken = getCurrentToken();
+	ASTNode* includeDirectiveNode = new ASTNode("INCLUDE_DIRECTIVE");
+	
+	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
+	
+	head->addChild(includeDirectiveNode);
+	includeDirectiveNode->addChild(includeKeyWordNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if(getCurrentToken().second != LESS_THAN_OPERATOR)
+		throw std::runtime_error("excepcted the char: '<'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* libaryNameNode = new ASTNode(currToken.second, currToken.first);
+	includeDirectiveNode->addChild(libaryNameNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != MORE_THAN_OPERATOR)
+		throw std::runtime_error("excepcted the char: '>'");
+	consumeToken();
+
 }
 
 void parser::parseExpression(ASTNode* head)
@@ -275,7 +617,7 @@ void parser::parseExpression(ASTNode* head)
 		}
 		consumeToken();
 		
-		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS")
+		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS" && !isBinaryOperator(getCurrentToken()))
 		{
 			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
 		}
@@ -507,7 +849,7 @@ void parser::parseModifyOperator(ASTNode* head)
 		consumeToken();
 		if (getCurrentToken().first == "++" || getCurrentToken().first == "--")
 		{
-			ASTNode* modifyOperatorNode = new ASTNode("modifyOperator", getCurrentToken().first); //create AST node
+			ASTNode* modifyOperatorNode = new ASTNode(getCurrentToken().second, getCurrentToken().first); //create AST node
 			head->addChild(modifyOperatorNode);
 			consumeToken();
 		}
