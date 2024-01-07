@@ -53,6 +53,16 @@ ASTNode* parser::parseProgram()
 				currToken = getCurrentToken();
 				parseIncludeDirective(programNode);
 		}
+		else if (currToken.second == IDENTIFIER)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				unconsumeToken();
+				parseFunctionCall(programNode);
+			}
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -202,6 +212,46 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 	}
 	else
 		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+}
+
+void parser::parseFunctionCall(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+	ASTNode* functionCallNode = new ASTNode("FUNCTION_CALL");
+	ASTNode* functionNameNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(functionCallNode);
+	functionCallNode->addChild(functionNameNode);
+
+	consumeToken(2);
+	currToken = getCurrentToken();
+	while (currToken.second != RIGHT_PARENTHESIS)
+	{
+		if (currToken.second.find("LITERAL") != std::string::npos || currToken.second == IDENTIFIER)
+		{
+			ASTNode* parameterNode = new ASTNode(PARAMETER);
+			functionCallNode->addChild(parameterNode);
+			ASTNode* identifierOrLiteralNode = new ASTNode(currToken.second, currToken.first);
+			parameterNode->addChild(identifierOrLiteralNode);
+			consumeToken();
+			currToken = getCurrentToken();
+		}
+		else
+		{
+			throw std::runtime_error("ERROR: expecting an parameter name or right parenthsis token......");
+		}
+	}
+	if (currToken.second == RIGHT_PARENTHESIS) //check that the token is ')'
+	{
+		consumeToken();
+		currToken = getCurrentToken();
+	}
+	else
+		throw std::runtime_error("excepcted RIGHT PARENTHESIS");
+
+	if (currToken.second != SEMICOLON) //thinking about adding the possibilty to use operators after function call
+	{
+		throw std::runtime_error("ERROR: expected a semicolon...");
+	}
 }
 
 void parser::parseStatement(ASTNode* head)
@@ -495,6 +545,16 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 					return;
 			}
 			return;
+		}
+		else if (currToken.second == IDENTIFIER)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == LEFT_PARENTHESIS)
+			{
+				unconsumeToken();
+				parseFunctionCall(head);
+			}
 		}
 		else
 		{

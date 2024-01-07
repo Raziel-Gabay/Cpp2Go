@@ -61,6 +61,7 @@ public:
 	ASTNode* parseProgram();
 	void parseDeclaration(ASTNode* head);
 	void parseFunctionDeclaration(ASTNode* head);
+	void parseFunctionCall(ASTNode* head);
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
 	void parseElseIfStatment(ASTNode* head);
