@@ -5,6 +5,7 @@ type car struct {
 	year int
 }
 func main () {
+	var numbers [10]int 
 	i := 0
 	if i == 0 {
 		i = 10

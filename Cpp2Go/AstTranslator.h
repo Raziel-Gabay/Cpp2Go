@@ -41,6 +41,8 @@
 #define IMPORT "IMPORT"
 #define IMPORT_DIRECTIVE "IMPORT_DIRECTIVE"
 #define IOSTREAM "iostream"
+#define ARRAY_DECLARATION "ARRAY_DECLARATION"
+#define ARRAY_LENGTH "ARRAY_LENGTH"
 
 class AstTranslator
 {
@@ -65,6 +67,7 @@ public:
 	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 
 	ASTNode* getAST();
 private:

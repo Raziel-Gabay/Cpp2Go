@@ -53,6 +53,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			node->addChild(cppChild);
 		}
+		else if (cppNode->name == ARRAY_DECLARATION)
+		{
+			translateArrayDeclaration(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -314,6 +318,30 @@ void AstTranslator::translateIncludeDirective(ASTNode* sourceNode, ASTNode*& des
 		{
 			ASTNode* libaryName = new ASTNode(IDENTIFIER, "fmt");
 			includeNode->addChild(libaryName);
+		}
+	}
+}
+
+void AstTranslator::translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* arrayDeclarationNode = new ASTNode(ARRAY_DECLARATION);
+	destNode->addChild(arrayDeclarationNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == ARRAY_LENGTH)
+		{
+			ASTNode* arrayLengthNode = new ASTNode(ARRAY_LENGTH);
+			arrayDeclarationNode->addChild(arrayLengthNode);
+		}
+		else if (cppChild->name == INT_LITERAL)
+		{
+			ASTNode* intLiteralNode = new ASTNode(INT_LITERAL);
+			arrayDeclarationNode->addChild(intLiteralNode);
+		}
+		else if (cppChild->name == IDENTIFIER)
+		{
+			ASTNode* ArrayNameNode = new ASTNode(IDENTIFIER);
+			arrayDeclarationNode->addChild(ArrayNameNode);
 		}
 	}
 }

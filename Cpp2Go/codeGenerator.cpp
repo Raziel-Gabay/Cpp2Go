@@ -46,6 +46,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateFunctionCall(child);
 		}
+		else if (child->name == ARRAY_DECLARATION)
+		{
+			generateArrayDeclaration(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -301,6 +305,10 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateFunctionCall(child);
 		}
+		else if (child->name == ARRAY_DECLARATION)
+		{
+			generateArrayDeclaration(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -343,6 +351,31 @@ void codeGenerator::generateIncludeDirective(ASTNode* node)
 			_code += '"';
 			_code += child->value;
 			_code += '"';
+		}
+	}
+}
+
+void codeGenerator::generateArrayDeclaration(ASTNode* node)
+{
+	_code += "var ";
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == IDENTIFIER)
+		{
+			_code += child->value + " ";
+		}
+	}
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == ARRAY_LENGTH)
+		{
+			_code += '[';
+			_code += child->children.back()->value;
+			_code += ']';
+		}
+		if (child->name.find("DATATYPE") != std::string::npos)
+		{
+			_code += child->value + " ";
 		}
 	}
 }
