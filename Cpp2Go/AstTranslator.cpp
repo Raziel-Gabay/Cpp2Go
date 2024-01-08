@@ -49,6 +49,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateIncludeDirective(cppChild, node);
 		}
+		else if (cppChild->name == FUNCTION_CALL)
+		{
+			node->addChild(cppChild);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -120,6 +124,7 @@ void AstTranslator::translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& 
 		}
 	}
 }
+
 
 void AstTranslator::translateStruct(ASTNode* sourceNode, ASTNode*& destNode)
 {
@@ -268,6 +273,10 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
 		{
 			translateStatement(cppChild, blockNode);
+		}
+		else if (cppChild->name == FUNCTION_CALL)
+		{
+			blockNode->addChild(cppChild);
 		}
 		else
 		{

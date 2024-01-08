@@ -42,6 +42,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateIncludeDirective(child);
 		}
+		else if (child->name == FUNCTION_CALL)
+		{
+			generateFunctionCall(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -118,6 +122,35 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 		else
 		{
 			_code += child->value + " ";
+		}
+	}
+}
+
+void codeGenerator::generateFunctionCall(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == IDENTIFIER)
+		{
+			_code += child->value + " (";
+		}
+		else if (child->name == PARAMETER)
+		{
+			_code += child->children.front()->value;
+			if (child != node->children.back())
+				_code += ", ";
+			else
+			{
+				if (_code.back() == WHITESPACE)
+				{
+					_code.pop_back();
+					if (_code.back() == COMMA)
+					{
+						_code.pop_back();
+					}
+				}
+				_code += ")";
+			}				
 		}
 	}
 }
@@ -263,6 +296,10 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			_countTab++;
 			generateStatement(child);
+		}
+		else if (child->name == FUNCTION_CALL)
+		{
+			generateFunctionCall(child);
 		}
 		else
 		{

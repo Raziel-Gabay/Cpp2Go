@@ -66,6 +66,7 @@ ASTNode* parser::parseProgram()
 		else
 		{
 			parseExpression(programNode);
+			parseSemicolon();
 		}
 
 	}
@@ -106,15 +107,7 @@ void parser::parseDeclaration(ASTNode* head)
 		currToken = getCurrentToken();
 	}
 
-	if (currToken.second == SEMICOLON)
-	{
-		consumeToken();
-	}
-	else
-	{
-		throw std::runtime_error("ERROR: expecting an semicolon token...");
-	}
-	
+	parseSemicolon();
 }
 
 void parser::parseFunctionDeclaration(ASTNode* head)
@@ -173,6 +166,15 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 				}
 				consumeToken();
 				currToken = getCurrentToken();
+				if (currToken.second == COMMA)
+				{
+					consumeToken();
+					currToken = getCurrentToken();
+				}
+				else if (currToken.second.find("DATATYPE") != std::string::npos)
+				{
+					throw std::runtime_error("ERROR: expecting an comma or right parenthsis token......");
+				}
 			}
 			else
 			{
@@ -229,11 +231,20 @@ void parser::parseFunctionCall(ASTNode* head)
 		if (currToken.second.find("LITERAL") != std::string::npos || currToken.second == IDENTIFIER)
 		{
 			ASTNode* parameterNode = new ASTNode(PARAMETER);
-			functionCallNode->addChild(parameterNode);
+			functionCallNode->addChild(parameterNode);	
 			ASTNode* identifierOrLiteralNode = new ASTNode(currToken.second, currToken.first);
 			parameterNode->addChild(identifierOrLiteralNode);
 			consumeToken();
 			currToken = getCurrentToken();
+			if (currToken.second == COMMA)
+			{
+				consumeToken();
+				currToken = getCurrentToken();
+			}
+			else if (currToken.second.find("LITERAL") != std::string::npos || currToken.second == IDENTIFIER)
+			{
+				throw std::runtime_error("ERROR: expecting an comma or right parenthsis token......");
+			}
 		}
 		else
 		{
@@ -248,10 +259,7 @@ void parser::parseFunctionCall(ASTNode* head)
 	else
 		throw std::runtime_error("excepcted RIGHT PARENTHESIS");
 
-	if (currToken.second != SEMICOLON) //thinking about adding the possibilty to use operators after function call
-	{
-		throw std::runtime_error("ERROR: expected a semicolon...");
-	}
+	parseSemicolon();
 }
 
 void parser::parseStatement(ASTNode* head)
@@ -485,6 +493,7 @@ void parser::parseForStatement(ASTNode* head)
 	consumeToken();
 	parseDeclaration(initializationNode); // we expect decleration to come (for example: 'int i = 0;')
 	parseExpression(conditionNode); //we expect an expression tp come
+	parseSemicolon();
 	parseModifyOperator(iterationNode); //we expect modify operator to come 
 
 	if (getCurrentToken().second != "RIGHT_PARENTHESIS") //check that the token is ')'
@@ -533,32 +542,39 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		}
 		else if (currToken.second == RIGHT_BRACE)
 		{
-
-			for (token var : _localsVariables)
+			for (auto it = _localsVariables.begin(); it != _localsVariables.end();)
 			{
 				if (num_of_locals)
 				{
-					_localsVariables.erase(var.first);
+					it = _localsVariables.erase(it);
 					num_of_locals--;
 				}
 				if (!num_of_locals)
 					return;
 			}
+
 			return;
 		}
 		else if (currToken.second == IDENTIFIER)
 		{
 			consumeToken();
 			currToken = getCurrentToken();
+			unconsumeToken();
 			if (currToken.second == LEFT_PARENTHESIS)
 			{
-				unconsumeToken();
 				parseFunctionCall(head);
 			}
+			else
+			{
+				parseExpression(head);
+				parseSemicolon();
+			}
+
 		}
 		else
 		{
 			parseExpression(head);
+			parseSemicolon();
 		}
 	}
 
@@ -681,18 +697,6 @@ void parser::parseExpression(ASTNode* head)
 		{
 			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
 		}
-		else if (getCurrentToken().second == SEMICOLON)
-		{
-			if (head->name != "DECLARATION")
-			{
-				consumeToken();
-			}
-			if (getCurrentToken().second == IDENTIFIER && head->name != "INITIALIZATION" && head->name != "CONDITION" && head->name != "DECLARATION")
-			{
-				consumeToken();
-			}
-		}
-
 	}
 }
 
@@ -710,6 +714,19 @@ void parser::parseType(std::string& datatype, ASTNode* head)
 	else
 	{
 		throw std::runtime_error("ERROR: expected a datatype token");
+	}
+}
+
+void parser::parseSemicolon()
+{
+	token currToken = getCurrentToken();
+	if (currToken.second == SEMICOLON)
+	{
+		consumeToken();
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expecting an semicolon token...");
 	}
 }
 
@@ -922,7 +939,7 @@ void parser::parseModifyOperator(ASTNode* head)
 
 token parser::getCurrentToken()
 {
-	if (_currentPosition < _tokensStream.size()) {
+	;	if (_currentPosition < _tokensStream.size()) {
 		return _tokensStream[_currentPosition];
 	}
 	return token("", "");

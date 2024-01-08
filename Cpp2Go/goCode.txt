@@ -14,8 +14,9 @@ func main () {
 		i = 8
 	}
 	i = 7
+	checkEvenOdd (i, 5)
 }
-func checkEvenOdd (num int) {
+func checkEvenOdd (num int, anotherNum int) {
 	if num % 2 == 0 {
 		f := 100
 	} else  {

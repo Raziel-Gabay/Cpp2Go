@@ -31,7 +31,7 @@
 #define INCLUDE_DIRECTIVE "INCLUDE_DIRECTIVE"
 #define LESS_THAN_OPERATOR "LESS_THAN_OPERATOR"
 #define MORE_THAN_OPERATOR "MORE_THAN_OPERATOR"
-
+#define COMMA "COMMA"
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
@@ -74,6 +74,7 @@ public:
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
+	void parseSemicolon();
 
 	void parseArithmeticOperator(const std::string& op, ASTNode* head);
 	void parseRelationalOperator(const std::string& op, ASTNode* head);
