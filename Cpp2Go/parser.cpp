@@ -29,6 +29,11 @@ ASTNode* parser::parseProgram()
 				currToken = getCurrentToken();
 				parseFunctionDeclaration(programNode);
 			}
+			else if (currToken.second == LEFT_SQUARE_PARENTHESIS)
+			{
+				currToken = getCurrentToken();
+				parseArrayDeclaration(programNode);
+			}
 			else
 			{
 				currToken = getCurrentToken();
@@ -532,6 +537,11 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 			{
 				throw std::runtime_error("You Cannot declare a function in a block!");
 			}
+			else if (currToken.second == LEFT_SQUARE_PARENTHESIS)
+			{
+				currToken = getCurrentToken();
+				parseArrayDeclaration(head);
+			}
 			else
 			{
 				currToken = getCurrentToken();
@@ -582,8 +592,9 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 
 void parser::parseIncludeDirective(ASTNode* head)
 {
-	//create an include directive node
 	token currToken = getCurrentToken();
+
+	//create an include directive node
 	ASTNode* includeDirectiveNode = new ASTNode("INCLUDE_DIRECTIVE");
 	
 	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
@@ -611,6 +622,54 @@ void parser::parseIncludeDirective(ASTNode* head)
 	consumeToken();
 
 }
+
+void parser::parseArrayDeclaration(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create an array node, and add it to the head node
+	ASTNode* arrayNode = new ASTNode("ARRAY_DECLARATION");
+	head->addChild(arrayNode);
+
+	ASTNode* arrayLengthNode = new ASTNode("ARRAY_LENGTH"); // create an ast node of the length of the array
+	arrayNode->addChild(arrayLengthNode);
+
+	std::string datatype;
+	parseType(datatype, arrayNode);
+	arrayNode->children.back()->name += "_ARRAY"; //declare that the data type is of an array
+
+	//consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != IDENTIFIER)
+		throw std::runtime_error("excepcted identifier");
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first); // create an ast representing the name of the array
+	arrayNode->addChild(identifierNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != LEFT_SQUARE_PARENTHESIS)
+		throw std::runtime_error("excepcted the char '['");
+	consumeToken();
+	currToken = getCurrentToken();
+	
+	if (currToken.second.find(INT_LITERAL) == std::string::npos)
+		throw std::runtime_error("excepcted int datatype");
+
+	ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first); // create an ast node representing the length of the array
+	arrayLengthNode->addChild(intLiteralNode);
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_SQUARE_PARENTHESIS)
+		throw std::runtime_error("excepcted the char ']'");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	parseSemicolon();
+}
+
 
 void parser::parseExpression(ASTNode* head)
 {

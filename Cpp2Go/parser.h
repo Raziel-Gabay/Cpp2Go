@@ -32,6 +32,11 @@
 #define LESS_THAN_OPERATOR "LESS_THAN_OPERATOR"
 #define MORE_THAN_OPERATOR "MORE_THAN_OPERATOR"
 #define COMMA "COMMA"
+#define DATATYPE_STRING "DATATYPE_STRING"
+#define LEFT_SQUARE_PARENTHESIS "LEFT_SQUARE_PARENTHESIS"
+#define RIGHT_SQUARE_PARENTHESIS "RIGHT_SQUARE_PARENTHESIS"
+#define DATATYPE "DATATYPE"
+
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
@@ -71,6 +76,7 @@ public:
 	void parseForStatement(ASTNode* head);
 	void parseBlock(ASTNode* head, int num_of_locals=0);
 	void parseIncludeDirective(ASTNode* head);
+	void parseArrayDeclaration (ASTNode* head);
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);

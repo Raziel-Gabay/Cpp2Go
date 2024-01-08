@@ -8,6 +8,7 @@ struct car
 
 int main()
 {
+	int cars[4];
 	int i = 0;
 	if(i == 0)
 	{

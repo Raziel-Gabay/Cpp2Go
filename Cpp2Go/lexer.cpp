@@ -23,6 +23,8 @@ tokensMap mapOfTokens =
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
 	{"}", "RIGHT_BRACE"},
+	{"[", "LEFT_SQUARE_PARENTHESIS"},
+	{"]", "RIGHT_SQUARE_PARENTHESIS"},
 	{"=", "ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
 	{"%", "MODULO_OPERATOR"},
