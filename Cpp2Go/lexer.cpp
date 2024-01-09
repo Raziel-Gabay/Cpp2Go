@@ -26,6 +26,14 @@ tokensMap mapOfTokens =
 	{"[", "LEFT_SQUARE_PARENTHESIS"},
 	{"]", "RIGHT_SQUARE_PARENTHESIS"},
 	{"=", "ASSIGNMENT_OPERATOR"},
+	{"+=", "ADDITION_ASSIGNMENT_OPERATOR"},
+	{"-=", "SUBTRACTION_ASSIGNMENT_OPERATOR"},
+	{"*=", "MULTIPLICATION_ASSIGNMENT_OPERATOR"},
+	{"/=", "DIVIDATION_ASSIGNMENT_OPERATOR"},
+	{"%=", "MODULUS_ASSIGNMENT_OPERATOR"},
+	{"&=", "AND_ASSIGNMENT_OPERATOR"},
+	{"|=", "OR_ASSIGNMENT_OPERATOR"},
+	{"^=", "XOR_ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
 	{"%", "MODULO_OPERATOR"},
 	{"#", "HASHTAG_OPERATOR"},
@@ -37,7 +45,21 @@ tokensMap mapOfTokens =
 	{"||", "OR_OPERATOR"},
 	{"++", "INCREMENT_OPERATOR"},
 	{"--", "DECREMENT_OPERATOR"},
-	{",", "COMMA"}
+	{",", "COMMA"},
+	{"+", "ADDITION_OPERATOR"},
+	{"-", "SUBTRACTION_OPERATOR"},
+	{"*", "MULTIPLICATION_OPERATOR"},
+	{"/", "DIVISION_OPERATOR"},
+	{"!", "LOGICAL_NOT_OPERATOR"},
+	{"&", "AND_OPERATOR"},
+	{"|", "OR_OPERATOR"},
+	{"^", "XOR_OPERATOR"},
+	{"~", "BITWISE_NOT_OPERATOR"},
+	{"?", "TERNARY_CONDITIONAL_OPERATOR"},
+	{":", "COLON_OPERATOR"},
+	{";", "SEMICOLON_OPERATOR"},
+	{".", "DOT_OPERATOR"},
+	{"*", "POINTER_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)
@@ -211,7 +233,7 @@ std::string lexer::getToken(std::string& code)
 	}
 
 	// Find the position of the first separator (including newline characters)
-	auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+	auto separatorPos = code.find_first_of(" ,.;:{}[]<>()*");
 
 	// Extract the token up to the first separator (or the end of the string if no separator found)
 	token = code.substr(0, separatorPos);
@@ -295,7 +317,17 @@ tokensVector lexer::createTokenStream(std::string& code)
 		tokensMap::iterator tokenFromMap = searchToken(token);
 		if (isTokensEqual(token, tokenFromMap))
 		{
-			insertToken(token, tokenFromMap, tokenStream);
+			if (tokenStream.size() > 0)
+			{
+				if (tokenStream.back().second.find("DATATYPE") != std::string::npos && token == POINTER)
+				{
+					tokenStream.push_back({ token, "POINTER_OPERATOR" });
+				}
+				else
+					insertToken(token, tokenFromMap, tokenStream);
+			}
+			else
+				insertToken(token, tokenFromMap, tokenStream);
 		}
 		else if (handleBoolLiteralValue(token))
 		{

@@ -6,6 +6,8 @@
 #include <string>
 
 #define FLOAT_POINT '.'
+#define IDENTIFIER "IDENTIFIER"
+#define POINTER "*"
 #define STR "std::string"
 #define STR_LEN 11
 #define IF "if"

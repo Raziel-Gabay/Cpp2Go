@@ -8,11 +8,12 @@ struct car
 
 int main()
 {
+	int* i;
 	int numbers[10];
 	int i = 0;
 	if(i == 0)
 	{
-		i = 10;
+		i = 10 * 1;
 		i = 20;
 	}
 	else

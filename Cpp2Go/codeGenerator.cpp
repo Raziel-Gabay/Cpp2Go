@@ -136,7 +136,7 @@ void codeGenerator::generateFunctionCall(ASTNode* node)
 	{
 		if (child->name == IDENTIFIER)
 		{
-			_code += child->value + " (";
+			_code += child->value + "(";
 		}
 		else if (child->name == PARAMETER)
 		{
