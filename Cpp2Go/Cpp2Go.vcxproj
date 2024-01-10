@@ -130,6 +130,7 @@
     <ClCompile Include="ASTNode.cpp" />
     <ClCompile Include="AstTranslator.cpp" />
     <ClCompile Include="codeGenerator.cpp" />
+    <ClCompile Include="DeclarationParsingImpl.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />

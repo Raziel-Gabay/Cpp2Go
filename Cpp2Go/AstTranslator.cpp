@@ -34,7 +34,7 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		}
 		else if (cppChild->name.find(DATATYPE) != std::string::npos)
 		{
-			translateDeclaration(cppChild, node);
+			translateVariableDeclaration(cppChild, node);
 		}
 		else if (cppChild->name == IF_STATEMENT || cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT ||
 			cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
@@ -64,21 +64,21 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 	}
 }
 
-void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode)
+void AstTranslator::translateVariableDeclaration(ASTNode* sourceNode, ASTNode* &destNode)
 {
-	ASTNode* declarationNode = new ASTNode("DECLARATION");
-	destNode->addChild(declarationNode);
+	ASTNode* variableDeclarationNode = new ASTNode("VARIABLE_DECLARATION");
+	destNode->addChild(variableDeclarationNode);
 	if (sourceNode->children.back()->name == ASSIGNMENT_OPERATOR)
 	{
 		ASTNode* assignmentNode = sourceNode->children.back();
 		if (_identifiers.find(assignmentNode->children.front()->value) != _identifiers.end())
 		{
-			declarationNode->addChild(assignmentNode);
+			variableDeclarationNode->addChild(assignmentNode);
 		}
 		else if (destNode->name == BLOCK || destNode->name == INITIALIZATION)
 		{
 			ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
-			declarationNode->addChild(shortAssignmentNode);
+			variableDeclarationNode->addChild(shortAssignmentNode);
 			shortAssignmentNode->addChild(assignmentNode->children.front());
 			shortAssignmentNode->addChild(assignmentNode->children.back());
 			_identifiers.insert(assignmentNode->children.front()->value);
@@ -87,8 +87,8 @@ void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode
 		else
 		{
 			ASTNode* varNode = new ASTNode(VAR_KEYWORD, "var");
-			declarationNode->addChild(varNode);
-			declarationNode->addChild(assignmentNode);
+			variableDeclarationNode->addChild(varNode);
+			variableDeclarationNode->addChild(assignmentNode);
 			_identifiers.insert(assignmentNode->children.front()->value);
 		}
 		
@@ -96,13 +96,9 @@ void AstTranslator::translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode
 	else
 	{
 		ASTNode* varNode = new ASTNode("VAR_KEYWORD", "var");
-		declarationNode->addChild(varNode);
-		declarationNode->addChild(sourceNode->children.back());
-		declarationNode->addChild(sourceNode->children.front());
-		if (sourceNode->children.front()->name == DATATYPE_STRING)
-		{
-			declarationNode->children.back()->value = "string";
-		}
+		variableDeclarationNode->addChild(varNode);
+		variableDeclarationNode->addChild(sourceNode->children.back());
+		translateType(sourceNode->children.front(), variableDeclarationNode);
 		_identifiers.insert(sourceNode->children.back()->value);
 	}
 }
@@ -250,7 +246,7 @@ void AstTranslator::translateForStatement(ASTNode* sourceNode, ASTNode*& destNod
 		{
 			ASTNode* child = new ASTNode(cppChild->name);
 			forStatementNode->addChild(child);
-			translateDeclaration(cppChild->children.front(), child);
+			translateVariableDeclaration(cppChild->children.front(), child);
 		}
 		else if (cppChild->name == CONDITION || cppChild->name == ITERATION)
 		{
@@ -271,7 +267,7 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 	{
 		if (cppChild->name == DECLARATION)
 		{
-			translateDeclaration(cppChild, blockNode);
+			translateVariableDeclaration(cppChild, blockNode);
 		}
 		else if (cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT || cppChild->name == IF_STATEMENT ||
 				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
@@ -322,6 +318,15 @@ void AstTranslator::translateIncludeDirective(ASTNode* sourceNode, ASTNode*& des
 	}
 }
 
+void AstTranslator::translateType(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	destNode->addChild(sourceNode);
+	if (sourceNode->name == DATATYPE_STRING)
+	{
+		destNode->children.back()->value = "string";
+	}
+}
+
 void AstTranslator::translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode)
 {
 	ASTNode* arrayDeclarationNode = new ASTNode(ARRAY_DECLARATION);
@@ -343,6 +348,47 @@ void AstTranslator::translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& des
 			ASTNode* ArrayNameNode = new ASTNode(IDENTIFIER);
 			arrayDeclarationNode->addChild(ArrayNameNode);
 		}
+	}
+}
+
+void AstTranslator::translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* pointerDeclarationNode = new ASTNode("POINTER_DECLARATION");
+	destNode->addChild(pointerDeclarationNode);
+	if (sourceNode->children.back()->name == ASSIGNMENT_OPERATOR)
+	{
+		ASTNode* assignmentNode = sourceNode->children.back();
+		if (_identifiers.find(assignmentNode->children.front()->value) != _identifiers.end())
+		{
+			pointerDeclarationNode->addChild(assignmentNode);
+		}
+		else if (destNode->name == BLOCK || destNode->name == INITIALIZATION)
+		{
+			ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
+			pointerDeclarationNode->addChild(shortAssignmentNode);
+			shortAssignmentNode->addChild(assignmentNode->children.front());
+			shortAssignmentNode->addChild(assignmentNode->children.back());
+			_identifiers.insert(assignmentNode->children.front()->value);
+
+		}
+		else
+		{
+			ASTNode* varNode = new ASTNode(VAR_KEYWORD, "var");
+			pointerDeclarationNode->addChild(varNode);
+			pointerDeclarationNode->addChild(assignmentNode);
+			_identifiers.insert(assignmentNode->children.front()->value);
+		}
+
+	}
+	else
+	{
+		ASTNode* varNode = new ASTNode(VAR_KEYWORD, "var");
+		//ASTNode* addressNode = sourceNode->children.back();
+		pointerDeclarationNode->addChild(varNode); // added var keyword
+		pointerDeclarationNode->addChild(sourceNode->children.back()); // added identifier
+		pointerDeclarationNode->addChild(sourceNode->children[1]); // added pointer operator
+		translateType(sourceNode->children.front(), pointerDeclarationNode); // add datatype
+		_identifiers.insert(sourceNode->children.back()->value);
 	}
 }
 

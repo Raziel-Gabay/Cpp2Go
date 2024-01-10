@@ -16,7 +16,7 @@ public:
 	void iterativeGenerate(ASTNode* node);
 	
 	void generateCode(ASTNode* node);
-	void generateDeclaration(ASTNode* node);
+	void generateVariableDeclaration(ASTNode* node);
 	void generateFunctionDeclaration(ASTNode* node);
 	void generateFunctionCall(ASTNode* node);
 	void generateStruct(ASTNode* node);

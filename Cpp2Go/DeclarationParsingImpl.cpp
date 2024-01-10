@@ -2,35 +2,33 @@
 
 void parser::parseVariableDeclaration(ASTNode* head)
 {
-	ASTNode* declarationNode = new ASTNode("DECLARATION");
-	head->addChild(declarationNode);
+	ASTNode* variableDeclarationNode = new ASTNode("VARIABLE_DECLARATION");
+	head->addChild(variableDeclarationNode);
 
 	std::string datatype;
-	parseType(datatype, declarationNode);
+	parseType(datatype, variableDeclarationNode);
 
 	token currToken = getCurrentToken();
 
-	if (currToken.second == IDENTIFIER)
-	{
-		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
-		declarationNode->addChild(identifierNode);
-
-		_identifiersTypes.emplace(currToken.first, datatype);
-		if (head->name == "BLOCK")
-			_localsVariables.emplace(currToken.first, datatype);
-		consumeToken();
-		currToken = getCurrentToken();
-	}
-	else
+	if (currToken.second != IDENTIFIER)
 	{
 		throw std::runtime_error("ERROR: expecting an identifier token...");
 	}
+	// create idetifier node and add it to the head node
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	variableDeclarationNode->addChild(identifierNode);
+
+	_identifiersTypes.emplace(currToken.first, datatype);
+	if (head->name == "BLOCK")
+		_localsVariables.emplace(currToken.first, datatype);
+	consumeToken();
+	currToken = getCurrentToken();
+
 	if (currToken.second == ASSIGNMENT_OPERATOR)
 	{
 		unconsumeToken();
-		declarationNode->children.pop_back();
-		parseExpression(declarationNode);
+		variableDeclarationNode->children.pop_back();
+		parseExpression(variableDeclarationNode);
 		currToken = getCurrentToken();
 	}
 
@@ -200,6 +198,17 @@ void parser::parsePointerDeclaration(ASTNode* head)
 		consumeToken();
 		currToken = getCurrentToken();
 	}
+	if (currToken.second != IDENTIFIER)
+	{
+		throw std::runtime_error("ERROR: excepcting an identifier token...");
+	}
+
+	// create idetifier node and add it to the head node
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	pointerDeclarationNode->addChild(identifierNode);
+	consumeToken();
+	currToken = getCurrentToken();
+
 	if (currToken.second == SEMICOLON)
 	{
 		parseSemicolon();

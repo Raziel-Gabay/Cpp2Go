@@ -26,7 +26,7 @@
 #define INITIALIZATION "INITIALIZATION"
 #define ITERATION "ITERATION"
 #define DATATYPE "DATATYPE"
-#define DECLARATION "DECLARATION"
+#define DECLARATION "VARIABLE_DECLARATION"
 #define VAR_KEYWORD "VAR_KEYWORD"
 #define DATATYPE_STRING "DATATYPE_STRING"
 #define PARAMETER "PARAMETER"
@@ -55,8 +55,10 @@ public:
 
 	ASTNode* translateProgram(ASTNode* node);
 	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
-	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateVariableDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
@@ -67,7 +69,8 @@ public:
 	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
-	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
+
 
 	ASTNode* getAST();
 private:

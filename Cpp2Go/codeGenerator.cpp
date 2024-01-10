@@ -27,7 +27,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		}
 		else if (child->name == DECLARATION)
 		{
-			generateDeclaration(child);
+			generateVariableDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
@@ -63,7 +63,7 @@ void codeGenerator::generateCode(ASTNode* node)
 	iterativeGenerate(node);
 }
 
-void codeGenerator::generateDeclaration(ASTNode* node)
+void codeGenerator::generateVariableDeclaration(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
@@ -266,7 +266,7 @@ void codeGenerator::generateForStatement(ASTNode* node)
 	{
 		if (child->name == INITIALIZATION)
 		{
-			generateDeclaration(child->children.front());
+			generateVariableDeclaration(child->children.front());
 			_code += "; ";
 		}
 		else if (child->name == CONDITION)
@@ -293,7 +293,7 @@ void codeGenerator::generateBlock(ASTNode* node)
 		_code += "\t" + std::string(_countTab, '\t');
 		if (child->name == DECLARATION)
 		{
-			generateDeclaration(child);
+			generateVariableDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)

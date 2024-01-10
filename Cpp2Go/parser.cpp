@@ -79,11 +79,6 @@ ASTNode* parser::parseProgram()
 }
 
 
-
-void parser::parsePointer(ASTNode* head)
-{
-}
-
 void parser::parseFunctionCall(ASTNode* head)
 {
 	token currToken = getCurrentToken();
@@ -277,7 +272,7 @@ void parser::parseStruct(ASTNode* head)
 	{
 		if (currToken.second.find("DATATYPE") != std::string::npos)
 		{
-			ASTNode* declarationNode = new ASTNode("DECLARATION");
+			ASTNode* declarationNode = new ASTNode("VARIABLE_DECLARATION");
 			membersNode->addChild(declarationNode);
 			//add the type to the declartion
 			std::string datatype;
