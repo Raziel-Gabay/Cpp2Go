@@ -336,6 +336,9 @@ tokensVector lexer::createTokenStream(std::string& code)
 		}
 		else if (handleIdentifiers(token))
 		{
+			if (tokenStream.back().second == AND_OPERATOR)
+				tokenStream.back().second =  ADDRESS_OF_OPERATOR;
+
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
 		}
