@@ -36,6 +36,8 @@
 #define LEFT_SQUARE_PARENTHESIS "LEFT_SQUARE_PARENTHESIS"
 #define RIGHT_SQUARE_PARENTHESIS "RIGHT_SQUARE_PARENTHESIS"
 #define DATATYPE "DATATYPE"
+#define POINTER_OPERATOR "POINTER_OPERATOR"
+#define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
@@ -64,8 +66,11 @@ public:
 
 	// Parse Functions
 	ASTNode* parseProgram();
-	void parseDeclaration(ASTNode* head);
+	void parseVariableDeclaration(ASTNode* head);
 	void parseFunctionDeclaration(ASTNode* head);
+	void parseArrayDeclaration(ASTNode* head);
+	void parsePointerDeclaration(ASTNode* head);
+	void parsePointer(ASTNode* head);
 	void parseFunctionCall(ASTNode* head);
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
@@ -76,7 +81,6 @@ public:
 	void parseForStatement(ASTNode* head);
 	void parseBlock(ASTNode* head, int num_of_locals=0);
 	void parseIncludeDirective(ASTNode* head);
-	void parseArrayDeclaration (ASTNode* head);
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
