@@ -19,6 +19,8 @@ tokensMap mapOfTokens =
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
+	{"std", "STD_DECLARATION"},
+	{"cout", "COUT_DECLARATION"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -59,7 +61,9 @@ tokensMap mapOfTokens =
 	{":", "COLON_OPERATOR"},
 	{";", "SEMICOLON_OPERATOR"},
 	{".", "DOT_OPERATOR"},
-	{"*", "POINTER_OPERATOR"}
+	{"*", "POINTER_OPERATOR"},
+	{"<<", "INSERTION_OPERATOR"},
+	{"::", "RESOLUTION_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)
@@ -223,7 +227,7 @@ std::string lexer::getToken(std::string& code)
 	}
 
 	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) > 0 || token == HASHTAG) {
+	if (standaloneTokens.count(token) > 0 || token == HASHTAG ) {
 		code.erase(0, 1); // Remove the processed token
 		if (code[0] == ' ' )
 		{

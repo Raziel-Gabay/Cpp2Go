@@ -29,6 +29,7 @@
 #define HASHTAG "#"
 #define INCLUDE "INCLUDE"
 #define INCLUDE_DIRECTIVE "INCLUDE_DIRECTIVE"
+#define INCLUDE_KEYWORD "INCLUDE_KEYWORD"
 #define LESS_THAN_OPERATOR "LESS_THAN_OPERATOR"
 #define MORE_THAN_OPERATOR "MORE_THAN_OPERATOR"
 #define COMMA "COMMA"
@@ -38,6 +39,11 @@
 #define DATATYPE "DATATYPE"
 #define POINTER_OPERATOR "POINTER_OPERATOR"
 #define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
+#define STD_COUT_EXPRESSION "STD_COUT_EXPRESSION"
+#define INSERTION_OPERATOR "INSERTION_OPERATOR"
+#define RESOLUTION_OPERATOR "RESOLUTION_OPERATOR"
+#define STD_DECLARATION "STD_DECLARATION"
+#define COUT_DECLARATION "COUT_DECLARATION"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
@@ -81,6 +87,8 @@ public:
 	void parseForStatement(ASTNode* head);
 	void parseBlock(ASTNode* head, int num_of_locals=0);
 	void parseIncludeDirective(ASTNode* head);
+	
+	void parseStdCout(ASTNode* head);
 
 	void parseExpression(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);

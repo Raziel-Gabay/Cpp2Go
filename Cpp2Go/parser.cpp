@@ -51,7 +51,7 @@ ASTNode* parser::parseProgram()
 			}
 		}
 		else if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
-				currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
+			currToken.second == WHILE_STATEMENT || currToken.second == FOR_STATEMENT)
 		{
 			parseStatement(programNode);
 		}
@@ -63,9 +63,7 @@ ASTNode* parser::parseProgram()
 		{
 			consumeToken();
 			currToken = getCurrentToken();
-			if (currToken.second == INCLUDE)
-				consumeToken();
-				currToken = getCurrentToken();
+			if (currToken.second == INCLUDE_KEYWORD)
 				parseIncludeDirective(programNode);
 		}
 		else if (currToken.second == IDENTIFIER)
@@ -76,6 +74,21 @@ ASTNode* parser::parseProgram()
 			{
 				unconsumeToken();
 				parseFunctionCall(programNode);
+			}
+		}
+		else if (currToken.second == STD_DECLARATION)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == INSERTION_OPERATOR)
+			{
+				consumeToken();
+				currToken = getCurrentToken();
+				if (currToken.second == COUT_DECLARATION)
+				{
+					consumeToken();
+					parseStdCout(programNode);
+				}
 			}
 		}
 		else
@@ -104,7 +117,7 @@ void parser::parseFunctionCall(ASTNode* head)
 		if (currToken.second.find("LITERAL") != std::string::npos || currToken.second == IDENTIFIER)
 		{
 			ASTNode* parameterNode = new ASTNode(PARAMETER);
-			functionCallNode->addChild(parameterNode);	
+			functionCallNode->addChild(parameterNode);
 			ASTNode* identifierOrLiteralNode = new ASTNode(currToken.second, currToken.first);
 			parameterNode->addChild(identifierOrLiteralNode);
 			consumeToken();
@@ -427,7 +440,7 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 				}
 			}
 			num_of_locals++;
-			
+
 		}
 		else if (currToken.second == RIGHT_BRACE)
 		{
@@ -460,6 +473,21 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 			}
 
 		}
+		else if (currToken.second == STD_DECLARATION)
+		{
+			consumeToken();
+			currToken = getCurrentToken();
+			if (currToken.second == INSERTION_OPERATOR)
+			{
+				consumeToken();
+				currToken = getCurrentToken();
+				if (currToken.second == COUT_DECLARATION)
+				{
+					consumeToken();
+					parseStdCout(head);
+				}
+			}
+		}
 		else
 		{
 			parseExpression(head);
@@ -474,17 +502,17 @@ void parser::parseIncludeDirective(ASTNode* head)
 	token currToken = getCurrentToken();
 
 	//create an include directive node
-	ASTNode* includeDirectiveNode = new ASTNode("INCLUDE_DIRECTIVE");
-	
+	ASTNode* includeDirectiveNode = new ASTNode(INCLUDE_DIRECTIVE);
+
 	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
-	
+
 	head->addChild(includeDirectiveNode);
 	includeDirectiveNode->addChild(includeKeyWordNode);
 
 	consumeToken();
 	currToken = getCurrentToken();
 
-	if(getCurrentToken().second != LESS_THAN_OPERATOR)
+	if (getCurrentToken().second != LESS_THAN_OPERATOR)
 		throw std::runtime_error("excepcted the char: '<'");
 
 	consumeToken();
@@ -502,6 +530,46 @@ void parser::parseIncludeDirective(ASTNode* head)
 
 }
 
+void parser::parseStdCout(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create std cout node and add it to the head node
+	ASTNode* stdCoutnode = new ASTNode(STD_COUT_EXPRESSION);
+	head->addChild(stdCoutnode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != STD_DECLARATION)
+		throw std::runtime_error("excepcted: 'std'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != INSERTION_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '::'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != COUT_DECLARATION)
+		throw std::runtime_error("excepcted: 'cout'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+	ASTNode* stdCoutDeclarationNode = new ASTNode("COUT");
+	stdCoutnode->addChild(stdCoutDeclarationNode);
+
+	if (getCurrentToken().second != INSERTION_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '<<'");
+	
+	consumeToken();
+	currToken = getCurrentToken();
+	ASTNode* stringLiteralNode = new ASTNode(currToken.second, currToken.first);
+	stdCoutnode->addChild(stringLiteralNode);
+}
+
 
 void parser::parseExpression(ASTNode* head)
 {
@@ -509,11 +577,11 @@ void parser::parseExpression(ASTNode* head)
 	{
 		consumeToken();
 	}
-	else if (getCurrentToken().second == "LEFT_PARENTHESIS")
+	else if (getCurrentToken().second == LEFT_PARENTHESIS)
 	{
 		consumeToken(); // Consume the '('
 		parseExpression(head);
-		if (getCurrentToken().second == "RIGHT_PARENTHESIS")
+		if (getCurrentToken().second == RIGHT_PARENTHESIS)
 		{
 			consumeToken(); // Consume the ')'
 		}
@@ -526,7 +594,7 @@ void parser::parseExpression(ASTNode* head)
 	{
 		return;
 	}
-	else 
+	else
 	{
 		throw std::runtime_error("ERROR: invalid start of expression");
 	}
@@ -544,7 +612,7 @@ void parser::parseExpression(ASTNode* head)
 			head->children.pop_back();
 			head->addChild(opNode);
 		}
-		else if (!head->children.empty()) 
+		else if (!head->children.empty())
 		{
 			if (LogicalOperators.find(head->children.back()->value) != LogicalOperators.end())
 			{
@@ -583,7 +651,7 @@ void parser::parseExpression(ASTNode* head)
 			parseAccessOperator(op, opNode);
 		}
 		consumeToken();
-		
+
 		if (getCurrentToken().second != SEMICOLON && getCurrentToken().second != "RIGHT_PARENTHESIS" && !isBinaryOperator(getCurrentToken()))
 		{
 			throw std::runtime_error("ERROR: expected a semicolon or right parenthesis");
@@ -766,7 +834,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 
 	if (currToken.second.find(datatype) == std::string::npos)
 	{
-		
+
 		if (currToken.second == IDENTIFIER)
 		{
 			if (datatype == _identifiersTypes.find(currToken.first)->second)

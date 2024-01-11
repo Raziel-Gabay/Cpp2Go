@@ -14,8 +14,7 @@
 #define ELSE "else"
 #define HASHTAG "#"
 #define AND_OPERATOR "AND_OPERATOR"
-#define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
-
+#define ADDRESS_OF_OPERATOR "ADDRESS_OF_OPERATOR"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> tokensMap;
