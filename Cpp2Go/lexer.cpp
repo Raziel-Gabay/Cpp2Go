@@ -19,8 +19,7 @@ tokensMap mapOfTokens =
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
-	{"std", "STD_DECLARATION"},
-	{"cout", "COUT_DECLARATION"},
+	{"std::cout", "STD_COUT_DECLARATION"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -63,7 +62,6 @@ tokensMap mapOfTokens =
 	{".", "DOT_OPERATOR"},
 	{"*", "POINTER_OPERATOR"},
 	{"<<", "INSERTION_OPERATOR"},
-	{"::", "RESOLUTION_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)

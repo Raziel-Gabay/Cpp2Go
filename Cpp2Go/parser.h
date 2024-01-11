@@ -47,8 +47,8 @@
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
+typedef std::map<std::string, std::string> ;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
-typedef std::pair<std::string, std::string> token;
 
 const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/", "%"};
 const std::unordered_set<std::string> RelationalOperators = { "==", "!=", "<", ">", "<=", ">="};
@@ -76,7 +76,6 @@ public:
 	void parseFunctionDeclaration(ASTNode* head);
 	void parseArrayDeclaration(ASTNode* head);
 	void parsePointerDeclaration(ASTNode* head);
-	void parsePointer(ASTNode* head);
 	void parseFunctionCall(ASTNode* head);
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
@@ -102,7 +101,7 @@ public:
 	void parseAccessOperator(const std::string& op, ASTNode* head);
 	void parseModifyOperator(ASTNode* head);
 	bool isUnaryOperator(const token& t);
-
+	bool isFunctionExists();
 	//get functions
 	token getCurrentToken();
 	ASTNode* getAST();
@@ -110,6 +109,8 @@ private:
 	tokensVector _tokensStream;
 	identifiersVector _identifiersTypes;
 	identifiersVector _localsVariables;
+	std::map<std::string, std::string> _functionIdentifiers;
+	std::vector<std::string> _functionCalls;
 	size_t _currentPosition;
 	ASTNode* _astRoot;
 

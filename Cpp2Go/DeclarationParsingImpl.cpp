@@ -57,6 +57,9 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 	// create idetifier node and add it to the head node
 	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
 	functionDeclarationNode->addChild(identifierNode);
+
+	_functionIdentifiers.emplace(currToken.first, returnValueNode->children.front()->value);
+
 	consumeToken();
 	currToken = getCurrentToken();
 

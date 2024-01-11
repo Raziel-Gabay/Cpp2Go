@@ -109,6 +109,7 @@ void parser::parseFunctionCall(ASTNode* head)
 	ASTNode* functionNameNode = new ASTNode(currToken.second, currToken.first);
 	head->addChild(functionCallNode);
 	functionCallNode->addChild(functionNameNode);
+	_functionCalls.push_back(currToken.first);
 
 	consumeToken(2);
 	currToken = getCurrentToken();
@@ -985,4 +986,17 @@ bool parser::isUnaryOperator(const token& t)
 {
 	const std::unordered_set<std::string> unaryOperators = { "+", "-", "!" /* Add other unary operators as needed */ };
 	return (t.second.find("OPERATOR") && unaryOperators.find(t.first) != unaryOperators.end());
+}
+
+bool parser::isFunctionExists()
+{
+	for (std::string functionCall : _functionCalls)
+	{
+		if (_functionIdentifiers.find(functionCall) == _functionIdentifiers.end())
+		{
+			return false;
+		}
+
+	}
+	return true;
 }
