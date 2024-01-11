@@ -206,6 +206,9 @@ void parser::parsePointerDeclaration(ASTNode* head)
 	// create idetifier node and add it to the head node
 	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
 	pointerDeclarationNode->addChild(identifierNode);
+	_identifiersTypes.emplace(currToken.first, datatype);
+	if (head->name == "BLOCK")
+		_localsVariables.emplace(currToken.first, datatype);
 	consumeToken();
 	currToken = getCurrentToken();
 

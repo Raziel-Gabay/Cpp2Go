@@ -18,6 +18,7 @@ public:
 	void generateCode(ASTNode* node);
 	void generateVariableDeclaration(ASTNode* node);
 	void generateFunctionDeclaration(ASTNode* node);
+	void generatePointerDeclaration(ASTNode* node);
 	void generateFunctionCall(ASTNode* node);
 	void generateStruct(ASTNode* node);
 	void generateStatement(ASTNode* node);

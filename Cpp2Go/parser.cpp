@@ -21,8 +21,7 @@ ASTNode* parser::parseProgram()
 		{
 			consumeToken(2);
 			currToken = getCurrentToken();
-			unconsumeToken();
-			unconsumeToken();
+			unconsumeToken(2);
 
 			if (currToken.second == LEFT_PARENTHESIS)
 			{
@@ -36,8 +35,19 @@ ASTNode* parser::parseProgram()
 			}
 			else
 			{
+				consumeToken();
 				currToken = getCurrentToken();
-				parseVariableDeclaration(programNode);
+				unconsumeToken();
+				if (currToken.second == POINTER_OPERATOR)
+				{
+					currToken = getCurrentToken();
+					parsePointerDeclaration(programNode);
+				}
+				else
+				{
+					currToken = getCurrentToken();
+					parseVariableDeclaration(programNode);
+				}
 			}
 		}
 		else if (currToken.second == IF_STATEMENT || currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT ||
@@ -402,10 +412,21 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 			}
 			else
 			{
+				consumeToken();
 				currToken = getCurrentToken();
-				parseVariableDeclaration(head);
-				num_of_locals++;
+				unconsumeToken();
+				if (currToken.second == POINTER_OPERATOR)
+				{
+					currToken = getCurrentToken();
+					parsePointerDeclaration(head);
+				}
+				else
+				{
+					currToken = getCurrentToken();
+					parseVariableDeclaration(head);
+				}
 			}
+			num_of_locals++;
 			
 		}
 		else if (currToken.second == RIGHT_BRACE)
@@ -859,6 +880,14 @@ void parser::unconsumeToken()
 	if (_currentPosition > 0)
 	{
 		--_currentPosition;
+	}
+}
+
+void parser::unconsumeToken(size_t n)
+{
+	if ((_currentPosition - n) > 0)
+	{
+		_currentPosition -= n;
 	}
 }
 

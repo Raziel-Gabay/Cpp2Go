@@ -8,7 +8,8 @@ struct car
 
 int main()
 {
-	int* i;
+	int r = 5;
+	int* i = &r;
 	int numbers[10];
 	int i = 0;
 	if(i == 0)

@@ -109,6 +109,7 @@ private:
 	void consumeToken();
 	void consumeToken(size_t n);
 	void unconsumeToken();
+	void unconsumeToken(size_t n);
 	bool isBinaryOperator(token t);
 };
 

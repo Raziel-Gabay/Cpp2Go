@@ -32,9 +32,13 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateBlock(cppChild, node);
 		}
-		else if (cppChild->name.find(DATATYPE) != std::string::npos)
+		else if (cppChild->name == VARIABLE_DECLARATION)
 		{
 			translateVariableDeclaration(cppChild, node);
+		}
+		else if (cppChild->name == POINTER_DECLARATION)
+		{
+			translatePointerDeclaration(cppChild, node);
 		}
 		else if (cppChild->name == IF_STATEMENT || cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT ||
 			cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
@@ -146,7 +150,7 @@ void AstTranslator::translateStruct(ASTNode* sourceNode, ASTNode*& destNode)
 			structNode->addChild(membersNode);
 			for (ASTNode* member : cppChild->children)
 			{
-				if (member->name == DECLARATION)
+				if (member->name == VARIABLE_DECLARATION)
 				{
 					ASTNode* goMember = member;
 					if (goMember->children.front()->name == DATATYPE_STRING)
@@ -265,9 +269,13 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 	destNode->addChild(blockNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
-		if (cppChild->name == DECLARATION)
+		if (cppChild->name == VARIABLE_DECLARATION)
 		{
 			translateVariableDeclaration(cppChild, blockNode);
+		}
+		else if (cppChild->name == POINTER_DECLARATION)
+		{
+			translatePointerDeclaration(cppChild, blockNode);
 		}
 		else if (cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT || cppChild->name == IF_STATEMENT ||
 				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)

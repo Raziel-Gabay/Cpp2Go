@@ -25,9 +25,13 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateBlock(child);
 		}
-		else if (child->name == DECLARATION)
+		else if (child->name == VARIABLE_DECLARATION)
 		{
 			generateVariableDeclaration(child);
+		}
+		else if (child->name == POINTER_DECLARATION)
+		{
+			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
@@ -122,6 +126,25 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 				}
 			}
 			generateBlock(child);
+		}
+		else
+		{
+			_code += child->value + " ";
+		}
+	}
+}
+
+void codeGenerator::generatePointerDeclaration(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == ASSIGNMENT_OPERATOR || child->name == SHORT_ASSIGNMENT_OPERATOR)
+		{
+			generateExpression(child);
+		}
+		else if (child->name == POINTER_OPERATOR)
+		{
+			_code += child->value;
 		}
 		else
 		{
@@ -291,9 +314,13 @@ void codeGenerator::generateBlock(ASTNode* node)
 	for (ASTNode* child : node->children)
 	{
 		_code += "\t" + std::string(_countTab, '\t');
-		if (child->name == DECLARATION)
+		if (child->name == VARIABLE_DECLARATION)
 		{
 			generateVariableDeclaration(child);
+		}
+		else if (child->name == POINTER_DECLARATION)
+		{
+			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
@@ -323,6 +350,13 @@ void codeGenerator::generateBlock(ASTNode* node)
 void codeGenerator::generateExpression(ASTNode* node)
 {
 	_code += node->children.front()->value + " " +  node->value + " " + node->children.back()->value;
+	if (node->children.back()->name == ADDRESS_OF_OPERATOR)
+	{
+		if (node->children.back()->children.size() > 0)
+		{
+			_code += node->children.back()->children.front()->value;
+		}
+	}
 }
 
 void codeGenerator::generateExpression(std::vector<ASTNode*> nodes)
