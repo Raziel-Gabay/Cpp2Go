@@ -5,6 +5,7 @@ type car struct {
 	year int
 }
 func main () {
+	  "s"
 	r := 5
 	i := &r
 	var numbers [10]int 

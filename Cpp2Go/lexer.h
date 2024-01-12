@@ -8,8 +8,10 @@
 #define FLOAT_POINT '.'
 #define IDENTIFIER "IDENTIFIER"
 #define POINTER "*"
-#define STR "std::string"
+#define STR_KEYWORD "std::string"
 #define STR_LEN 11
+#define STD_COUT_KEYWORD "std::cout"
+#define STD_COUT_LEN 9
 #define IF "if"
 #define ELSE "else"
 #define HASHTAG "#"

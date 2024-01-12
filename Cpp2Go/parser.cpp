@@ -76,20 +76,9 @@ ASTNode* parser::parseProgram()
 				parseFunctionCall(programNode);
 			}
 		}
-		else if (currToken.second == STD_DECLARATION)
+		else if (currToken.second == STD_COUT_DECLARATION)
 		{
-			consumeToken();
-			currToken = getCurrentToken();
-			if (currToken.second == INSERTION_OPERATOR)
-			{
-				consumeToken();
-				currToken = getCurrentToken();
-				if (currToken.second == COUT_DECLARATION)
-				{
-					consumeToken();
-					parseStdCout(programNode);
-				}
-			}
+			parseStdCout(programNode);
 		}
 		else
 		{
@@ -289,20 +278,9 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 			}
 
 		}
-		else if (currToken.second == STD_DECLARATION)
+		else if (currToken.second == STD_COUT_DECLARATION)
 		{
-			consumeToken();
-			currToken = getCurrentToken();
-			if (currToken.second == INSERTION_OPERATOR)
-			{
-				consumeToken();
-				currToken = getCurrentToken();
-				if (currToken.second == COUT_DECLARATION)
-				{
-					consumeToken();
-					parseStdCout(head);
-				}
-			}
+			parseStdCout(head);
 		}
 		else
 		{
@@ -351,35 +329,23 @@ void parser::parseStdCout(ASTNode* head)
 	token currToken = getCurrentToken();
 
 	//create std cout node and add it to the head node
-	ASTNode* stdCoutnode = new ASTNode(STD_COUT_EXPRESSION);
+	ASTNode* stdCoutnode = new ASTNode(STD_COUT_DECLARATION);
 	head->addChild(stdCoutnode);
 
-	consumeToken();
-	currToken = getCurrentToken();
-
-	if (getCurrentToken().second != STD_DECLARATION)
-		throw std::runtime_error("excepcted: 'std'");
+	if (getCurrentToken().second != STD_COUT_DECLARATION)
+		throw std::runtime_error("excepcted: 'std::cout'");
 
 	consumeToken();
 	currToken = getCurrentToken();
-
-	if (getCurrentToken().second != INSERTION_OPERATOR)
-		throw std::runtime_error("excepcted the operator: '::'");
-
-	consumeToken();
-	currToken = getCurrentToken();
-
-	if (getCurrentToken().second != COUT_DECLARATION)
-		throw std::runtime_error("excepcted: 'cout'");
-
-	consumeToken();
-	currToken = getCurrentToken();
-	ASTNode* stdCoutDeclarationNode = new ASTNode("COUT");
-	stdCoutnode->addChild(stdCoutDeclarationNode);
 
 	if (getCurrentToken().second != INSERTION_OPERATOR)
 		throw std::runtime_error("excepcted the operator: '<<'");
+
+	ASTNode* stdCoutDeclarationNode = new ASTNode("STD_COUT");
+	stdCoutnode->addChild(stdCoutDeclarationNode);
+
 	
+
 	consumeToken();
 	currToken = getCurrentToken();
 	ASTNode* stringLiteralNode = new ASTNode(currToken.second, currToken.first);

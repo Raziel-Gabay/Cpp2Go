@@ -194,12 +194,19 @@ std::string lexer::getToken(std::string& code)
 
 	// check if the token is string
 	token = code.substr(0, STR_LEN);
-	if ( token == STR)
+	if ( token == STR_KEYWORD)
 	{
 		code.erase(0, STR_LEN + 1);
 		return token;
 	}
 
+	//check if the token is std::cout
+	token = code.substr(0, STD_COUT_LEN);
+	if (token == STD_COUT_KEYWORD)
+	{
+		code.erase(0, STD_COUT_LEN + 1);
+		return token;
+	}
 
 	// Get the 2 first characters
 	token = code.substr(0, 2);
