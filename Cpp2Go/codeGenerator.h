@@ -32,6 +32,7 @@ public:
 	void generateExpression(std::vector<ASTNode*> nodes);
 	void generateIncludeDirective(ASTNode* node);
 	void generateArrayDeclaration(ASTNode* node);
+	void generateStdCout(ASTNode* node);
 
 	std::string getCode();
 private:

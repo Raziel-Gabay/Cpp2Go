@@ -46,6 +46,11 @@
 #define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
 #define POINTER_DECLARATION "POINTER_DECLARATION"
 #define POINTER_OPERATOR "POINTER_OPERATOR"
+#define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
+#define STD_COUT "STD_COUT"
+#define FMT_PRINTLN "FMT_PRINTLN"
+#define PRINTLN "PRINTLN"
+#define STRING_LITERAL "STRING_LITERAL"
 
 class AstTranslator
 {
@@ -73,7 +78,7 @@ public:
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
-
+	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
 
 	ASTNode* getAST();
 private:

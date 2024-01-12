@@ -54,6 +54,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
+		else if (child->name == FMT_PRINTLN)
+		{
+			generateStdCout(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -336,6 +340,10 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
+		else if (child->name == FMT_PRINTLN)
+		{
+			generateStdCout(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -410,6 +418,23 @@ void codeGenerator::generateArrayDeclaration(ASTNode* node)
 		if (child->name.find("DATATYPE") != std::string::npos)
 		{
 			_code += child->value + " ";
+		}
+	}
+}
+
+void codeGenerator::generateStdCout(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == PRINTLN)
+		{
+			_code += "fmt.Println";
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			_code += "(";
+			_code += child->value;
+			_code += '")';
 		}
 	}
 }

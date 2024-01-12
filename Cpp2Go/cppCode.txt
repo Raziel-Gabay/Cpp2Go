@@ -8,7 +8,7 @@ struct car
 
 int main()
 {
-	std::cout << "s";
+	std::cout << "a";
 	int r = 5;
 	int* i = &r;
 	int numbers[10];

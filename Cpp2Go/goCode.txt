@@ -5,7 +5,9 @@ type car struct {
 	year int
 }
 func main () {
-	  "s"
+	fmt.Println("shilo")
+	fmt.Println("dfjcskdvnkfjdvnjfdksvbs")
+	fmt.Println("a")
 	r := 5
 	i := &r
 	var numbers [10]int 

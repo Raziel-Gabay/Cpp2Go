@@ -61,6 +61,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateArrayDeclaration(cppChild, node);
 		}
+		else if (cppNode->name == STD_COUT_DECLARATION)
+		{
+			translateStdCout(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -286,6 +290,10 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			blockNode->addChild(cppChild);
 		}
+		else if (cppChild->name == STD_COUT_DECLARATION)
+		{
+			translateStdCout(cppChild, blockNode);
+		}
 		else
 		{
 			translateExpression(cppChild, blockNode);
@@ -332,6 +340,25 @@ void AstTranslator::translateType(ASTNode* sourceNode, ASTNode*& destNode)
 	if (sourceNode->name == DATATYPE_STRING)
 	{
 		destNode->children.back()->value = "string";
+	}
+}
+
+void AstTranslator::translateStdCout(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* fmtprintLnNode = new ASTNode(FMT_PRINTLN);
+	destNode->addChild(fmtprintLnNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == STD_COUT)
+		{
+			ASTNode* printLnNode = new ASTNode(PRINTLN);
+			fmtprintLnNode->addChild(printLnNode);
+		}
+		else if (cppChild->name == STRING_LITERAL)
+		{
+			ASTNode* stringLiteralNode = new ASTNode(STRING_LITERAL, cppChild->value);
+			fmtprintLnNode->addChild(stringLiteralNode);
+		}
 	}
 }
 
