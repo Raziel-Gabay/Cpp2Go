@@ -133,6 +133,7 @@
     <ClCompile Include="DeclarationParsingImpl.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OperatorParsingImpl.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="StatementParsingImpl.cpp" />
   </ItemGroup>
