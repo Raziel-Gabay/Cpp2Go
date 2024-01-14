@@ -201,7 +201,7 @@ void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand after bitwise operator.");
 	}	
-	ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first);
+	intLiteralNode = new ASTNode(currToken.second, currToken.first);
 	head->addChild(intLiteralNode);
 	
 }
@@ -275,7 +275,7 @@ void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier after Access Operator...");
 	}
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	identifierNode = new ASTNode(currToken.second, currToken.first);
 	head->addChild(identifierNode);
 
 }

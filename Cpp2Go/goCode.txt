@@ -5,8 +5,7 @@ type car struct {
 	year int
 }
 func main () {
-	fmt.Println("shilo")
-	fmt.Println("dfjcskdvnkfjdvnjfdksvbs")
+	var cars [4]std::string 
 	fmt.Println("a")
 	r := 5
 	i := &r
