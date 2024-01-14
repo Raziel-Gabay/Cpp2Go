@@ -25,6 +25,9 @@ int main()
 	}
 	i = 7;
 	checkEvenOdd(i, 5);
+	for (int s = 0; s < 10; s++)
+	{
+	}
 }
 
 void checkEvenOdd(int num, int anotherNum)

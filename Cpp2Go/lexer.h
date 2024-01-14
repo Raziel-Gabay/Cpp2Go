@@ -37,6 +37,8 @@ public:
 	static bool handleStringLiteralValue(std::string stringDataTypeToken);
 	static bool handleBoolLiteralValue(std::string boolDataTypeToken);
 	static std::string getToken(std::string& code);
+	static std::string elseCheck(std::string& code, size_t separatorPos, std::string token);
+	static void floatCheck(std::string& code, size_t& separatorPos, std::string& token);
 	static tokensMap::iterator searchToken(std::string token);
 	static bool isTokensEqual(std::string token, tokensMap::iterator tokenFromMap);
 	static void insertToken(std::string token, tokensMap::iterator tokenFromMap, tokensVector& codeTokensMap);

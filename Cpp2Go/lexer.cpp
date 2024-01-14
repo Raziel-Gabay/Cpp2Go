@@ -260,36 +260,10 @@ std::string lexer::getToken(std::string& code)
 
 	if (token == ELSE)
 	{
-		if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
-		{
-			code.erase(0, separatorPos + 1);
-		}
-		else
-		{
-			code.erase(0, separatorPos);
-		}
-		auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
-		std::string next_token = code.substr(0, separatorPos);
-		if (next_token == IF)
-		{
-			token += " " + next_token;
-			code.erase(0, separatorPos + 1);
-			return token;
-		}
-		else
-		{
-			return token;
-		}
+		return elseCheck(code, separatorPos, token);
+	}
 
-	}
-	//handling float
-	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
-	{
-		token += FLOAT_POINT;
-		code.erase(0, separatorPos + 1);
-		separatorPos = code.find_first_of(" ,.;:{}[]<>()");
-		token += code.substr(0, separatorPos);
-	}
+	floatCheck(code, separatorPos, token);
 	// Remove the processed token (including the separator, if any)
 	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
 	{
@@ -300,6 +274,43 @@ std::string lexer::getToken(std::string& code)
 		code.erase(0, separatorPos);
 	}
 	return token;
+}
+
+std::string lexer::elseCheck(std::string& code, size_t separatorPos, std::string token)
+{
+
+	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
+	{
+		code.erase(0, separatorPos + 1);
+	}
+	else
+	{
+		code.erase(0, separatorPos);
+	}
+	separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+	std::string next_token = code.substr(0, separatorPos);
+	if (next_token == IF)
+	{
+		token += " " + next_token;
+		code.erase(0, separatorPos + 1);
+		return token;
+	}
+	else
+	{
+		return token;
+	}
+}
+
+void lexer::floatCheck(std::string& code, size_t& separatorPos, std::string& token)
+{
+	//handling float
+	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
+	{
+		token += FLOAT_POINT;
+		code.erase(0, separatorPos + 1);
+		separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+		token += code.substr(0, separatorPos);
+	}
 }
 
 tokensMap::iterator lexer::searchToken(std::string token)

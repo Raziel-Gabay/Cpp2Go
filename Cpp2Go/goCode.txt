@@ -5,7 +5,6 @@ type car struct {
 	year int
 }
 func main () {
-	var cars [4]std::string 
 	fmt.Println("a")
 	r := 5
 	i := &r
@@ -21,6 +20,8 @@ func main () {
 	}
 	i = 7
 	checkEvenOdd(i, 5)
+	for s := 0; s < 10; s++ {
+	}
 }
 func checkEvenOdd (num int, anotherNum int) {
 	if num % 2 == 0 {

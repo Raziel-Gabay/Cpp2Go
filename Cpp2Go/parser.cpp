@@ -355,36 +355,30 @@ void parser::parseStdCout(ASTNode* head)
 void parser::parseType(std::string& datatype, ASTNode* head)
 {
 	token currToken = getCurrentToken();
-	if (currToken.second.find("DATATYPE") != std::string::npos)
-	{
-		consumeToken();
-		datatype = currToken.second.substr(currToken.second.find("_") + 1);
-		//create ast node
-		ASTNode* dataTypeNode = new ASTNode(currToken.second, currToken.first);
-		head->addChild(dataTypeNode);
-	}
-	else
+	if (currToken.second.find("DATATYPE") == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: expected a datatype token");
 	}
+	consumeToken();
+	datatype = currToken.second.substr(currToken.second.find("_") + 1);
+	//create ast node
+	ASTNode* dataTypeNode = new ASTNode(currToken.second, currToken.first);
+	head->addChild(dataTypeNode);
 }
 
 void parser::parseSemicolon()
 {
 	token currToken = getCurrentToken();
-	if (currToken.second == SEMICOLON)
-	{
-		consumeToken();
-	}
-	else
+	if (currToken.second != SEMICOLON)
 	{
 		throw std::runtime_error("ERROR: expecting an semicolon token...");
 	}
+	consumeToken();
 }
 
 token parser::getCurrentToken()
 {
-	;	if (_currentPosition < _tokensStream.size()) {
+	if (_currentPosition < _tokensStream.size()) {
 		return _tokensStream[_currentPosition];
 	}
 	return token("", "");

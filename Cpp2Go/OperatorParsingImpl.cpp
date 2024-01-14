@@ -2,28 +2,11 @@
 
 void parser::parseExpression(ASTNode* head)
 {
-	if (isUnaryOperator(getCurrentToken()) || getCurrentToken().second == IDENTIFIER || getCurrentToken().second.find(LITERAL) != std::string::npos)
-	{
-		consumeToken();
-	}
-	else if (getCurrentToken().second == LEFT_PARENTHESIS)
-	{
-		consumeToken(); // Consume the '('
-		parseExpression(head);
-		if (getCurrentToken().second != RIGHT_PARENTHESIS)
-		{
-			throw std::runtime_error("ERROR: expected a right parenthesis");
-		}
-		consumeToken(); // Consume the ')'
-	}
-	else if (getCurrentToken().second == RIGHT_BRACE)
-	{
-		return;
-	}
-	else
+	if (!isUnaryOperator(getCurrentToken()) && getCurrentToken().second != IDENTIFIER && getCurrentToken().second.find(LITERAL) == std::string::npos)
 	{
 		throw std::runtime_error("ERROR: invalid start of expression");
 	}
+	consumeToken();
 
 	while (isBinaryOperator(getCurrentToken()))
 	{
