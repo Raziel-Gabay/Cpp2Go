@@ -37,8 +37,14 @@ public:
 	static bool handleStringLiteralValue(std::string stringDataTypeToken);
 	static bool handleBoolLiteralValue(std::string boolDataTypeToken);
 	static std::string getToken(std::string& code);
-	static std::string elseCheck(std::string& code, size_t separatorPos, std::string token);
-	static void floatCheck(std::string& code, size_t& separatorPos, std::string& token);
+	static bool isStringType(std::string& code, std::string& token);
+	static bool isStdCout(std::string& code, std::string& token);
+	static bool isOperatorWithTwoChars(std::string& code, std::string& token);
+	static bool isStringLiteral(std::string& code, std::string& token);
+	static bool isStandaloneToken(std::string& code, std::string& token);
+	static bool isUnaryOperator(std::string& code, size_t& separatorPos, std::string& token);
+	static bool isElse(std::string& code, size_t& separatorPos, std::string token);
+	static bool isFloat(std::string& code, size_t& separatorPos, std::string& token);
 	static tokensMap::iterator searchToken(std::string token);
 	static bool isTokensEqual(std::string token, tokensMap::iterator tokenFromMap);
 	static void insertToken(std::string token, tokensMap::iterator tokenFromMap, tokensVector& codeTokensMap);
