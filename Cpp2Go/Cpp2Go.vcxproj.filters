@@ -45,6 +45,12 @@
     <ClCompile Include="StatementCodeGenerating.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeclarationCodeGeneratingImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OperatorCodeGeneratingImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexer.h">
