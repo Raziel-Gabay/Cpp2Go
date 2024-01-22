@@ -67,6 +67,7 @@ public:
 	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);

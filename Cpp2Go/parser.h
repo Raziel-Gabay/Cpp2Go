@@ -44,7 +44,7 @@
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
-typedef std::map<std::string, std::string> ;
+typedef std::map<std::string, std::string>;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
 
 const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/", "%"};
