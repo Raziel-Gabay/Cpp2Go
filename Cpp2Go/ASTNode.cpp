@@ -5,8 +5,18 @@ ASTNode::ASTNode(const std::string& nodeName, const std::string& nodeValue)
 {
 }
 
+ASTNode::ASTNode(ASTNode* otherAst)
+	: name(otherAst->name), value(otherAst->value)
+{
+
+}
+
 ASTNode::~ASTNode()
 {
+	for (auto child : this->children) 
+	{
+		delete child;
+	}
 }
 
 void ASTNode::addChild(ASTNode* childNode)

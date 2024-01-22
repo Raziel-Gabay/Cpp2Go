@@ -8,6 +8,7 @@ codeGenerator::codeGenerator(ASTNode* destNode)
 
 codeGenerator::~codeGenerator()
 {
+	delete _destNode;
 }
 
 void codeGenerator::iterativeGenerate(ASTNode* node)

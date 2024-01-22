@@ -1,14 +1,14 @@
 import "fmt"
 type car struct {
-	brand string
-	model string
-	year int
+	string string
+	string string
+	int int
 }
 func main () {
 	fmt.Println("a")
 	r := 5
-	i := &r
-	var numbers [10]int 
+	i := &
+	var numbers [10]
 	i = 0
 	if i == 0 {
 		i = 10
@@ -19,12 +19,11 @@ func main () {
 		i = 8
 	}
 	i = 7
-	checkEvenOdd(i, 5)
-	for s := 0; s < 10; s++ {
+	for s := 0; s < 10;  {
 	}
 }
-func checkEvenOdd (num int, anotherNum int) {
-	if num % 2 == 0 {
+func checkEvenOdd (int int, int int) {
+	if num % 2 {
 		f := 100
 	} else  {
 		k := 400
