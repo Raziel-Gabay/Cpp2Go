@@ -138,6 +138,7 @@
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="StatementCodeGenerating.cpp" />
     <ClCompile Include="StatementParsingImpl.cpp" />
+    <ClCompile Include="StatementTranslatingImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASTNode.h" />
