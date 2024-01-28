@@ -63,20 +63,28 @@ public:
 
 	ASTNode* translateProgram(ASTNode* node);
 	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
+
+	// declaration translate
 	void translateVariableDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
 	void translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
-	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
-	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
+	
+	// statement translate
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
+	
+	// expression translate
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+
+	// other translate
+	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateBlock(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
