@@ -135,6 +135,7 @@
     <ClCompile Include="DeclarationTranslatingImpl.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OperatorCodeGeneratingImpl.cpp" />
     <ClCompile Include="OperatorParsingImpl.cpp" />
     <ClCompile Include="OperatorTranslatingImpl.cpp" />
     <ClCompile Include="parser.cpp" />
