@@ -1,3 +1,5 @@
+#include "AstTranslator.h"
+
 void AstTranslator::translateStatement(ASTNode* sourceNode, ASTNode*& destNode)
 {
 	if (sourceNode->name == IF_STATEMENT)

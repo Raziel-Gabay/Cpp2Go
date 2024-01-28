@@ -67,7 +67,7 @@ void parser::parseIfStatment(ASTNode* head)
 	if (currToken.second != LEFT_BRACE) //check that the token is '{'
 		throw std::runtime_error("excepcted LEFT BRACE");
 	consumeToken();
-	parseBlock(blockNode); //the block part of the tree
+		parseBlock(blockNode); //the block part of the tree
 	currToken = getCurrentToken();
 
 	if (currToken.second != RIGHT_BRACE) //check that the token is '}'

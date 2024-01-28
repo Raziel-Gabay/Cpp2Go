@@ -7,7 +7,7 @@ type car struct {
 func main () {
 	fmt.Println("a")
 	r := 5
-	i := &
+	i := &r
 	var numbers [10]
 	i = 0
 	if i == 0 {

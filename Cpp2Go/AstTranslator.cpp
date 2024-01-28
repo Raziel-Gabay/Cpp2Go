@@ -193,6 +193,27 @@ void AstTranslator::translateStdCout(ASTNode* sourceNode, ASTNode*& destNode)
 	}
 }
 
+void AstTranslator::translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* functionCallNode = new ASTNode(sourceNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == IDENTIFIER)
+		{
+			ASTNode* identifierNode = new ASTNode(cppChild);
+			functionCallNode->addChild(identifierNode);
+		}
+		else if (cppChild->name == PARAMETER)
+		{
+			ASTNode* parameterNode = new ASTNode(cppChild);
+			ASTNode* parameterChildNode = new ASTNode(cppChild->children.front());
+			parameterNode->addChild(parameterChildNode);
+			functionCallNode->addChild(parameterNode);
+		}
+	}
+}
+
+
 ASTNode* AstTranslator::getAST()
 {
 	return _astRoot;

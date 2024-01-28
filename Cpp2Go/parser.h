@@ -69,27 +69,22 @@ public:
 
 	// Parse Functions
 	ASTNode* parseProgram();
+	// declaration parsing
 	void parseVariableDeclaration(ASTNode* head);
 	void parseFunctionDeclaration(ASTNode* head);
 	void parseArrayDeclaration(ASTNode* head);
 	void parsePointerDeclaration(ASTNode* head);
-	void parseFunctionCall(ASTNode* head);
+
+	// statement parsing
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
 	void parseElseIfStatment(ASTNode* head);
 	void parseElseStatment(ASTNode* head);
-	void parseStruct(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
-	void parseBlock(ASTNode* head, int num_of_locals=0);
-	void parseIncludeDirective(ASTNode* head);
-	
-	void parseStdCout(ASTNode* head);
 
+	// operator parsing
 	void parseExpression(ASTNode* head);
-	void parseType(std::string& datatype, ASTNode* head);
-	void parseSemicolon();
-
 	void parseArithmeticOperator(const std::string& op, ASTNode* head);
 	void parseRelationalOperator(const std::string& op, ASTNode* head);
 	void parseLogicalOperator(const std::string& op, ASTNode* head);
@@ -98,6 +93,16 @@ public:
 	void parseAccessOperator(const std::string& op, ASTNode* head);
 	void parseModifyOperator(ASTNode* head);
 	bool isUnaryOperator(const token& t);
+
+	// other parsing
+	void parseFunctionCall(ASTNode* head);
+	void parseStruct(ASTNode* head);
+	void parseBlock(ASTNode* head, int num_of_locals = 0);
+	void parseIncludeDirective(ASTNode* head);
+	void parseStdCout(ASTNode* head);
+	void parseType(std::string& datatype, ASTNode* head);
+	void parseSemicolon();
+
 	bool isFunctionExists();
 	//get functions
 	token getCurrentToken();

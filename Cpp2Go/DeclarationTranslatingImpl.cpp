@@ -114,6 +114,7 @@ void AstTranslator::translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& d
 			pointerDeclarationNode->addChild(shortAssignmentNode);
 			shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.front()));
 			shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.back()));
+			shortAssignmentNode->children.back()->addChild(new ASTNode(assignmentNode->children.back()->children.back()));
 			_identifiers.insert(assignmentNode->children.front()->value);
 		}
 		else

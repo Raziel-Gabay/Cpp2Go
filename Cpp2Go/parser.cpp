@@ -5,6 +5,10 @@ parser::parser(tokensVector tokenStream)
 	: _tokensStream(tokenStream), _currentPosition(0), _identifiersTypes({})
 {
 	_astRoot = parseProgram();
+	if (!isFunctionExists())
+	{
+		throw std::runtime_error("ERROR: function does not exist!");
+	}
 }
 
 parser::~parser()
