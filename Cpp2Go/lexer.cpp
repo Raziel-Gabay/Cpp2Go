@@ -19,11 +19,22 @@ tokensMap mapOfTokens =
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
+	{"std::cout", "STD_COUT_DECLARATION"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
 	{"}", "RIGHT_BRACE"},
+	{"[", "LEFT_SQUARE_PARENTHESIS"},
+	{"]", "RIGHT_SQUARE_PARENTHESIS"},
 	{"=", "ASSIGNMENT_OPERATOR"},
+	{"+=", "ADDITION_ASSIGNMENT_OPERATOR"},
+	{"-=", "SUBTRACTION_ASSIGNMENT_OPERATOR"},
+	{"*=", "MULTIPLICATION_ASSIGNMENT_OPERATOR"},
+	{"/=", "DIVIDATION_ASSIGNMENT_OPERATOR"},
+	{"%=", "MODULUS_ASSIGNMENT_OPERATOR"},
+	{"&=", "AND_ASSIGNMENT_OPERATOR"},
+	{"|=", "OR_ASSIGNMENT_OPERATOR"},
+	{"^=", "XOR_ASSIGNMENT_OPERATOR"},
 	{";", "SEMICOLON"},
 	{"%", "MODULO_OPERATOR"},
 	{"#", "HASHTAG_OPERATOR"},
@@ -34,7 +45,23 @@ tokensMap mapOfTokens =
 	{"&&", "AND_OPERATOR"},
 	{"||", "OR_OPERATOR"},
 	{"++", "INCREMENT_OPERATOR"},
-	{"--", "DECREMENT_OPERATOR"}
+	{"--", "DECREMENT_OPERATOR"},
+	{",", "COMMA"},
+	{"+", "ADDITION_OPERATOR"},
+	{"-", "SUBTRACTION_OPERATOR"},
+	{"*", "MULTIPLICATION_OPERATOR"},
+	{"/", "DIVISION_OPERATOR"},
+	{"!", "LOGICAL_NOT_OPERATOR"},
+	{"&", "AND_OPERATOR"},
+	{"|", "OR_OPERATOR"},
+	{"^", "XOR_OPERATOR"},
+	{"~", "BITWISE_NOT_OPERATOR"},
+	{"?", "TERNARY_CONDITIONAL_OPERATOR"},
+	{":", "COLON_OPERATOR"},
+	{";", "SEMICOLON_OPERATOR"},
+	{".", "DOT_OPERATOR"},
+	{"*", "POINTER_OPERATOR"},
+	{"<<", "INSERTION_OPERATOR"},
 };
 
 void lexer::preprocessing(std::string& sourceCode)
@@ -160,101 +187,17 @@ This function will get the first token of the code and then remove it and spaces
 std::string lexer::getToken(std::string& code)
 {
 	std::string token = "";
+	size_t separatorPos;
 	// Check if the input string is empty
 	if (code.empty()) {
 		return token;
 	}
 
-	// check if the token is string
-	token = code.substr(0, STR_LEN);
-	if ( token == STR)
+	if (isStringType(code, token) || isStdCout(code, token) || isOperatorWithTwoChars(code, token) ||
+		isStringLiteral(code, token) || isStandaloneToken(code, token) || isUnaryOperator(code, separatorPos, token) ||
+		isElse(code, separatorPos, token) || isFloat(code, separatorPos, token))
 	{
-		code.erase(0, STR_LEN + 1);
 		return token;
-	}
-
-
-	// Get the 2 first characters
-	token = code.substr(0, 2);
-	if (operatorWithTwoCharsTokens.count(token) > 0)
-	{
-		code.erase(0, 2); // Remove the processed token
-		if (code[0] == ' ')
-		{
-			code.erase(0, 1); // Remove the whitespace that may come afterward
-		}
-		return token;
-	}
-	// Get the first character
-	token = code[0];
-	
-	if (token == "\"")
-	{
-		code.erase(0, 1);
-		auto separatorPos = code.find_first_of("\"");
-		token += code.substr(0, separatorPos + 1);
-		code.erase(0, separatorPos + 1);
-		return token;
-	}
-
-	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) > 0 || token == HASHTAG) {
-		code.erase(0, 1); // Remove the processed token
-		if (code[0] == ' ' )
-		{
-			code.erase(0, 1); // Remove the whitespace that may come afterward
-		}
-		return token;
-	}
-
-	// Find the position of the first separator (including newline characters)
-	auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
-
-	// Extract the token up to the first separator (or the end of the string if no separator found)
-	token = code.substr(0, separatorPos);
-
-	//handling unary operator
-	if (token.length() > 2)
-	{
-		if (UnaryOperators.count(token.substr(token.length() - 2)) > 0)
-		{
-			token = code.substr(0, separatorPos - 2);
-			code.erase(0, separatorPos - 2);
-			return token;
-		}
-	}
-
-	if (token == ELSE)
-	{
-		if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
-		{
-			code.erase(0, separatorPos + 1);
-		}
-		else
-		{
-			code.erase(0, separatorPos);
-		}
-		auto separatorPos = code.find_first_of(" ,.;:{}[]<>()");
-		std::string next_token = code.substr(0, separatorPos);
-		if (next_token == IF)
-		{
-			token += " " + next_token;
-			code.erase(0, separatorPos + 1);
-			return token;
-		}
-		else
-		{
-			return token;
-		}
-
-	}
-	//handling float
-	if (code[separatorPos] == FLOAT_POINT && std::stoi(token))
-	{
-		token += FLOAT_POINT;
-		code.erase(0, separatorPos + 1);
-		separatorPos = code.find_first_of(" ,.;:{}[]<>()");
-		token += code.substr(0, separatorPos);
 	}
 	// Remove the processed token (including the separator, if any)
 	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
@@ -266,6 +209,134 @@ std::string lexer::getToken(std::string& code)
 		code.erase(0, separatorPos);
 	}
 	return token;
+}
+
+bool lexer::isStringType(std::string& code, std::string& token)
+{
+	// check if the token is string type
+	token = code.substr(0, STR_LEN);
+	if (token != STR_KEYWORD)
+	{
+		return false;
+	}
+	code.erase(0, STR_LEN + 1);
+	return true;
+}
+
+bool lexer::isStdCout(std::string& code, std::string& token)
+{
+	//check if the token is std::cout
+	token = code.substr(0, STD_COUT_LEN);
+	if (token != STD_COUT_KEYWORD)
+	{
+		return false;
+	}
+	code.erase(0, STD_COUT_LEN + 1);
+	return true;
+}
+
+bool lexer::isOperatorWithTwoChars(std::string& code, std::string& token)
+{
+	// Get the 2 first characters
+	token = code.substr(0, 2);
+	if (operatorWithTwoCharsTokens.count(token) == 0)
+	{
+		return false;
+	}
+	code.erase(0, 2); // Remove the processed token
+	if (code[0] == ' ')
+	{
+		code.erase(0, 1); // Remove the whitespace that may come afterward
+	}
+	return true;
+}
+
+bool lexer::isStringLiteral(std::string& code, std::string& token)
+{
+
+	// Get the first character
+	token = code[0];
+
+	if (token != "\"")
+	{
+		return false;
+	}
+	code.erase(0, 1);
+	auto separatorPos = code.find_first_of("\""); //what happen if we don't add another ", will it still work?
+	token += code.substr(0, separatorPos + 1);
+	code.erase(0, separatorPos + 1);
+	return true;
+}
+
+bool lexer::isStandaloneToken(std::string& code, std::string& token)
+{
+	// If the character is a standalone token, return it as a separate token
+	if (standaloneTokens.count(token) == 0 && token != HASHTAG) 
+	{
+		return false;
+	}
+	code.erase(0, 1); // Remove the processed token
+	if (code[0] == ' ')
+	{
+		code.erase(0, 1); // Remove the whitespace that may come afterward
+	}
+	return true;
+}
+
+bool lexer::isUnaryOperator(std::string& code, size_t& separatorPos, std::string& token)
+{
+	// Find the position of the first separator (including newline characters)
+	separatorPos = code.find_first_of(" ,.;:{}[]<>()*");
+
+	// Extract the token up to the first separator (or the end of the string if no separator found)
+	token = code.substr(0, separatorPos);
+
+	//handling unary operator
+	if (token.length() < 2 || UnaryOperators.count(token.substr(token.length() - 2)) == 0)
+	{
+		return false;
+	}
+	token = code.substr(0, separatorPos - 2);
+	code.erase(0, separatorPos - 2);
+	return true;
+}
+
+bool lexer::isElse(std::string& code, size_t& separatorPos, std::string token)
+{
+	if (token != ELSE)
+	{
+		return false;
+	}
+	if (separatorPos != std::string::npos && standaloneTokens.find(code.substr(separatorPos, 1)) == standaloneTokens.end())
+	{
+		code.erase(0, separatorPos + 1);
+	}
+	else
+	{
+		code.erase(0, separatorPos);
+	}
+	separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+	std::string next_token = code.substr(0, separatorPos);
+	if (next_token == IF)
+	{
+		token += " " + next_token;
+		code.erase(0, separatorPos + 1);
+	}
+	return true;
+}
+
+bool lexer::isFloat(std::string& code, size_t& separatorPos, std::string& token)
+{
+	//handling float
+	if (code[separatorPos] != FLOAT_POINT || !std::stoi(token))
+	{
+		return false;
+	}
+	token += FLOAT_POINT;
+	code.erase(0, separatorPos + 1);
+	separatorPos = code.find_first_of(" ,.;:{}[]<>()");
+	token += code.substr(0, separatorPos);
+	return true;
 }
 
 tokensMap::iterator lexer::searchToken(std::string token)
@@ -292,7 +363,17 @@ tokensVector lexer::createTokenStream(std::string& code)
 		tokensMap::iterator tokenFromMap = searchToken(token);
 		if (isTokensEqual(token, tokenFromMap))
 		{
-			insertToken(token, tokenFromMap, tokenStream);
+			if (tokenStream.size() > 0)
+			{
+				if (tokenStream.back().second.find("DATATYPE") != std::string::npos && token == POINTER)
+				{
+					tokenStream.push_back({ token, "POINTER_OPERATOR" });
+				}
+				else
+					insertToken(token, tokenFromMap, tokenStream);
+			}
+			else
+				insertToken(token, tokenFromMap, tokenStream);
 		}
 		else if (handleBoolLiteralValue(token))
 		{
@@ -301,6 +382,9 @@ tokensVector lexer::createTokenStream(std::string& code)
 		}
 		else if (handleIdentifiers(token))
 		{
+			if (tokenStream.back().second == AND_OPERATOR)
+				tokenStream.back().second =  ADDRESS_OF_OPERATOR;
+
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
 		}

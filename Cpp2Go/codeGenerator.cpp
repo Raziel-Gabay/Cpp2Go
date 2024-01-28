@@ -8,6 +8,7 @@ codeGenerator::codeGenerator(ASTNode* destNode)
 
 codeGenerator::~codeGenerator()
 {
+	delete _destNode;
 }
 
 void codeGenerator::iterativeGenerate(ASTNode* node)
@@ -25,9 +26,13 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateBlock(child);
 		}
-		else if (child->name == DECLARATION)
+		else if (child->name == VARIABLE_DECLARATION)
 		{
-			generateDeclaration(child);
+			generateVariableDeclaration(child);
+		}
+		else if (child->name == POINTER_DECLARATION)
+		{
+			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
@@ -42,6 +47,18 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateIncludeDirective(child);
 		}
+		else if (child->name == FUNCTION_CALL)
+		{
+			generateFunctionCall(child);
+		}
+		else if (child->name == ARRAY_DECLARATION)
+		{
+			generateArrayDeclaration(child);
+		}
+		else if (child->name == FMT_PRINTLN)
+		{
+			generateStdCout(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -55,69 +72,33 @@ void codeGenerator::generateCode(ASTNode* node)
 	iterativeGenerate(node);
 }
 
-void codeGenerator::generateDeclaration(ASTNode* node)
-{
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == ASSIGNMENT_OPERATOR || child->name == SHORT_ASSIGNMENT_OPERATOR)
-		{
-			generateExpression(child);
-		}
-		else
-		{
-			_code += child->value + " ";
-		}
-	}
-}
 
-void codeGenerator::generateFunctionDeclaration(ASTNode* node)
+
+void codeGenerator::generateFunctionCall(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
 		if (child->name == IDENTIFIER)
 		{
-			_code += child->value + " (";
+			_code += child->value + "(";
 		}
 		else if (child->name == PARAMETER)
 		{
-			_code += child->children.back()->value + " " + child->children.front()->value + ", ";
-		}
-		else if (child->name == RETURN_VALUE)
-		{
-			if (_code.back() == WHITESPACE)
+			_code += child->children.front()->value;
+			if (child != node->children.back())
+				_code += ", ";
+			else
 			{
-				_code.pop_back();
-				if (_code.back() == COMMA)
+				if (_code.back() == WHITESPACE)
 				{
 					_code.pop_back();
-				}
-			}
-			_code += ") " + child->children.front()->value;
-		}
-		else if (child->name == BLOCK)
-		{
-			if (node->children[1]->value == "main")
-				_code += ")";
-			else if (node->children.size() > 2)
-			{
-				if (node->children[node->children.size() - 2]->name != RETURN_VALUE)
-				{
-					if (_code.back() == WHITESPACE)
+					if (_code.back() == COMMA)
 					{
 						_code.pop_back();
-						if (_code.back() == COMMA)
-						{
-							_code.pop_back();
-						}
-						_code += ")";
 					}
 				}
-			}
-			generateBlock(child);
-		}
-		else
-		{
-			_code += child->value + " ";
+				_code += ")";
+			}				
 		}
 	}
 }
@@ -144,125 +125,37 @@ void codeGenerator::generateStruct(ASTNode* node)
 	}
 }
 
-void codeGenerator::generateStatement(ASTNode* node)
-{
-	if (node->name == IF_STATEMENT)
-		generateIfStatement(node);
-	else if(node->name == ELSE_IF_STATEMENT)
-	{ 
-		_code.erase(_code.size() - _countTab);
-		_code.pop_back();
-		_code += " ";
-		generateElseIfStatement(node);
-	}
-	else if (node->name == ELSE_STATEMENT)
-	{
-		_code.erase(_code.size() - _countTab);
-		_code.pop_back();
-		_code += " ";
-		generateElseStatement(node);
-	}
-	else if (node->name == WHILE_STATEMENT)
-		generateWhileStatement(node);
-	else
-		generateForStatement(node);
-}
-
-void codeGenerator::generateIfStatement(ASTNode* node)
-{
-	_code += "if ";
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == CONDITION)
-		{
-			generateExpression(child->children);
-		}
-		else if (child->name == BLOCK)
-		{
-			generateBlock(child);
-		}
-	}
-}
-
-void codeGenerator::generateElseIfStatement(ASTNode* node)
-{
-	_code += "else if ";
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == CONDITION)
-		{
-			generateExpression(child->children);
-		}
-		else if (child->name == BLOCK)
-		{
-			generateBlock(child);
-		}
-	}
-}
-
-void codeGenerator::generateElseStatement(ASTNode* node)
-{
-	_code += "else ";
-	generateBlock(node->children.front());
-}
-
-void codeGenerator::generateWhileStatement(ASTNode* node)
-{
-	_code += "for "; //in go, the while loop is represented by the 'for' keyword
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == CONDITION)
-		{
-			generateExpression(child->children);
-		}
-		else if (child->name == BLOCK)
-		{
-			generateBlock(child);
-		}
-	}
-}
-
-void codeGenerator::generateForStatement(ASTNode* node)
-{
-	_code += "for ";
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == INITIALIZATION)
-		{
-			generateDeclaration(child->children.front());
-			_code += "; ";
-		}
-		else if (child->name == CONDITION)
-		{
-			generateExpression(child->children);
-			_code += "; ";
-		}
-		else if (child->name == ITERATION)
-		{
-			_code += child->children.front()->value + child->children.back()->value;
-		}
-		else if (child->name == BLOCK)
-		{
-			generateBlock(child);
-		}
-	}
-}
-
 void codeGenerator::generateBlock(ASTNode* node)
 {
 	_code += " {\n";
 	for (ASTNode* child : node->children)
 	{
 		_code += "\t" + std::string(_countTab, '\t');
-		if (child->name == DECLARATION)
+		if (child->name == VARIABLE_DECLARATION)
 		{
-			generateDeclaration(child);
+			generateVariableDeclaration(child);
+		}
+		else if (child->name == POINTER_DECLARATION)
+		{
+			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
 			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
 		{
 			_countTab++;
 			generateStatement(child);
+		}
+		else if (child->name == FUNCTION_CALL)
+		{
+			generateFunctionCall(child);
+		}
+		else if (child->name == ARRAY_DECLARATION)
+		{
+			generateArrayDeclaration(child);
+		}
+		else if (child->name == FMT_PRINTLN)
+		{
+			generateStdCout(child);
 		}
 		else
 		{
@@ -273,24 +166,6 @@ void codeGenerator::generateBlock(ASTNode* node)
 	_code += std::string(_countTab, '\t') + "}";
 	if (_countTab > 0)
 		_countTab--;
-}
-
-void codeGenerator::generateExpression(ASTNode* node)
-{
-	_code += node->children.front()->value + " " +  node->value + " " + node->children.back()->value;
-}
-
-void codeGenerator::generateExpression(std::vector<ASTNode*> nodes)
-{
-	std::string last_value = nodes.front()->children.back()->value;
-	for (ASTNode* node : nodes)
-	{
-		if (node->children.front()->value == last_value)
-			_code += " " + node->value + " " + node->children.back()->value;
-		else
-			generateExpression(node);
-		last_value = node->children.back()->value;
-	}
 }
 
 void codeGenerator::generateIncludeDirective(ASTNode* node)
@@ -306,6 +181,24 @@ void codeGenerator::generateIncludeDirective(ASTNode* node)
 			_code += '"';
 			_code += child->value;
 			_code += '"';
+		}
+	}
+}
+
+
+void codeGenerator::generateStdCout(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == PRINTLN)
+		{
+			_code += "fmt.Println";
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			_code += "(";
+			_code += child->value;
+			_code += '")';
 		}
 	}
 }

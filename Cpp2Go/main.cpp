@@ -2,7 +2,7 @@
 #include "parser.h"
 #include "AstTranslator.h"
 #include "codeGenerator.h"
-
+#include <chrono>
 #include <fstream>
 
 void printAST(const ASTNode* node, int depth = 0) {
@@ -48,6 +48,7 @@ void writeToDestFile(std::string goCode)
 
 int main()
 {
+
 	std::string code = readCodeFromFile();
 	std::cout << code << std::endl;
 	lexer::preprocessing(code);
@@ -55,7 +56,20 @@ int main()
 	tokensVector tokenStream;
 	try
 	{
-		 tokenStream = lexer::createTokenStream(code); 
+		// Start the timer
+		auto start = std::chrono::high_resolution_clock::now();
+
+		tokenStream = lexer::createTokenStream(code);
+
+		// End the timer
+		auto end = std::chrono::high_resolution_clock::now();
+
+		// Calculate the duration
+		std::chrono::duration<double> duration = end - start;
+
+		// Print the duration in seconds
+		std::cout << "Execution time: " << duration.count() << " seconds." << std::endl;
+
 		 parser p = parser(tokenStream); 
 		 printAST(p.getAST());  
 		 AstTranslator translator = AstTranslator(p.getAST());

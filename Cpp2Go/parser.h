@@ -29,13 +29,23 @@
 #define HASHTAG "#"
 #define INCLUDE "INCLUDE"
 #define INCLUDE_DIRECTIVE "INCLUDE_DIRECTIVE"
+#define INCLUDE_KEYWORD "INCLUDE_KEYWORD"
 #define LESS_THAN_OPERATOR "LESS_THAN_OPERATOR"
 #define MORE_THAN_OPERATOR "MORE_THAN_OPERATOR"
+#define COMMA "COMMA"
+#define DATATYPE_STRING "DATATYPE_STRING"
+#define LEFT_SQUARE_PARENTHESIS "LEFT_SQUARE_PARENTHESIS"
+#define RIGHT_SQUARE_PARENTHESIS "RIGHT_SQUARE_PARENTHESIS"
+#define DATATYPE "DATATYPE"
+#define POINTER_OPERATOR "POINTER_OPERATOR"
+#define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
+#define INSERTION_OPERATOR "INSERTION_OPERATOR"
+#define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
 
 typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
+typedef std::map<std::string, std::string>;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
-typedef std::pair<std::string, std::string> token;
 
 const std::unordered_set<std::string> ArithmeticOperators = { "+", "-", "*", "/", "%"};
 const std::unordered_set<std::string> RelationalOperators = { "==", "!=", "<", ">", "<=", ">="};
@@ -59,21 +69,22 @@ public:
 
 	// Parse Functions
 	ASTNode* parseProgram();
-	void parseDeclaration(ASTNode* head);
+	// declaration parsing
+	void parseVariableDeclaration(ASTNode* head);
 	void parseFunctionDeclaration(ASTNode* head);
+	void parseArrayDeclaration(ASTNode* head);
+	void parsePointerDeclaration(ASTNode* head);
+
+	// statement parsing
 	void parseStatement(ASTNode* head);
 	void parseIfStatment(ASTNode* head);
 	void parseElseIfStatment(ASTNode* head);
 	void parseElseStatment(ASTNode* head);
-	void parseStruct(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
-	void parseBlock(ASTNode* head, int num_of_locals=0);
-	void parseIncludeDirective(ASTNode* head);
 
+	// operator parsing
 	void parseExpression(ASTNode* head);
-	void parseType(std::string& datatype, ASTNode* head);
-
 	void parseArithmeticOperator(const std::string& op, ASTNode* head);
 	void parseRelationalOperator(const std::string& op, ASTNode* head);
 	void parseLogicalOperator(const std::string& op, ASTNode* head);
@@ -83,6 +94,16 @@ public:
 	void parseModifyOperator(ASTNode* head);
 	bool isUnaryOperator(const token& t);
 
+	// other parsing
+	void parseFunctionCall(ASTNode* head);
+	void parseStruct(ASTNode* head);
+	void parseBlock(ASTNode* head, int num_of_locals = 0);
+	void parseIncludeDirective(ASTNode* head);
+	void parseStdCout(ASTNode* head);
+	void parseType(std::string& datatype, ASTNode* head);
+	void parseSemicolon();
+
+	bool isFunctionExists();
 	//get functions
 	token getCurrentToken();
 	ASTNode* getAST();
@@ -90,6 +111,8 @@ private:
 	tokensVector _tokensStream;
 	identifiersVector _identifiersTypes;
 	identifiersVector _localsVariables;
+	std::map<std::string, std::string> _functionIdentifiers;
+	std::vector<std::string> _functionCalls;
 	size_t _currentPosition;
 	ASTNode* _astRoot;
 
@@ -97,6 +120,7 @@ private:
 	void consumeToken();
 	void consumeToken(size_t n);
 	void unconsumeToken();
+	void unconsumeToken(size_t n);
 	bool isBinaryOperator(token t);
 };
 

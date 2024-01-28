@@ -16,11 +16,12 @@ public:
 
 	// Constructor
 	ASTNode(const std::string& nodeName, const std::string& nodeValue = "");
-
+	ASTNode(ASTNode* otherAst);
 	// Destructor
 	~ASTNode();
 
 	// Methods
 	void addChild(ASTNode* childNode);
+	void deleteAst(ASTNode* node);
 };
 

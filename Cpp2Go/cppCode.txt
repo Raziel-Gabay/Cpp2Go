@@ -8,10 +8,14 @@ struct car
 
 int main()
 {
+	std::cout << "a";
+	int r = 5;
+	int* i = &r;
+	int numbers[10];
 	int i = 0;
 	if(i == 0)
 	{
-		i = 10;
+		i = 10 * 1;
 		i = 20;
 	}
 	else
@@ -20,9 +24,13 @@ int main()
 		i = 8;
 	}
 	i = 7;
+	checkEvenOdd(i, 5);
+	for (int s = 0; s < 10; s++)
+	{
+	}
 }
 
-void checkEvenOdd(int num)
+void checkEvenOdd(int num, int anotherNum)
 {
 	if (num % 2 == 0)
 	{

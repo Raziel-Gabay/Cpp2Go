@@ -26,12 +26,13 @@
 #define INITIALIZATION "INITIALIZATION"
 #define ITERATION "ITERATION"
 #define DATATYPE "DATATYPE"
-#define DECLARATION "DECLARATION"
+#define VARIABLE_DECLARATION "VARIABLE_DECLARATION"
 #define VAR_KEYWORD "VAR_KEYWORD"
 #define DATATYPE_STRING "DATATYPE_STRING"
 #define PARAMETER "PARAMETER"
 #define RETURN_VALUE "RETURN_VALUE"
 #define FUNCTION_DECLARATION "FUNCTION_DECLARATION"
+#define FUNCTION_CALL "FUNCTION_CALL"
 #define MEMBERS "MEMBERS"
 #define STRUCT_KEYWORD "STRUCT_KEYWORD"
 #define STRUCT "STRUCT"
@@ -40,6 +41,16 @@
 #define IMPORT "IMPORT"
 #define IMPORT_DIRECTIVE "IMPORT_DIRECTIVE"
 #define IOSTREAM "iostream"
+#define ARRAY_DECLARATION "ARRAY_DECLARATION"
+#define ARRAY_LENGTH "ARRAY_LENGTH"
+#define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
+#define POINTER_DECLARATION "POINTER_DECLARATION"
+#define POINTER_OPERATOR "POINTER_OPERATOR"
+#define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
+#define STD_COUT "STD_COUT"
+#define FMT_PRINTLN "FMT_PRINTLN"
+#define PRINTLN "PRINTLN"
+#define STRING_LITERAL "STRING_LITERAL"
 
 class AstTranslator
 {
@@ -52,18 +63,31 @@ public:
 
 	ASTNode* translateProgram(ASTNode* node);
 	void iterativeTranslate(ASTNode* cppNode, ASTNode* node);
-	void translateDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
+
+	// declaration translate
+	void translateVariableDeclaration(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
-	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	void translatePointerDeclaration(ASTNode* sourceNode, ASTNode*& destNode);
+	
+	// statement translate
 	void translateStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateIfStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateElseIfStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
-	void translateBlock(ASTNode* sourceNode, ASTNode* &destNode);
+	
+	// expression translate
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+
+	// other translate
+	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStruct(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateBlock(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
 
 	ASTNode* getAST();
 private:

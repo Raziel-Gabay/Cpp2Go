@@ -130,9 +130,18 @@
     <ClCompile Include="ASTNode.cpp" />
     <ClCompile Include="AstTranslator.cpp" />
     <ClCompile Include="codeGenerator.cpp" />
+    <ClCompile Include="DeclarationCodeGeneratingImpl.cpp" />
+    <ClCompile Include="DeclarationParsingImpl.cpp" />
+    <ClCompile Include="DeclarationTranslatingImpl.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OperatorCodeGeneratingImpl.cpp" />
+    <ClCompile Include="OperatorParsingImpl.cpp" />
+    <ClCompile Include="OperatorTranslatingImpl.cpp" />
     <ClCompile Include="parser.cpp" />
+    <ClCompile Include="StatementCodeGenerating.cpp" />
+    <ClCompile Include="StatementParsingImpl.cpp" />
+    <ClCompile Include="StatementTranslatingImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASTNode.h" />
