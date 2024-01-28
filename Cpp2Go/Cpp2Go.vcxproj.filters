@@ -42,7 +42,7 @@
     <ClCompile Include="OperatorParsingImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StatementTranslatingImpl.cpp">
+    <ClCompile Include="OperatorTranslatingImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
