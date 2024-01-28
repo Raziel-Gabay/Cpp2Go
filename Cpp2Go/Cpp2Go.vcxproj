@@ -132,6 +132,7 @@
     <ClCompile Include="codeGenerator.cpp" />
     <ClCompile Include="DeclarationCodeGeneratingImpl.cpp" />
     <ClCompile Include="DeclarationParsingImpl.cpp" />
+    <ClCompile Include="DeclarationTranslatingImpl.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OperatorParsingImpl.cpp" />
