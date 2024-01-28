@@ -41,8 +41,9 @@
 #define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
 #define INSERTION_OPERATOR "INSERTION_OPERATOR"
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
+#define COLON_OPERATOR "COLON_OPERATOR"
+#define LOOP_VARIABLE "LOOP_VARIABLE"
 
-typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::map<std::string, std::string>;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
@@ -82,6 +83,7 @@ public:
 	void parseElseStatment(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
+	void parseForeachStatement(ASTNode* head);
 
 	// operator parsing
 	void parseExpression(ASTNode* head);

@@ -5,6 +5,11 @@ ASTNode::ASTNode(const std::string& nodeName, const std::string& nodeValue)
 {
 }
 
+ASTNode::ASTNode(token t)
+	: name(t.second), value(t.first)
+{
+}
+
 ASTNode::ASTNode(ASTNode* otherAst)
 	: name(otherAst->name), value(otherAst->value)
 {

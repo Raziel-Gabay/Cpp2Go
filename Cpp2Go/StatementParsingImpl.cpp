@@ -15,8 +15,17 @@ void parser::parseStatement(ASTNode* head)
 	}
 	else if (currToken.second == FOR_STATEMENT)
 	{
-		consumeToken();
-		parseForStatement(head);
+		consumeToken(4);
+		currToken = getCurrentToken();
+		unconsumeToken(3);
+		if (currToken.second == COLON_OPERATOR)
+		{
+			parseForeachStatement(head);
+		}
+		else
+		{
+			parseForStatement(head);
+		}
 	}
 	else if (currToken.second == ELSE_IF_STATEMENT || currToken.second == ELSE_STATEMENT && !head->children.empty())
 	{
@@ -215,3 +224,56 @@ void parser::parseForStatement(ASTNode* head)
 		throw std::runtime_error("excepcted RIGHT BRACE");
 	consumeToken();
 }
+
+void parser::parseForeachStatement(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+	//create a for statement node
+	ASTNode* foreachStatementNode = new ASTNode("FOREACH_STATEMENT");
+	ASTNode* loopVariableNode = new ASTNode("LOOP_VARIABLE");
+	ASTNode* containerNode = new ASTNode("CONTAINER");
+	ASTNode* blockNode = new ASTNode("BLOCK");
+
+	head->addChild(foreachStatementNode);
+	//create children for the for statement
+	foreachStatementNode->addChild(loopVariableNode);
+	if (currToken.second != "LEFT_PARENTHESIS") //check that the token is '('
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+
+	consumeToken();
+	parseVariableDeclaration(loopVariableNode); // we expect decleration to come (for example: 'int i')
+
+	currToken = getCurrentToken();
+	foreachStatementNode->addChild(new ASTNode(currToken));
+	foreachStatementNode->addChild(containerNode);
+	foreachStatementNode->addChild(blockNode);
+	consumeToken();
+
+	currToken = getCurrentToken();
+	if (currToken.second != IDENTIFIER)
+	{
+		throw std::runtime_error("ERROR: expecting an identifier token...");
+	}
+	// create idetifier node and add it to the head node
+	ASTNode* identifierNode = new ASTNode(currToken);
+	containerNode->addChild(identifierNode);
+
+	consumeToken();
+	currToken = getCurrentToken();
+	if (currToken.second != "RIGHT_PARENTHESIS") //check that the token is ')'
+		throw std::runtime_error("excepcted RIGHT_PARENTHESIS");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	//check - for body
+	if (currToken.second != LEFT_BRACE) //check that the token is '{'
+		throw std::runtime_error("excepcted LEFT BRACE");
+	consumeToken();
+	parseBlock(blockNode); //the block part of the tree 
+	currToken = getCurrentToken();
+
+	if (currToken.second != RIGHT_BRACE) //check that the token is '}'
+		throw std::runtime_error("excepcted RIGHT BRACE");
+	consumeToken();
+}
+

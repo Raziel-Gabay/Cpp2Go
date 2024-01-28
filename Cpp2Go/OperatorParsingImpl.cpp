@@ -76,13 +76,13 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 	{
 		datatype = _identifiersTypes.find(currToken.first)->second;
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		head->addChild(identifierNode);
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
 		// create literal node and add it to the head node
-		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* literalNode = new ASTNode(currToken);
 		head->addChild(literalNode);
 	}
 	else
@@ -99,7 +99,7 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
@@ -107,7 +107,7 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* literalNode = new ASTNode(currToken);
 	head->addChild(literalNode);
 }
 
@@ -119,13 +119,13 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 	{
 		datatype = _identifiersTypes.find(currToken.first)->second;
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		head->addChild(identifierNode);
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
 		// create literal node and add it to the head node
-		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* literalNode = new ASTNode(currToken);
 		head->addChild(literalNode);
 	}
 	else
@@ -142,7 +142,7 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
@@ -150,7 +150,7 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* literalNode = new ASTNode(currToken);
 	head->addChild(literalNode);
 }
 
@@ -175,7 +175,7 @@ void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand before bitwise operator.");
 	}
-	ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* intLiteralNode = new ASTNode(currToken);
 	head->addChild(intLiteralNode);
 	
 	consumeToken(2);
@@ -184,7 +184,7 @@ void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand after bitwise operator.");
 	}	
-	intLiteralNode = new ASTNode(currToken.second, currToken.first);
+	intLiteralNode = new ASTNode(currToken);
 	head->addChild(intLiteralNode);
 	
 }
@@ -199,7 +199,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 	}
 	datatype = _identifiersTypes.find(currToken.first)->second;
 	// create idetifier node and add it to the head node
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 	consumeToken(2);
@@ -213,14 +213,14 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
 		}
 		else if (currToken.second == ADDRESS_OF_OPERATOR)
 		{
-			ASTNode* addressNode = new ASTNode(currToken.second, currToken.first);
+			ASTNode* addressNode = new ASTNode(currToken);
 			head->addChild(addressNode);
 			consumeToken();
 			currToken = getCurrentToken();
@@ -229,7 +229,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 				if (datatype == _identifiersTypes.find(currToken.first)->second)
 				{
 					// create idetifier node and add it to the head node
-					ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+					ASTNode* identifierNode = new ASTNode(currToken);
 					addressNode->addChild(identifierNode);
 					return;
 				}
@@ -238,7 +238,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* literalNode = new ASTNode(currToken);
 	head->addChild(literalNode);
 }
 
@@ -249,7 +249,7 @@ void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier before Access Operator...");
 	}
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 	consumeToken(2);
@@ -258,7 +258,7 @@ void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier after Access Operator...");
 	}
-	identifierNode = new ASTNode(currToken.second, currToken.first);
+	identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 }

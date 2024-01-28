@@ -99,7 +99,7 @@ void parser::parseFunctionCall(ASTNode* head)
 {
 	token currToken = getCurrentToken();
 	ASTNode* functionCallNode = new ASTNode("FUNCTION_CALL");
-	ASTNode* functionNameNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* functionNameNode = new ASTNode(currToken);
 	head->addChild(functionCallNode);
 	functionCallNode->addChild(functionNameNode);
 	_functionCalls.push_back(currToken.first);
@@ -112,7 +112,7 @@ void parser::parseFunctionCall(ASTNode* head)
 		{
 			ASTNode* parameterNode = new ASTNode(PARAMETER);
 			functionCallNode->addChild(parameterNode);
-			ASTNode* identifierOrLiteralNode = new ASTNode(currToken.second, currToken.first);
+			ASTNode* identifierOrLiteralNode = new ASTNode(currToken);
 			parameterNode->addChild(identifierOrLiteralNode);
 			consumeToken();
 			currToken = getCurrentToken();
@@ -149,7 +149,7 @@ void parser::parseStruct(ASTNode* head)
 	token currToken = getCurrentToken();
 	ASTNode* structNode = new ASTNode("STRUCT");
 	ASTNode* membersNode = new ASTNode("MEMBERS");
-	ASTNode* structKeywordNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* structKeywordNode = new ASTNode(currToken);
 	head->addChild(structNode);
 	structNode->addChild(structKeywordNode);
 
@@ -158,7 +158,7 @@ void parser::parseStruct(ASTNode* head)
 	if (currToken.second == IDENTIFIER)
 	{
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		structNode->addChild(identifierNode);
 		structNode->addChild(membersNode);
 		consumeToken();
@@ -182,7 +182,7 @@ void parser::parseStruct(ASTNode* head)
 			if (currToken.second == IDENTIFIER)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				declarationNode->addChild(identifierNode);
 				consumeToken();
 				currToken = getCurrentToken();
@@ -302,7 +302,7 @@ void parser::parseIncludeDirective(ASTNode* head)
 	//create an include directive node
 	ASTNode* includeDirectiveNode = new ASTNode(INCLUDE_DIRECTIVE);
 
-	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* includeKeyWordNode = new ASTNode(currToken);
 
 	head->addChild(includeDirectiveNode);
 	includeDirectiveNode->addChild(includeKeyWordNode);
@@ -316,7 +316,7 @@ void parser::parseIncludeDirective(ASTNode* head)
 	consumeToken();
 	currToken = getCurrentToken();
 
-	ASTNode* libaryNameNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* libaryNameNode = new ASTNode(currToken);
 	includeDirectiveNode->addChild(libaryNameNode);
 
 	consumeToken();
@@ -352,7 +352,7 @@ void parser::parseStdCout(ASTNode* head)
 
 	consumeToken();
 	currToken = getCurrentToken();
-	ASTNode* stringLiteralNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* stringLiteralNode = new ASTNode(currToken);
 	stdCoutnode->addChild(stringLiteralNode);
 }
 
@@ -366,7 +366,7 @@ void parser::parseType(std::string& datatype, ASTNode* head)
 	consumeToken();
 	datatype = currToken.second.substr(currToken.second.find("_") + 1);
 	//create ast node
-	ASTNode* dataTypeNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* dataTypeNode = new ASTNode(currToken);
 	head->addChild(dataTypeNode);
 }
 
