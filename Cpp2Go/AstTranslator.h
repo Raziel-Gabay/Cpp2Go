@@ -49,6 +49,7 @@
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
 #define STD_COUT "STD_COUT"
 #define STD_CIN_DECLARATION "STD_CIN_DECLARATION"
+#define STD_CERR_DECLARATION "STD_CERR_DECLARATION"
 #define FMT_PRINTLN "FMT_PRINTLN"
 #define PRINTLN "PRINTLN"
 #define STRING_LITERAL "STRING_LITERAL"
@@ -96,6 +97,7 @@ public:
 	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCin(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStdCerr(ASTNode* sourceNode, ASTNode*& destNode);
 
 	ASTNode* getAST();
 private:

@@ -44,6 +44,7 @@ public:
 	void generateIncludeDirective(ASTNode* node);
 	void generateStdCout(ASTNode* node);
 	void generateStdCin(ASTNode* node);
+	void generateStdCerr(ASTNode* node);
 
 	std::string getCode();
 private:

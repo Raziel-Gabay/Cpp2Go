@@ -228,6 +228,21 @@ void codeGenerator::generateStdCin(ASTNode* node)
 	}
 }
 
+void codeGenerator::generateStdCerr(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == "ERROR")
+		{
+			
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			
+		}
+	}
+}
+
 std::string codeGenerator::getCode()
 {
 	return _code;

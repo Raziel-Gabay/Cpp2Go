@@ -70,6 +70,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateStdCin(cppChild, node);
 		}
+		else if (cppNode->name == STD_CERR_DECLARATION)
+		{
+			translateStdCerr(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -146,6 +150,10 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			translateStdCin(cppChild, blockNode);
 		}
+		else if (cppChild->name == STD_CERR_DECLARATION)
+		{
+			translateStdCerr(cppChild, blockNode);
+		}
 		else
 		{
 			translateExpression(cppChild, blockNode);
@@ -184,38 +192,57 @@ void AstTranslator::translateType(ASTNode* sourceNode, ASTNode*& destNode)
 
 void AstTranslator::translateStdCout(ASTNode* sourceNode, ASTNode*& destNode)
 {
-	ASTNode* fmtprintLnNode = new ASTNode("PRINT_DECLARATION");
-	destNode->addChild(fmtprintLnNode);
+	ASTNode* printDeclarationNode = new ASTNode("PRINT_DECLARATION");
+	destNode->addChild(printDeclarationNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
 		if (cppChild->name == "PRINT")
 		{
-			ASTNode* printLnNode = new ASTNode(cppChild->name, cppChild->value);
-			fmtprintLnNode->addChild(printLnNode);
+			ASTNode* printNode = new ASTNode(cppChild->name, cppChild->value);
+			printDeclarationNode->addChild(printNode);
 		}
 		else if (cppChild->name == STRING_LITERAL)
 		{
 			ASTNode* stringLiteralNode = new ASTNode(cppChild->name, cppChild->value);
-			fmtprintLnNode->addChild(stringLiteralNode);
+			printDeclarationNode->addChild(stringLiteralNode);
 		}
 	}
 }
 
 void AstTranslator::translateStdCin(ASTNode* sourceNode, ASTNode*& destNode)
 {
-	ASTNode* fmtprintLnNode = new ASTNode("SCAN_DECLARATION");
-	destNode->addChild(fmtprintLnNode);
+	ASTNode* scanDeclarationNode = new ASTNode("SCAN_DECLARATION");
+	destNode->addChild(scanDeclarationNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
 		if (cppChild->name == "SCAN")
 		{
-			ASTNode* printLnNode = new ASTNode(cppChild->name, cppChild->value);
-			fmtprintLnNode->addChild(printLnNode);
+			ASTNode* scanNode = new ASTNode(cppChild->name, cppChild->value);
+			scanDeclarationNode->addChild(scanNode);
 		}
 		else if (cppChild->name == IDENTIFIER)
 		{
+			ASTNode* identifierNode = new ASTNode(cppChild->name, cppChild->value);
+			scanDeclarationNode->addChild(identifierNode);
+		}
+	}
+}
+
+void AstTranslator::translateStdCerr(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* errorDeclarationNode = new ASTNode("ERROR_DECLARATION");
+	destNode->addChild(errorDeclarationNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == "ERROR")
+		{
+			ASTNode* errorNode = new ASTNode(cppChild->name, cppChild->value);
+			errorDeclarationNode->addChild(errorNode);
+		}
+		else if (cppChild->name == STRING_LITERAL)
+		{
 			ASTNode* stringLiteralNode = new ASTNode(cppChild->name, cppChild->value);
-			fmtprintLnNode->addChild(stringLiteralNode);
+			errorDeclarationNode->addChild(stringLiteralNode);
 		}
 	}
 }
