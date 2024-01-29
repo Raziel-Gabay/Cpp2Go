@@ -42,7 +42,7 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 			translatePointerDeclaration(cppChild, node);
 		}
 		else if (cppChild->name == IF_STATEMENT || cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT ||
-			cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
+			cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT || cppChild->name == FOREACH_STATEMENT)
 		{
 			translateStatement(cppChild, node);
 		}
@@ -122,7 +122,7 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 			translatePointerDeclaration(cppChild, blockNode);
 		}
 		else if (cppChild->name == ELSE_IF_STATEMENT || cppChild->name == ELSE_STATEMENT || cppChild->name == IF_STATEMENT ||
-				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT)
+				cppChild->name == WHILE_STATEMENT || cppChild->name == FOR_STATEMENT || cppChild->name == FOREACH_STATEMENT)
 		{
 			translateStatement(cppChild, blockNode);
 		}

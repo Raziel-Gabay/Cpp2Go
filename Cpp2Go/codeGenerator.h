@@ -2,7 +2,8 @@
 #include "AstTranslator.h"
 
 #define WHITESPACE ' '
-#define COMMA ','
+#define COMMA_CHAR ','
+
 
 class codeGenerator
 {
@@ -30,6 +31,7 @@ public:
 	void generateElseStatement(ASTNode* node);
 	void generateWhileStatement(ASTNode* node);
 	void generateForStatement(ASTNode* node);
+	void generateForeachStatement(ASTNode* node);
 
 	// expression generate
 	void generateExpression(ASTNode* node);

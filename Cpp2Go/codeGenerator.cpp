@@ -35,7 +35,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
-			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT || child->name == FOREACH_STATEMENT)
 		{
 			generateStatement(child);
 		}
@@ -92,7 +92,7 @@ void codeGenerator::generateFunctionCall(ASTNode* node)
 				if (_code.back() == WHITESPACE)
 				{
 					_code.pop_back();
-					if (_code.back() == COMMA)
+					if (_code.back() == COMMA_CHAR)
 					{
 						_code.pop_back();
 					}
@@ -140,7 +140,7 @@ void codeGenerator::generateBlock(ASTNode* node)
 			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
-			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT || child->name == FOREACH_STATEMENT)
 		{
 			_countTab++;
 			generateStatement(child);

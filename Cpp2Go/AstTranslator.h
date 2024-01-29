@@ -51,6 +51,11 @@
 #define FMT_PRINTLN "FMT_PRINTLN"
 #define PRINTLN "PRINTLN"
 #define STRING_LITERAL "STRING_LITERAL"
+#define COMMA "COMMA"
+#define LOOP_VARIABLE "LOOP_VARIABLE"
+#define COLON_OPERATOR "COLON_OPERATOR"
+#define CONTAINER "CONTAINER"
+#define FOREACH_STATEMENT "FOREACH_STATEMENT"
 
 class AstTranslator
 {
@@ -77,6 +82,7 @@ public:
 	void translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateForeachStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	
 	// expression translate
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
