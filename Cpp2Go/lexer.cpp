@@ -20,6 +20,7 @@ tokensMap mapOfTokens =
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
 	{"std::cout", "STD_COUT_DECLARATION"},
+	{"std::cin", "STD_CIN_DECLARATION"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -62,6 +63,7 @@ tokensMap mapOfTokens =
 	{".", "DOT_OPERATOR"},
 	{"*", "POINTER_OPERATOR"},
 	{"<<", "INSERTION_OPERATOR"},
+	{">>", "RIGHT_SHIFT_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)
@@ -193,7 +195,7 @@ std::string lexer::getToken(std::string& code)
 		return token;
 	}
 
-	if (isStringType(code, token) || isStdCout(code, token) || isOperatorWithTwoChars(code, token) ||
+	if (isStringType(code, token) || isStdCout(code, token) || isStdCin(code, token) || isOperatorWithTwoChars(code, token) ||
 		isStringLiteral(code, token) || isStandaloneToken(code, token) || isUnaryOperator(code, separatorPos, token) ||
 		isElse(code, separatorPos, token) || isFloat(code, separatorPos, token))
 	{
@@ -232,6 +234,18 @@ bool lexer::isStdCout(std::string& code, std::string& token)
 		return false;
 	}
 	code.erase(0, STD_COUT_LEN + 1);
+	return true;
+}
+
+bool lexer::isStdCin(std::string& code, std::string& token)
+{
+	//check if the token is std::cout
+	token = code.substr(0, STD_CIN_LEN);
+	if (token != STD_CIN_KEYWORD)
+	{
+		return false;
+	}
+	code.erase(0, STD_CIN_LEN + 1);
 	return true;
 }
 

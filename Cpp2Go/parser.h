@@ -40,7 +40,9 @@
 #define POINTER_OPERATOR "POINTER_OPERATOR"
 #define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
 #define INSERTION_OPERATOR "INSERTION_OPERATOR"
+#define RIGHT_SHIFT_OPERATOR "RIGHT_SHIFT_OPERATOR"
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
+#define STD_CIN_DECLARATION "STD_CIN_DECLARATION"
 #define COLON_OPERATOR "COLON_OPERATOR"
 #define LOOP_VARIABLE "LOOP_VARIABLE"
 
@@ -102,6 +104,7 @@ public:
 	void parseBlock(ASTNode* head, int num_of_locals = 0);
 	void parseIncludeDirective(ASTNode* head);
 	void parseStdCout(ASTNode* head);
+	void parseStdCin(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
 	void parseSemicolon();
 

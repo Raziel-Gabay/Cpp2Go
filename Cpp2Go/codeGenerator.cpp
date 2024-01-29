@@ -55,9 +55,13 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
-		else if (child->name == FMT_PRINTLN)
+		else if (child->name == "PRINT_DECLARATION")
 		{
 			generateStdCout(child);
+		}
+		else if (child->name == "SCAN_DECLARATION")
+		{
+			generateStdCin(child);
 		}
 		else
 		{
@@ -153,9 +157,13 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
-		else if (child->name == FMT_PRINTLN)
+		else if (child->name == "PRINT_DECLARATION")
 		{
 			generateStdCout(child);
+		}
+		else if (child->name == "SCAN_DECLARATION")
+		{
+			generateStdCin(child);
 		}
 		else
 		{
@@ -190,13 +198,30 @@ void codeGenerator::generateStdCout(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
-		if (child->name == PRINTLN)
+		if (child->name == "PRINT")
 		{
-			_code += "fmt.Println";
+			_code += "fmt.Print";
 		}
 		if (child->name == STRING_LITERAL)
 		{
 			_code += "(";
+			_code += child->value;
+			_code += '")';
+		}
+	}
+}
+
+void codeGenerator::generateStdCin(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == "SCAN")
+		{
+			_code += "fmt.Scan";
+		}
+		if (child->name == IDENTIFIER)
+		{
+			_code += "(&";
 			_code += child->value;
 			_code += '")';
 		}

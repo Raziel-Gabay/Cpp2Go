@@ -12,6 +12,8 @@
 #define STR_LEN 11
 #define STD_COUT_KEYWORD "std::cout"
 #define STD_COUT_LEN 9
+#define STD_CIN_KEYWORD "std::cin"
+#define STD_CIN_LEN 8
 #define IF "if"
 #define ELSE "else"
 #define HASHTAG "#"
@@ -39,6 +41,7 @@ public:
 	static std::string getToken(std::string& code);
 	static bool isStringType(std::string& code, std::string& token);
 	static bool isStdCout(std::string& code, std::string& token);
+	static bool isStdCin(std::string& code, std::string& token);
 	static bool isOperatorWithTwoChars(std::string& code, std::string& token);
 	static bool isStringLiteral(std::string& code, std::string& token);
 	static bool isStandaloneToken(std::string& code, std::string& token);

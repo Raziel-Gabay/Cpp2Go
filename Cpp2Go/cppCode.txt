@@ -10,6 +10,7 @@ int main()
 {
 	std::cout << "a";
 	int r = 5;
+	std::cin >> r;
 	int* i = &r;
 	int numbers[10];
 	int i = 0;

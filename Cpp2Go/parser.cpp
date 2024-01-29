@@ -84,6 +84,10 @@ ASTNode* parser::parseProgram()
 		{
 			parseStdCout(programNode);
 		}
+		else if (currToken.second == STD_CIN_DECLARATION)
+		{
+			parseStdCin(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -286,6 +290,10 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		{
 			parseStdCout(head);
 		}
+		else if (currToken.second == STD_CIN_DECLARATION)
+		{
+			parseStdCin(head);
+		}
 		else
 		{
 			parseExpression(head);
@@ -345,15 +353,43 @@ void parser::parseStdCout(ASTNode* head)
 	if (getCurrentToken().second != INSERTION_OPERATOR)
 		throw std::runtime_error("excepcted the operator: '<<'");
 
-	ASTNode* stdCoutDeclarationNode = new ASTNode("STD_COUT");
+	ASTNode* stdCoutDeclarationNode = new ASTNode("PRINT");
 	stdCoutnode->addChild(stdCoutDeclarationNode);
-
-	
 
 	consumeToken();
 	currToken = getCurrentToken();
 	ASTNode* stringLiteralNode = new ASTNode(currToken);
 	stdCoutnode->addChild(stringLiteralNode);
+}
+
+void parser::parseStdCin(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create std cin node and add it to the head node
+	ASTNode* stdCinNode = new ASTNode(STD_CIN_DECLARATION);
+	head->addChild(stdCinNode);
+
+	ASTNode* stdCinDeclarationNode = new ASTNode("SCAN");
+	stdCinNode->addChild(stdCinDeclarationNode);
+
+	if (getCurrentToken().second != STD_CIN_DECLARATION)
+		throw std::runtime_error("excepcted: 'std::cin'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_SHIFT_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '>>'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != IDENTIFIER)
+		throw std::runtime_error("excepcted identifier");
+
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	stdCinNode->addChild(identifierNode);
 }
 
 void parser::parseType(std::string& datatype, ASTNode* head)

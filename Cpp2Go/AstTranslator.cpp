@@ -66,6 +66,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateStdCout(cppChild, node);
 		}
+		else if (cppNode->name == STD_CIN_DECLARATION)
+		{
+			translateStdCin(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -138,6 +142,10 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			translateStdCout(cppChild, blockNode);
 		}
+		else if (cppChild->name == STD_CIN_DECLARATION)
+		{
+			translateStdCin(cppChild, blockNode);
+		}
 		else
 		{
 			translateExpression(cppChild, blockNode);
@@ -176,18 +184,37 @@ void AstTranslator::translateType(ASTNode* sourceNode, ASTNode*& destNode)
 
 void AstTranslator::translateStdCout(ASTNode* sourceNode, ASTNode*& destNode)
 {
-	ASTNode* fmtprintLnNode = new ASTNode(FMT_PRINTLN);
+	ASTNode* fmtprintLnNode = new ASTNode("PRINT_DECLARATION");
 	destNode->addChild(fmtprintLnNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
-		if (cppChild->name == STD_COUT)
+		if (cppChild->name == "PRINT")
 		{
-			ASTNode* printLnNode = new ASTNode(PRINTLN);
+			ASTNode* printLnNode = new ASTNode(cppChild->name, cppChild->value);
 			fmtprintLnNode->addChild(printLnNode);
 		}
 		else if (cppChild->name == STRING_LITERAL)
 		{
-			ASTNode* stringLiteralNode = new ASTNode(STRING_LITERAL, cppChild->value);
+			ASTNode* stringLiteralNode = new ASTNode(cppChild->name, cppChild->value);
+			fmtprintLnNode->addChild(stringLiteralNode);
+		}
+	}
+}
+
+void AstTranslator::translateStdCin(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* fmtprintLnNode = new ASTNode("SCAN_DECLARATION");
+	destNode->addChild(fmtprintLnNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == "SCAN")
+		{
+			ASTNode* printLnNode = new ASTNode(cppChild->name, cppChild->value);
+			fmtprintLnNode->addChild(printLnNode);
+		}
+		else if (cppChild->name == IDENTIFIER)
+		{
+			ASTNode* stringLiteralNode = new ASTNode(cppChild->name, cppChild->value);
 			fmtprintLnNode->addChild(stringLiteralNode);
 		}
 	}

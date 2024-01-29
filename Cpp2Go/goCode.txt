@@ -5,8 +5,9 @@ type car struct {
 	int int
 }
 func main () {
-	fmt.Println("a")
+	fmt.Print("a")
 	r := 5
+	fmt.Scan(&r)
 	i := &r
 	var numbers [10]
 	i = 0
