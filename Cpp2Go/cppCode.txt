@@ -9,6 +9,7 @@ struct car
 int main()
 {
 	std::cout << "a";
+	std::cerr << "number";
 	int r = 5;
 	std::cin >> r;
 	int* i = &r;
@@ -26,6 +27,7 @@ int main()
 	}
 	i = 7;
 	checkEvenOdd(i, 5);
+	std::cin >> i;
 	for (int s = 0; s < 10; s++)
 	{
 	}

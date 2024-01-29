@@ -88,6 +88,10 @@ ASTNode* parser::parseProgram()
 		{
 			parseStdCin(programNode);
 		}
+		else if (currToken.second == STD_CERR_DECLARATION)
+		{
+			parseStdCerr(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -294,6 +298,10 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		{
 			parseStdCin(head);
 		}
+		else if (currToken.second == STD_CERR_DECLARATION)
+		{
+			parseStdCerr(head);
+		}
 		else
 		{
 			parseExpression(head);
@@ -390,6 +398,33 @@ void parser::parseStdCin(ASTNode* head)
 
 	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
 	stdCinNode->addChild(identifierNode);
+}
+
+void parser::parseStdCerr(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create std cerr node and add it to the head node
+	ASTNode* stdCerrnode = new ASTNode(STD_CERR_DECLARATION);
+	head->addChild(stdCerrnode);
+
+	ASTNode* stdCerrDeclarationNode = new ASTNode("ERROR");
+	stdCerrnode->addChild(stdCerrDeclarationNode);
+
+	if (getCurrentToken().second != STD_CERR_DECLARATION)
+		throw std::runtime_error("excepcted: 'std::cerr'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != INSERTION_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '<<'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* stringLiteralNode = new ASTNode(currToken);
+	stdCerrnode->addChild(stringLiteralNode);
 }
 
 void parser::parseType(std::string& datatype, ASTNode* head)

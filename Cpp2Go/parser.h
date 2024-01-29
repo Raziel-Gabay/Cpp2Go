@@ -43,6 +43,7 @@
 #define RIGHT_SHIFT_OPERATOR "RIGHT_SHIFT_OPERATOR"
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
 #define STD_CIN_DECLARATION "STD_CIN_DECLARATION"
+#define STD_CERR_DECLARATION "STD_CERR_DECLARATION"
 #define COLON_OPERATOR "COLON_OPERATOR"
 #define LOOP_VARIABLE "LOOP_VARIABLE"
 
@@ -105,6 +106,7 @@ public:
 	void parseIncludeDirective(ASTNode* head);
 	void parseStdCout(ASTNode* head);
 	void parseStdCin(ASTNode* head);
+	void parseStdCerr(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
 	void parseSemicolon();
 

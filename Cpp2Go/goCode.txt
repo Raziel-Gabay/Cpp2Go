@@ -6,6 +6,7 @@ type car struct {
 }
 func main () {
 	fmt.Print("a")
+	  "number"
 	r := 5
 	fmt.Scan(&r)
 	i := &r
@@ -20,6 +21,7 @@ func main () {
 		i = 8
 	}
 	i = 7
+	fmt.Scan(&i)
 	for s := 0; s < 10;  {
 	}
 }
