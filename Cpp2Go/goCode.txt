@@ -6,7 +6,7 @@ type car struct {
 }
 func main () {
 	fmt.Print("a")
-	  "number"
+	fmt.Errorf("v")
 	r := 5
 	fmt.Scan(&r)
 	i := &r

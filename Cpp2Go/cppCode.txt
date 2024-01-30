@@ -9,7 +9,7 @@ struct car
 int main()
 {
 	std::cout << "a";
-	std::cerr << "number";
+	std::cerr << "v";
 	int r = 5;
 	std::cin >> r;
 	int* i = &r;

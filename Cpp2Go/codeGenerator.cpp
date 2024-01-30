@@ -63,6 +63,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateStdCin(child);
 		}
+		else if (child->name == "ERROR_DECLARATION")
+		{
+			generateStdCerr(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -165,6 +169,10 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateStdCin(child);
 		}
+		else if (child->name == "ERROR_DECLARATION")
+		{
+			generateStdCerr(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -234,11 +242,13 @@ void codeGenerator::generateStdCerr(ASTNode* node)
 	{
 		if (child->name == "ERROR")
 		{
-			
+			_code += "fmt.Errorf";
 		}
 		if (child->name == STRING_LITERAL)
 		{
-			
+			_code += "(";
+			_code += child->value;
+			_code += '")';
 		}
 	}
 }
