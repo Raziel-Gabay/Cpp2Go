@@ -46,6 +46,7 @@
 #define STD_CERR_DECLARATION "STD_CERR_DECLARATION"
 #define COLON_OPERATOR "COLON_OPERATOR"
 #define LOOP_VARIABLE "LOOP_VARIABLE"
+#define TERNARY_OPERATOR "TERNARY_OPERATOR"
 
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::map<std::string, std::string>;
@@ -97,6 +98,7 @@ public:
 	void parseAssignmentOperator(const std::string& op, ASTNode* head);
 	void parseAccessOperator(const std::string& op, ASTNode* head);
 	void parseModifyOperator(ASTNode* head);
+	void parseTernaryOperator(std::string datatype, ASTNode* head);
 	bool isUnaryOperator(const token& t);
 
 	// other parsing

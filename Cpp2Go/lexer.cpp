@@ -58,7 +58,7 @@ tokensMap mapOfTokens =
 	{"|", "OR_OPERATOR"},
 	{"^", "XOR_OPERATOR"},
 	{"~", "BITWISE_NOT_OPERATOR"},
-	{"?", "TERNARY_CONDITIONAL_OPERATOR"},
+	{"?", "TERNARY_OPERATOR"},
 	{":", "COLON_OPERATOR"},
 	{";", "SEMICOLON_OPERATOR"},
 	{".", "DOT_OPERATOR"},
