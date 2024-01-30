@@ -58,7 +58,9 @@
 #define COLON_OPERATOR "COLON_OPERATOR"
 #define CONTAINER "CONTAINER"
 #define FOREACH_STATEMENT "FOREACH_STATEMENT"
-
+#define TERNARY_OPERATOR "TERNARY_OPERATOR"
+#define EXPRESSION_TRUE "EXPRESSION_TRUE"
+#define EXPRESSION_FALSE "EXPRESSION_FALSE"
 class AstTranslator
 {
 public:
@@ -88,6 +90,7 @@ public:
 	
 	// expression translate
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateTernaryOperator(ASTNode* sourceNode, ASTNode*& destNode);
 
 	// other translate
 	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
