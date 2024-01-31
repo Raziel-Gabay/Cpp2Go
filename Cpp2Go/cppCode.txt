@@ -11,6 +11,7 @@ int main()
 	std::cout << "a";
 	std::cerr << "v";
 	int r = 5;
+	int w = (r > 3) ? 10 : 0;
 	std::cin >> r;
 	int* i = &r;
 	int numbers[10];

@@ -8,6 +8,10 @@ func main () {
 	fmt.Print("a")
 	fmt.Errorf("v")
 	r := 5
+	w := 0
+	if r > 3 {
+		w = 10
+	}
 	fmt.Scan(&r)
 	i := &r
 	var numbers [10]

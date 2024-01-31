@@ -5,6 +5,7 @@ void AstTranslator::translateVariableDeclaration(ASTNode* sourceNode, ASTNode*& 
 {
 	ASTNode* variableDeclarationNode = new ASTNode(sourceNode);
 	destNode->addChild(variableDeclarationNode);
+	
 	if (sourceNode->children.back()->name == ASSIGNMENT_OPERATOR)
 	{
 		ASTNode* assignmentNode = sourceNode->children.back();
@@ -14,12 +15,19 @@ void AstTranslator::translateVariableDeclaration(ASTNode* sourceNode, ASTNode*& 
 		}
 		else if (destNode->name == BLOCK || destNode->name == INITIALIZATION)
 		{
-			ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
-			variableDeclarationNode->addChild(shortAssignmentNode);
-			shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.front()));
-			shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.back()));
+			if (assignmentNode->children.back()->name == TERNARY_OPERATOR)
+			{
+				destNode->children.pop_back();
+				translateTernaryOperator(assignmentNode, destNode);
+			}
+			else
+			{
+				ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
+				variableDeclarationNode->addChild(shortAssignmentNode);
+				shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.front()));
+				shortAssignmentNode->addChild(new ASTNode(assignmentNode->children.back()));
+			}
 			_identifiers.insert(assignmentNode->children.front()->value);
-
 		}
 		else
 		{

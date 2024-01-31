@@ -235,6 +235,11 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 				}
 			}
 		}
+		else if (currToken.second == LEFT_PARENTHESIS)
+		{
+			parseTernaryOperator(datatype, head);
+			return;
+		}
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
@@ -242,10 +247,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 		ASTNode* literalNode = new ASTNode(currToken);
 		head->addChild(literalNode);
 	}
-	else if (currToken.second != LEFT_PARENTHESIS)
-	{
-		parseTernaryOperator(datatype ,head);
-	}
+	
 	
 }
 
@@ -376,7 +378,6 @@ void parser::parseTernaryOperator(std::string datatype, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
-	consumeToken();
 }
 
 bool parser::isBinaryOperator(token t)
