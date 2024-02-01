@@ -23,7 +23,9 @@ namespace Cpp2Go_Visual_Interface
 
         private void OpenTranspilerWindow(object sender, RoutedEventArgs e)
         {
-
+            TranspilerWindow objTranspilerWindow = new TranspilerWindow();
+            this.Visibility = Visibility.Hidden;
+            objTranspilerWindow.Show();
         }
     }
 }
