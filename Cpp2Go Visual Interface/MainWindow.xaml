@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cpp2Go_Visual_Interface"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Start" Height="450" Width="800"
+        Icon="C:/Users/test0/OneDrive/מסמכים/magshimim/כיתה יב'/Cpp2Go project/galilmaaravi-806-cpp2go/Cpp2Go Visual Interface/Cpp2GoLogoSimplfied.ico">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="C:/Users/test0/OneDrive/מסמכים/magshimim/כיתה יב'/Cpp2Go project/galilmaaravi-806-cpp2go/Cpp2Go Visual Interface/StartScreenBG.jpeg" Stretch="UniformToFill"/>

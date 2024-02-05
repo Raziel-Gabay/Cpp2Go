@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Cpp2Go_Visual_Interface"
         mc:Ignorable="d"
-        Title="TranspilerWindow" Height="563" Width="750">
+        Title="Transpiler" Height="563" Width="750"
+        Icon="C:/Users/test0/OneDrive/מסמכים/magshimim/כיתה יב'/Cpp2Go project/galilmaaravi-806-cpp2go/Cpp2Go Visual Interface/Cpp2GoLogoSimplfied.ico">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="C:/Users/test0/OneDrive/מסמכים/magshimim/כיתה יב'/Cpp2Go project/galilmaaravi-806-cpp2go/Cpp2Go Visual Interface/TranspilerBG.jpg" Stretch="UniformToFill"/>
@@ -34,11 +35,6 @@
         <!-- Left TextBox -->
         <TextBox Grid.Row="1" Grid.ColumnSpan="1" x:Name="CppCode" Margin="10,10,20,70" Opacity="0.75" Background="#FF040404" Foreground="White" FontFamily="Aharoni" FontSize="18" IsReadOnly="False"
          Text="Enter your text here..." GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" AcceptsReturn="True" AcceptsTab="True"/>
-
-
-
-        <!-- Separator -->
-        <Border Grid.Column="1" Background="Gray" Width="1" Margin="5"/>
 
         <Label Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="36" Foreground="#FF00DDFF" FontFamily="Aharoni" Content="Go Code">
             <Label.Effect>
