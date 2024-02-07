@@ -17,6 +17,10 @@ parser::~parser()
 
 ASTNode* parser::parseProgram()
 {
+	if (_tokensStream.front().second != HASHTAG_OPERATOR)
+	{
+		throw std::runtime_error("ERROR: this code is not valid!");
+	}
 	ASTNode* programNode = new ASTNode("PROGRAM");
 	while (_currentPosition < _tokensStream.size())
 	{
