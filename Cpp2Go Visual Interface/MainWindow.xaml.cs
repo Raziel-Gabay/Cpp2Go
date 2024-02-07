@@ -27,5 +27,11 @@ namespace Cpp2Go_Visual_Interface
             this.Visibility = Visibility.Hidden;
             objTranspilerWindow.Show();
         }
+
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Application.Current.Shutdown();
+        }
+
     }
 }

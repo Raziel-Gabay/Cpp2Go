@@ -1,0 +1,47 @@
+#include <iostream>
+struct car
+{
+	std::string brand;
+	std::string model;
+	int year;
+};
+
+int main()
+{
+	std::cout << "a";
+	std::cerr << "v";
+	int r = 5;
+	int w = (r > 3) ? 10 : 0;
+	std::cin >> r;
+	int* i = &r;
+	int numbers[10];
+	int i = 0;
+	if(i == 0)
+	{
+		i = 10 * 1;
+		i = 20;
+	}
+	else
+	{
+		i = 5;
+		i = 8;
+	}
+	i = 7;
+	checkEvenOdd(i, 5);
+	std::cin >> i;
+	for (int s = 0; s < 10; s++)
+	{
+	}
+}
+
+void checkEvenOdd(int num, int anotherNum)
+{
+	if (num % 2 == 0)
+	{
+		int f = 100;
+	}
+	else
+	{
+		int k = 400;
+	}
+}

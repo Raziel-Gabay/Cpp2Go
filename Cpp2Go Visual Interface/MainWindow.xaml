@@ -28,5 +28,19 @@
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
+
+        <Button Grid.Row="3" Content="Exit"
+        HorizontalAlignment="Left"
+         VerticalAlignment="Bottom" 
+        Width="100" Height="40" FontSize="20" Margin="10" FontFamily="Aharoni" Background="#FF006BF1" Foreground="Red" Click="Exit">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"></Setter>
+                </Style>
+            </Button.Resources>
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
     </Grid>
 </Window>

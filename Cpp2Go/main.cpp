@@ -23,7 +23,7 @@ std::string readCodeFromFile()
 {
 	std::string code = "";
 	std::fstream cppTextFile;
-	cppTextFile.open("C:\\Users\\test0\\OneDrive\\מסמכים\\magshimim\\כיתה יב'\\Cpp2Go project\\galilmaaravi-806-cpp2go\\Cpp2Go\\cppCode.txt", std::ios::in); //open the file to read
+	cppTextFile.open("cppCode.txt", std::ios::in); //open the file to read
 	if (cppTextFile.is_open())
 	{	//checking whether the file is open
 		std::string data;

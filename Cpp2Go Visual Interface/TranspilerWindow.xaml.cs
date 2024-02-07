@@ -16,6 +16,7 @@ using System.Collections;
 using System.Reflection.Emit;
 using System.IO;
 using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace Cpp2Go_Visual_Interface
 {
@@ -32,7 +33,7 @@ namespace Cpp2Go_Visual_Interface
         private void TranslateClick(object sender, RoutedEventArgs e)
         {
             SaveToFile(CppCode.Text);
-            GoCode.Text = codeTranslator();
+            codeTranslator();
         }
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -53,7 +54,7 @@ namespace Cpp2Go_Visual_Interface
         }
         private void SaveToFile(string text)
         {
-            string filePath = @"C:\Users\test0\OneDrive\מסמכים\magshimim\כיתה יב'\Cpp2Go project\galilmaaravi-806-cpp2go\Cpp2Go\cppCode.txt";
+            string filePath = @"cppCode.txt";
             try
             {
                 if (text != "Enter your text here..." || !string.IsNullOrWhiteSpace(text))
@@ -69,10 +70,10 @@ namespace Cpp2Go_Visual_Interface
                 MessageBox.Show($"Error saving text to file: {ex.Message}");
             }
         }
-        static string codeTranslator()
+        private void codeTranslator()
         {
             // Path to the executable file
-            string exePath = @"C:\Users\test0\OneDrive\מסמכים\magshimim\כיתה יב'\Cpp2Go project\galilmaaravi-806-cpp2go\Cpp2Go\x64\Release\Cpp2Go.exe";
+            string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Cpp2Go.exe");
 
             // Create a new process start info
             ProcessStartInfo startInfo = new ProcessStartInfo
@@ -95,12 +96,21 @@ namespace Cpp2Go_Visual_Interface
 
             if (error.Count() > 0)
             {
-                return error;
+                GoCode.Text = error;
+                GoCode.Foreground = Brushes.Red;
             }
             else
             {
-                return output;
+                GoCode.Text = output;
+                GoCode.Foreground = Brushes.White;
             }
+        }
+
+        private void Back(object sender, RoutedEventArgs e)
+        {
+            MainWindow objMainWindow = new MainWindow();
+            this.Visibility = Visibility.Hidden;
+            objMainWindow.Show();
         }
     }
 }
