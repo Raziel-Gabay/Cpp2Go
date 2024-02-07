@@ -96,6 +96,10 @@ ASTNode* parser::parseProgram()
 		{
 			parseStdCerr(programNode);
 		}
+		else if (currToken.second == OFSTREAM_KEYWORD)
+		{
+			parseOpenFile(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -306,6 +310,10 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		{
 			parseStdCerr(head);
 		}
+		else if (currToken.second == OFSTREAM_KEYWORD)
+		{
+			parseOpenFile(head);
+		}
 		else
 		{
 			parseExpression(head);
@@ -429,6 +437,44 @@ void parser::parseStdCerr(ASTNode* head)
 
 	ASTNode* stringLiteralNode = new ASTNode(currToken);
 	stdCerrnode->addChild(stringLiteralNode);
+}
+
+void parser::parseOpenFile(ASTNode* head)
+{
+	consumeToken();
+	token currToken = getCurrentToken();
+
+	//create file node and add it to the head node
+	ASTNode* openFileNode = new ASTNode(OPEN_FILE);
+	head->addChild(openFileNode);
+
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	openFileNode->addChild(identifierNode);
+
+	if (getCurrentToken().second != IDENTIFIER)
+		throw std::runtime_error("excepcted identifier");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != LEFT_PARENTHESIS)
+		throw std::runtime_error("excepcted: '('");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* pathNode = new ASTNode(currToken.second, currToken.first);
+	openFileNode->addChild(pathNode);
+
+	if (getCurrentToken().second != STRING_LITERAL)
+		throw std::runtime_error("excepcted string ");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_PARENTHESIS)
+		throw std::runtime_error("excepcted: ')'");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	parseSemicolon();
 }
 
 void parser::parseType(std::string& datatype, ASTNode* head)

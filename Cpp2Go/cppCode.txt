@@ -8,6 +8,7 @@ struct car
 
 int main()
 {
+	ofstream f("path.txt");
 	std::cout << "a";
 	std::cerr << "v";
 	int r = 5;

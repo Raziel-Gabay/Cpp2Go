@@ -67,6 +67,10 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateStdCerr(child);
 		}
+		else if (child->name == OPEN_FILE)
+		{
+			generateOpenFile(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -173,6 +177,10 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateStdCerr(child);
 		}
+		else if (child->name == OPEN_FILE)
+		{
+			generateOpenFile(child);
+		}
 		else
 		{
 			generateExpression(child);
@@ -243,6 +251,23 @@ void codeGenerator::generateStdCerr(ASTNode* node)
 		if (child->name == "ERROR")
 		{
 			_code += "fmt.Errorf";
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			_code += "(";
+			_code += child->value;
+			_code += '")';
+		}
+	}
+}
+
+void codeGenerator::generateOpenFile(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == IDENTIFIER)
+		{
+			_code += child->value + " := os.Create";
 		}
 		if (child->name == STRING_LITERAL)
 		{

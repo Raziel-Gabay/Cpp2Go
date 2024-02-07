@@ -19,6 +19,7 @@ tokensMap mapOfTokens =
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
+	{"ofstream", "OFSTREAM_KEYWORD"},
 	{"std::cout", "STD_COUT_DECLARATION"},
 	{"std::cin", "STD_CIN_DECLARATION"},
 	{"std::cerr", "STD_CERR_DECLARATION"},
@@ -298,7 +299,7 @@ bool lexer::isStringLiteral(std::string& code, std::string& token)
 bool lexer::isStandaloneToken(std::string& code, std::string& token)
 {
 	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) == 0 && token != HASHTAG) 
+	if (standaloneTokens.count(token) == 0 && token != HASHTAG)
 	{
 		return false;
 	}
@@ -440,4 +441,3 @@ tokensVector lexer::createTokenStream(std::string& code)
 	}
 	return tokenStream;
 }
-

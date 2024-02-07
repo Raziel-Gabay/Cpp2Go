@@ -5,6 +5,7 @@ type car struct {
 	int int
 }
 func main () {
+	f := os.Create("path.txt")
 	fmt.Print("a")
 	fmt.Errorf("v")
 	r := 5

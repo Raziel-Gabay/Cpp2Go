@@ -61,6 +61,8 @@
 #define TERNARY_OPERATOR "TERNARY_OPERATOR"
 #define EXPRESSION_TRUE "EXPRESSION_TRUE"
 #define EXPRESSION_FALSE "EXPRESSION_FALSE"
+#define OPEN_FILE "OPEN_FILE"
+
 class AstTranslator
 {
 public:
@@ -101,7 +103,8 @@ public:
 	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCin(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCerr(ASTNode* sourceNode, ASTNode*& destNode);
-
+	void translateOpenFile(ASTNode* sourceNode, ASTNode*& destNode);
+	
 	ASTNode* getAST();
 private:
 	ASTNode* _astRoot; //this is the go ast

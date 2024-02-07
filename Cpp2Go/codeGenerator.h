@@ -45,6 +45,7 @@ public:
 	void generateStdCout(ASTNode* node);
 	void generateStdCin(ASTNode* node);
 	void generateStdCerr(ASTNode* node);
+	void generateOpenFile(ASTNode* node);
 
 	std::string getCode();
 private:

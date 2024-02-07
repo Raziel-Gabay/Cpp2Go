@@ -47,6 +47,9 @@
 #define COLON_OPERATOR "COLON_OPERATOR"
 #define LOOP_VARIABLE "LOOP_VARIABLE"
 #define TERNARY_OPERATOR "TERNARY_OPERATOR"
+#define OFSTREAM_KEYWORD "OFSTREAM_KEYWORD"
+#define OPEN_FILE "OPEN_FILE"
+#define STRING_LITERAL "STRING_LITERAL"
 
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::map<std::string, std::string>;
@@ -58,9 +61,6 @@ const std::unordered_set<std::string> LogicalOperators = { "&&", "||", "!"};
 const std::unordered_set<std::string> BitwiseOperators = { "&", "|", "^", "<<", ">>" };
 const std::unordered_set<std::string> AssignmentOperators = { "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=" };
 const std::unordered_set<std::string> AccessOperators = { ",", "->", ".", "[]" };
-
-
-
 
 
 class parser
@@ -109,9 +109,10 @@ public:
 	void parseStdCout(ASTNode* head);
 	void parseStdCin(ASTNode* head);
 	void parseStdCerr(ASTNode* head);
+	void parseOpenFile(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
 	void parseSemicolon();
-
+	
 	bool isFunctionExists();
 	//get functions
 	token getCurrentToken();

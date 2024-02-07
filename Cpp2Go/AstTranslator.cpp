@@ -74,6 +74,10 @@ void AstTranslator::iterativeTranslate(ASTNode* cppNode, ASTNode* node)
 		{
 			translateStdCerr(cppChild, node);
 		}
+		else if (cppChild->name == OPEN_FILE)
+		{
+			translateOpenFile(cppChild, node);
+		}
 		else
 		{
 			translateExpression(cppChild, node);
@@ -153,6 +157,10 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 		else if (cppChild->name == STD_CERR_DECLARATION)
 		{
 			translateStdCerr(cppChild, blockNode);
+		}
+		else if (cppChild->name == OPEN_FILE)
+		{
+			translateOpenFile(cppChild, blockNode);
 		}
 		else
 		{
@@ -243,6 +251,25 @@ void AstTranslator::translateStdCerr(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			ASTNode* stringLiteralNode = new ASTNode(cppChild->name, cppChild->value);
 			errorDeclarationNode->addChild(stringLiteralNode);
+		}
+	}
+}
+
+void AstTranslator::translateOpenFile(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* openFileNode = new ASTNode(sourceNode);
+	destNode->addChild(openFileNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == IDENTIFIER)
+		{
+			ASTNode* identifierNode = new ASTNode(cppChild->name, cppChild->value);
+			openFileNode->addChild(identifierNode);
+		}
+		else if (cppChild->name == STRING_LITERAL)
+		{
+			ASTNode* pathNode = new ASTNode(cppChild->name, cppChild->value);
+			openFileNode->addChild(pathNode);
 		}
 	}
 }
