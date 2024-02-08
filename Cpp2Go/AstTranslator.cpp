@@ -172,18 +172,18 @@ void AstTranslator::translateBlock(ASTNode* sourceNode, ASTNode*& destNode)
 
 void AstTranslator::translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode)
 {
-	ASTNode* includeNode = new ASTNode(IMPORT_DIRECTIVE);
+	ASTNode* includeNode = new ASTNode(INCLUDE_DIRECTIVE);
 	destNode->addChild(includeNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
 		if (cppChild->name == INCLUDE_KEYWORD)
 		{
-			ASTNode* importNode = new ASTNode(IMPORT);
+			ASTNode* importNode = new ASTNode(cppChild->name, cppChild->value);
 			includeNode->addChild(importNode);
 		}
 		else if (cppChild->name == IDENTIFIER)
 		{
-			ASTNode* libaryName = new ASTNode(IDENTIFIER, "fmt");
+			ASTNode* libaryName = new ASTNode(cppChild->name, cppChild->value);
 			includeNode->addChild(libaryName);
 		}
 	}

@@ -43,7 +43,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateStruct(child);
 		}
-		else if (child->name == IMPORT_DIRECTIVE)
+		else if (child->name == INCLUDE_DIRECTIVE)
 		{
 			generateIncludeDirective(child);
 		}
@@ -196,14 +196,19 @@ void codeGenerator::generateIncludeDirective(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
-		if (child->name == IMPORT)
+		if (child->name == INCLUDE_KEYWORD)
 		{
 			_code += "import ";
 		}
 		else if (child->name == IDENTIFIER)
 		{
 			_code += '"';
-			_code += child->value;
+			if (child->value == "iostream")
+				_code += "fmt";
+			else if (child->value == "fstream")
+				_code += "os";
+			else if ((child->value == "cmath") || (child->value == "math"))
+				_code += "math";
 			_code += '"';
 		}
 	}
