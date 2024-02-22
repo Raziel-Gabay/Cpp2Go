@@ -40,9 +40,17 @@
 #define POINTER_OPERATOR "POINTER_OPERATOR"
 #define ADDRESS_OF_OPERATOR  "ADDRESS_OF_OPERATOR"
 #define INSERTION_OPERATOR "INSERTION_OPERATOR"
+#define RIGHT_SHIFT_OPERATOR "RIGHT_SHIFT_OPERATOR"
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
+#define STD_CIN_DECLARATION "STD_CIN_DECLARATION"
+#define STD_CERR_DECLARATION "STD_CERR_DECLARATION"
+#define COLON_OPERATOR "COLON_OPERATOR"
+#define LOOP_VARIABLE "LOOP_VARIABLE"
+#define TERNARY_OPERATOR "TERNARY_OPERATOR"
+#define OFSTREAM_KEYWORD "OFSTREAM_KEYWORD"
+#define OPEN_FILE "OPEN_FILE"
+#define STRING_LITERAL "STRING_LITERAL"
 
-typedef std::pair<std::string, std::string> token;
 typedef std::multimap<std::string, std::string> identifiersVector;
 typedef std::map<std::string, std::string>;
 typedef std::vector<std::pair<std::string, std::string>> tokensVector;
@@ -53,9 +61,6 @@ const std::unordered_set<std::string> LogicalOperators = { "&&", "||", "!"};
 const std::unordered_set<std::string> BitwiseOperators = { "&", "|", "^", "<<", ">>" };
 const std::unordered_set<std::string> AssignmentOperators = { "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=" };
 const std::unordered_set<std::string> AccessOperators = { ",", "->", ".", "[]" };
-
-
-
 
 
 class parser
@@ -82,6 +87,7 @@ public:
 	void parseElseStatment(ASTNode* head);
 	void parseWhileStatement(ASTNode* head);
 	void parseForStatement(ASTNode* head);
+	void parseForeachStatement(ASTNode* head);
 
 	// operator parsing
 	void parseExpression(ASTNode* head);
@@ -92,6 +98,7 @@ public:
 	void parseAssignmentOperator(const std::string& op, ASTNode* head);
 	void parseAccessOperator(const std::string& op, ASTNode* head);
 	void parseModifyOperator(ASTNode* head);
+	void parseTernaryOperator(std::string datatype, ASTNode* head);
 	bool isUnaryOperator(const token& t);
 
 	// other parsing
@@ -100,9 +107,12 @@ public:
 	void parseBlock(ASTNode* head, int num_of_locals = 0);
 	void parseIncludeDirective(ASTNode* head);
 	void parseStdCout(ASTNode* head);
+	void parseStdCin(ASTNode* head);
+	void parseStdCerr(ASTNode* head);
+	void parseOpenFile(ASTNode* head);
 	void parseType(std::string& datatype, ASTNode* head);
 	void parseSemicolon();
-
+	
 	bool isFunctionExists();
 	//get functions
 	token getCurrentToken();

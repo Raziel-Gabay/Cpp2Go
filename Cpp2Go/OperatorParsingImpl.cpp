@@ -76,13 +76,13 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 	{
 		datatype = _identifiersTypes.find(currToken.first)->second;
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		head->addChild(identifierNode);
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
 		// create literal node and add it to the head node
-		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* literalNode = new ASTNode(currToken);
 		head->addChild(literalNode);
 	}
 	else
@@ -99,7 +99,7 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
@@ -107,7 +107,7 @@ void parser::parseArithmeticOperator(const std::string& op, ASTNode* head)
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* literalNode = new ASTNode(currToken);
 	head->addChild(literalNode);
 }
 
@@ -119,13 +119,13 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 	{
 		datatype = _identifiersTypes.find(currToken.first)->second;
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		head->addChild(identifierNode);
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
 		// create literal node and add it to the head node
-		ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* literalNode = new ASTNode(currToken);
 		head->addChild(literalNode);
 	}
 	else
@@ -142,7 +142,7 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
@@ -150,7 +150,7 @@ void parser::parseRelationalOperator(const std::string& op, ASTNode* head)
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
 
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* literalNode = new ASTNode(currToken);
 	head->addChild(literalNode);
 }
 
@@ -175,7 +175,7 @@ void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand before bitwise operator.");
 	}
-	ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* intLiteralNode = new ASTNode(currToken);
 	head->addChild(intLiteralNode);
 	
 	consumeToken(2);
@@ -184,7 +184,7 @@ void parser::parseBitwiseOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: Expected an integer operand after bitwise operator.");
 	}	
-	intLiteralNode = new ASTNode(currToken.second, currToken.first);
+	intLiteralNode = new ASTNode(currToken);
 	head->addChild(intLiteralNode);
 	
 }
@@ -199,7 +199,7 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 	}
 	datatype = _identifiersTypes.find(currToken.first)->second;
 	// create idetifier node and add it to the head node
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 	consumeToken(2);
@@ -213,14 +213,14 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 			if (datatype == _identifiersTypes.find(currToken.first)->second)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				head->addChild(identifierNode);
 				return;
 			}
 		}
 		else if (currToken.second == ADDRESS_OF_OPERATOR)
 		{
-			ASTNode* addressNode = new ASTNode(currToken.second, currToken.first);
+			ASTNode* addressNode = new ASTNode(currToken);
 			head->addChild(addressNode);
 			consumeToken();
 			currToken = getCurrentToken();
@@ -229,17 +229,26 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 				if (datatype == _identifiersTypes.find(currToken.first)->second)
 				{
 					// create idetifier node and add it to the head node
-					ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+					ASTNode* identifierNode = new ASTNode(currToken);
 					addressNode->addChild(identifierNode);
 					return;
 				}
 			}
 		}
+		else if (currToken.second == LEFT_PARENTHESIS)
+		{
+			parseTernaryOperator(datatype, head);
+			return;
+		}
 		throw std::runtime_error("ERROR: cannot use two diffrent types...");
 	}
-
-	ASTNode* literalNode = new ASTNode(currToken.second, currToken.first);
-	head->addChild(literalNode);
+	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
+	{
+		ASTNode* literalNode = new ASTNode(currToken);
+		head->addChild(literalNode);
+	}
+	
+	
 }
 
 void parser::parseAccessOperator(const std::string& op, ASTNode* head)
@@ -249,7 +258,7 @@ void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier before Access Operator...");
 	}
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 	consumeToken(2);
@@ -258,7 +267,7 @@ void parser::parseAccessOperator(const std::string& op, ASTNode* head)
 	{
 		throw std::runtime_error("ERROR: expected an identifier after Access Operator...");
 	}
-	identifierNode = new ASTNode(currToken.second, currToken.first);
+	identifierNode = new ASTNode(currToken);
 	head->addChild(identifierNode);
 
 }
@@ -277,6 +286,97 @@ void parser::parseModifyOperator(ASTNode* head)
 		ASTNode* modifyOperatorNode = new ASTNode(getCurrentToken().second, getCurrentToken().first); //create AST node
 		head->addChild(modifyOperatorNode);
 		consumeToken();
+	}
+}
+
+void parser::parseTernaryOperator(std::string datatype, ASTNode* head)
+{
+	ASTNode* conditionNode = new ASTNode("CONDITION");
+	token currToken = getCurrentToken();
+	if (currToken.second != LEFT_PARENTHESIS) //check that the token is '('
+		throw std::runtime_error("excepcted LEFT_PARENTHESIS");
+	consumeToken();
+
+	parseExpression(conditionNode); //we expect an expression to come
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_PARENTHESIS)
+		throw std::runtime_error("ERROR: expected a right parenthesis");
+	consumeToken(); // Consume the ')'
+	currToken = getCurrentToken();
+
+	if (currToken.second != TERNARY_OPERATOR)
+	{
+		if (datatype == BOOL)
+		{
+			head->addChild(conditionNode);
+			return;
+		}
+		else
+			throw std::runtime_error("ERROR: expected ternary operator");
+
+	}
+	consumeToken();
+
+	ASTNode* expressionTrueNode = new ASTNode("EXPRESSION_TRUE");
+	ASTNode* expressionFalseNode = new ASTNode("EXPRESSION_FALSE");
+	ASTNode* ternaryOperatorNode = new ASTNode(currToken);
+	head->addChild(ternaryOperatorNode);
+	ternaryOperatorNode->addChild(conditionNode);
+	ternaryOperatorNode->addChild(expressionTrueNode);
+	ternaryOperatorNode->addChild(expressionFalseNode);
+	currToken = getCurrentToken();
+
+	// note: we gonna support 2 cases, case 1: literal value, case 2: identifier.
+	if (currToken.second == IDENTIFIER)
+	{
+		if (datatype != _identifiersTypes.find(currToken.first)->second)
+			throw std::runtime_error("ERROR: expected same type!");
+
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken);
+		expressionTrueNode->addChild(identifierNode);
+	}
+	else if (currToken.second.find(LITERAL) != std::string::npos)
+	{
+		if (datatype != currToken.second.substr(0,currToken.second.find("_")))
+			throw std::runtime_error("ERROR: expected same type!");
+		// create literal node and add it to the head node
+		ASTNode* literalNode = new ASTNode(currToken);
+		expressionTrueNode->addChild(literalNode);
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal...");
+	}
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (currToken.second != COLON_OPERATOR)
+		throw std::runtime_error("ERROR: expected colon operator");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (currToken.second == IDENTIFIER)
+	{
+		if (datatype != _identifiersTypes.find(currToken.first)->second)
+			throw std::runtime_error("ERROR: expected same type!");
+
+		// create idetifier node and add it to the head node
+		ASTNode* identifierNode = new ASTNode(currToken);
+		expressionFalseNode->addChild(identifierNode);
+	}
+	else if (currToken.second.find(LITERAL) != std::string::npos)
+	{
+		if (datatype != currToken.second.substr(0, currToken.second.find("_")))
+			throw std::runtime_error("ERROR: expected same type!");
+		// create literal node and add it to the head node
+		ASTNode* literalNode = new ASTNode(currToken);
+		expressionFalseNode->addChild(literalNode);
+	}
+	else
+	{
+		throw std::runtime_error("ERROR: expected an identifier or literal...");
 	}
 }
 

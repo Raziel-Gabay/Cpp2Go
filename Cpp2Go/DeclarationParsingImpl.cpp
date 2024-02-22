@@ -15,7 +15,7 @@ void parser::parseVariableDeclaration(ASTNode* head)
 		throw std::runtime_error("ERROR: expecting an identifier token...");
 	}
 	// create idetifier node and add it to the head node
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	variableDeclarationNode->addChild(identifierNode);
 
 	_identifiersTypes.emplace(currToken.first, datatype);
@@ -30,6 +30,14 @@ void parser::parseVariableDeclaration(ASTNode* head)
 		variableDeclarationNode->children.pop_back();
 		parseExpression(variableDeclarationNode);
 		currToken = getCurrentToken();
+	}
+	else if (currToken.second == COLON_OPERATOR)
+	{
+		if (head->name != LOOP_VARIABLE)
+		{
+			throw std::runtime_error("ERROR: expecting to be in foreach loop...");
+		}
+		return;
 	}
 
 	parseSemicolon();
@@ -55,7 +63,7 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 	}
 
 	// create idetifier node and add it to the head node
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	functionDeclarationNode->addChild(identifierNode);
 
 	_functionIdentifiers.emplace(currToken.first, returnValueNode->children.front()->value);
@@ -88,7 +96,7 @@ void parser::parseFunctionDeclaration(ASTNode* head)
 		{
 			throw std::runtime_error("ERROR: expecting an parameter name token...");
 		}
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		parameterNode->addChild(identifierNode);
 		_identifiersTypes.emplace(currToken.first, datatype);
 		_localsVariables.emplace(currToken.first, datatype);
@@ -155,7 +163,7 @@ void parser::parseArrayDeclaration(ASTNode* head)
 
 	if (getCurrentToken().second != IDENTIFIER)
 		throw std::runtime_error("excepcted identifier");
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first); // create an ast representing the name of the array
+	ASTNode* identifierNode = new ASTNode(currToken); // create an ast representing the name of the array
 	arrayNode->addChild(identifierNode);
 
 	consumeToken();
@@ -169,7 +177,7 @@ void parser::parseArrayDeclaration(ASTNode* head)
 	if (currToken.second.find(INT_LITERAL) == std::string::npos)
 		throw std::runtime_error("excepcted int datatype");
 
-	ASTNode* intLiteralNode = new ASTNode(currToken.second, currToken.first); // create an ast node representing the length of the array
+	ASTNode* intLiteralNode = new ASTNode(currToken); // create an ast node representing the length of the array
 	arrayLengthNode->addChild(intLiteralNode);
 	consumeToken();
 	currToken = getCurrentToken();
@@ -196,7 +204,7 @@ void parser::parsePointerDeclaration(ASTNode* head)
 	currToken = getCurrentToken();
 	if (currToken.second == POINTER_OPERATOR)
 	{
-		ASTNode* pointerOperatorNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* pointerOperatorNode = new ASTNode(currToken);
 		pointerDeclarationNode->addChild(pointerOperatorNode);
 		consumeToken();
 		currToken = getCurrentToken();
@@ -207,7 +215,7 @@ void parser::parsePointerDeclaration(ASTNode* head)
 	}
 
 	// create idetifier node and add it to the head node
-	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* identifierNode = new ASTNode(currToken);
 	pointerDeclarationNode->addChild(identifierNode);
 	_identifiersTypes.emplace(currToken.first, datatype);
 	if (head->name == "BLOCK")

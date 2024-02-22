@@ -11,8 +11,10 @@ void AstTranslator::translateStatement(ASTNode* sourceNode, ASTNode*& destNode)
 
 	else if (sourceNode->name == WHILE_STATEMENT)
 		translateWhileStatement(sourceNode, destNode);
-	else
+	else if (sourceNode->name == FOR_STATEMENT)
 		translateForStatement(sourceNode, destNode);
+	else if (sourceNode->name == FOREACH_STATEMENT)
+		translateForeachStatement(sourceNode, destNode);
 }
 
 void AstTranslator::translateIfStatement(ASTNode* sourceNode, ASTNode*& destNode)
@@ -111,5 +113,46 @@ void AstTranslator::translateForStatement(ASTNode* sourceNode, ASTNode*& destNod
 		{
 			translateBlock(cppChild, forStatementNode);
 		}
+	}
+}
+
+void AstTranslator::translateForeachStatement(ASTNode* sourceNode, ASTNode*& destNode)
+{
+	ASTNode* foreachStatementNode = new ASTNode(sourceNode);
+	destNode->addChild(foreachStatementNode);
+	for (ASTNode* cppChild : sourceNode->children)
+	{
+		if (cppChild->name == LOOP_VARIABLE)
+		{
+			ASTNode* indexNode = new ASTNode("INDEX", "_");
+			ASTNode* commaNode = new ASTNode(COMMA, ",");
+
+			//adding the loop variable
+			ASTNode* loopVariableNode = new ASTNode(cppChild);
+			loopVariableNode->addChild(new ASTNode(cppChild->children.front()->children.back()));
+
+			foreachStatementNode->addChild(indexNode);
+			foreachStatementNode->addChild(commaNode);
+			foreachStatementNode->addChild(loopVariableNode);
+		}
+		else if (cppChild->name == COLON_OPERATOR)
+		{
+			ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
+			ASTNode* rangeKeywordNode = new ASTNode("RANGE_KEYWORD", "range");
+			foreachStatementNode->addChild(shortAssignmentNode);
+			foreachStatementNode->addChild(rangeKeywordNode);
+		}
+		else if (cppChild->name == CONTAINER)
+		{
+			//adding the container
+			ASTNode* containerNode = new ASTNode(cppChild);
+			containerNode->addChild(new ASTNode(cppChild->children.front()));
+			foreachStatementNode->addChild(containerNode);
+		}
+		else if (cppChild->name == BLOCK)
+		{
+			translateBlock(cppChild, foreachStatementNode);
+		}
+
 	}
 }

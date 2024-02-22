@@ -20,8 +20,10 @@ void codeGenerator::generateStatement(ASTNode* node)
 	}
 	else if (node->name == WHILE_STATEMENT)
 		generateWhileStatement(node);
-	else
+	else if (node->name == FOR_STATEMENT)
 		generateForStatement(node);
+	else if (node->name == FOREACH_STATEMENT)
+		generateForeachStatement(node);
 }
 
 void codeGenerator::generateIfStatement(ASTNode* node)
@@ -100,6 +102,35 @@ void codeGenerator::generateForStatement(ASTNode* node)
 		else if (child->name == BLOCK)
 		{
 			generateBlock(child);
+		}
+	}
+}
+
+void codeGenerator::generateForeachStatement(ASTNode* node)
+{
+	_code += "for ";
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == COMMA)
+		{
+			_code.pop_back();
+			_code += child->value + " ";
+		}
+		else if (child->name == LOOP_VARIABLE)
+		{
+			_code += child->children.front()->value + " ";
+		}
+		else if (child->name == CONTAINER)
+		{
+			_code += child->children.front()->value;
+		}
+		else if (child->name == BLOCK)
+		{
+			generateBlock(child);
+		}
+		else
+		{
+			_code += child->value + " ";
 		}
 	}
 }

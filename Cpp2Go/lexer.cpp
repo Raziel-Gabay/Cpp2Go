@@ -19,7 +19,10 @@ tokensMap mapOfTokens =
 	{"else", "ELSE_STATEMENT"},
 	{"struct", "STRUCT_KEYWORD"},
 	{"include", "INCLUDE_KEYWORD"},
+	{"ofstream", "OFSTREAM_KEYWORD"},
 	{"std::cout", "STD_COUT_DECLARATION"},
+	{"std::cin", "STD_CIN_DECLARATION"},
+	{"std::cerr", "STD_CERR_DECLARATION"},
 	{"(", "LEFT_PARENTHESIS"},
 	{")", "RIGHT_PARENTHESIS"},
 	{"{", "LEFT_BRACE"},
@@ -56,12 +59,13 @@ tokensMap mapOfTokens =
 	{"|", "OR_OPERATOR"},
 	{"^", "XOR_OPERATOR"},
 	{"~", "BITWISE_NOT_OPERATOR"},
-	{"?", "TERNARY_CONDITIONAL_OPERATOR"},
+	{"?", "TERNARY_OPERATOR"},
 	{":", "COLON_OPERATOR"},
 	{";", "SEMICOLON_OPERATOR"},
 	{".", "DOT_OPERATOR"},
 	{"*", "POINTER_OPERATOR"},
 	{"<<", "INSERTION_OPERATOR"},
+	{">>", "RIGHT_SHIFT_OPERATOR"}
 };
 
 void lexer::preprocessing(std::string& sourceCode)
@@ -193,7 +197,7 @@ std::string lexer::getToken(std::string& code)
 		return token;
 	}
 
-	if (isStringType(code, token) || isStdCout(code, token) || isOperatorWithTwoChars(code, token) ||
+	if (isStringType(code, token) || isStdCout(code, token) || isStdCin(code, token) || isStdCerr(code, token) || isOperatorWithTwoChars(code, token) ||
 		isStringLiteral(code, token) || isStandaloneToken(code, token) || isUnaryOperator(code, separatorPos, token) ||
 		isElse(code, separatorPos, token) || isFloat(code, separatorPos, token))
 	{
@@ -235,6 +239,30 @@ bool lexer::isStdCout(std::string& code, std::string& token)
 	return true;
 }
 
+bool lexer::isStdCin(std::string& code, std::string& token)
+{
+	//check if the token is std::cin
+	token = code.substr(0, STD_CIN_LEN);
+	if (token != STD_CIN_KEYWORD)
+	{
+		return false;
+	}
+	code.erase(0, STD_CIN_LEN + 1);
+	return true;
+}
+
+bool lexer::isStdCerr(std::string& code, std::string& token)
+{
+	//check if the token is std::cerr
+	token = code.substr(0, STD_CERR_LEN);
+	if (token != STD_CERR_KEYWORD)
+	{
+		return false;
+	}
+	code.erase(0, STD_CERR_LEN + 1);
+	return true;
+}
+
 bool lexer::isOperatorWithTwoChars(std::string& code, std::string& token)
 {
 	// Get the 2 first characters
@@ -271,7 +299,7 @@ bool lexer::isStringLiteral(std::string& code, std::string& token)
 bool lexer::isStandaloneToken(std::string& code, std::string& token)
 {
 	// If the character is a standalone token, return it as a separate token
-	if (standaloneTokens.count(token) == 0 && token != HASHTAG) 
+	if (standaloneTokens.count(token) == 0 && token != HASHTAG)
 	{
 		return false;
 	}
@@ -382,8 +410,11 @@ tokensVector lexer::createTokenStream(std::string& code)
 		}
 		else if (handleIdentifiers(token))
 		{
-			if (tokenStream.back().second == AND_OPERATOR)
-				tokenStream.back().second =  ADDRESS_OF_OPERATOR;
+			if (tokenStream.size() > 0)
+			{
+				if (tokenStream.back().second == AND_OPERATOR)
+					tokenStream.back().second = ADDRESS_OF_OPERATOR;
+			}
 
 			tokenFromMap = searchToken("identifier");
 			insertToken(token, tokenFromMap, tokenStream);
@@ -410,4 +441,3 @@ tokensVector lexer::createTokenStream(std::string& code)
 	}
 	return tokenStream;
 }
-

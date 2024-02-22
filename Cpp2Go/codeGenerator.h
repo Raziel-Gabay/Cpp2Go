@@ -2,7 +2,8 @@
 #include "AstTranslator.h"
 
 #define WHITESPACE ' '
-#define COMMA ','
+#define COMMA_CHAR ','
+
 
 class codeGenerator
 {
@@ -30,6 +31,7 @@ public:
 	void generateElseStatement(ASTNode* node);
 	void generateWhileStatement(ASTNode* node);
 	void generateForStatement(ASTNode* node);
+	void generateForeachStatement(ASTNode* node);
 
 	// expression generate
 	void generateExpression(ASTNode* node);
@@ -41,6 +43,9 @@ public:
 	void generateBlock(ASTNode* node);
 	void generateIncludeDirective(ASTNode* node);
 	void generateStdCout(ASTNode* node);
+	void generateStdCin(ASTNode* node);
+	void generateStdCerr(ASTNode* node);
+	void generateOpenFile(ASTNode* node);
 
 	std::string getCode();
 private:

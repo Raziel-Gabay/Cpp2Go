@@ -48,9 +48,20 @@
 #define POINTER_OPERATOR "POINTER_OPERATOR"
 #define STD_COUT_DECLARATION "STD_COUT_DECLARATION"
 #define STD_COUT "STD_COUT"
+#define STD_CIN_DECLARATION "STD_CIN_DECLARATION"
+#define STD_CERR_DECLARATION "STD_CERR_DECLARATION"
 #define FMT_PRINTLN "FMT_PRINTLN"
 #define PRINTLN "PRINTLN"
 #define STRING_LITERAL "STRING_LITERAL"
+#define COMMA "COMMA"
+#define LOOP_VARIABLE "LOOP_VARIABLE"
+#define COLON_OPERATOR "COLON_OPERATOR"
+#define CONTAINER "CONTAINER"
+#define FOREACH_STATEMENT "FOREACH_STATEMENT"
+#define TERNARY_OPERATOR "TERNARY_OPERATOR"
+#define EXPRESSION_TRUE "EXPRESSION_TRUE"
+#define EXPRESSION_FALSE "EXPRESSION_FALSE"
+#define OPEN_FILE "OPEN_FILE"
 
 class AstTranslator
 {
@@ -77,9 +88,11 @@ public:
 	void translateElseStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateWhileStatement(ASTNode* sourceNode, ASTNode* &destNode);
 	void translateForStatement(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateForeachStatement(ASTNode* sourceNode, ASTNode*& destNode);
 	
 	// expression translate
 	void translateExpression(ASTNode* sourceNode, ASTNode* &destNode);
+	void translateTernaryOperator(ASTNode* sourceNode, ASTNode*& destNode);
 
 	// other translate
 	void translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode);
@@ -88,7 +101,10 @@ public:
 	void translateIncludeDirective(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateType(ASTNode* sourceNode, ASTNode*& destNode);
 	void translateStdCout(ASTNode* sourceNode, ASTNode*& destNode);
-
+	void translateStdCin(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateStdCerr(ASTNode* sourceNode, ASTNode*& destNode);
+	void translateOpenFile(ASTNode* sourceNode, ASTNode*& destNode);
+	
 	ASTNode* getAST();
 private:
 	ASTNode* _astRoot; //this is the go ast

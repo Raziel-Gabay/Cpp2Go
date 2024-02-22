@@ -1,12 +1,20 @@
 import "fmt"
+import "os"
 type car struct {
 	string string
 	string string
 	int int
 }
 func main () {
-	fmt.Println("a")
+	f := os.Create("path.txt")
+	fmt.Print("a")
+	fmt.Errorf("v")
 	r := 5
+	w := 0
+	if r > 3 {
+		w = 10
+	}
+	fmt.Scan(&r)
 	i := &r
 	var numbers [10]
 	i = 0
@@ -19,6 +27,7 @@ func main () {
 		i = 8
 	}
 	i = 7
+	fmt.Scan(&i)
 	for s := 0; s < 10;  {
 	}
 }

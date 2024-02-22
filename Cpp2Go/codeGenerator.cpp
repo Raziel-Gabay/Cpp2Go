@@ -35,7 +35,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
-			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT || child->name == FOREACH_STATEMENT)
 		{
 			generateStatement(child);
 		}
@@ -43,7 +43,7 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateStruct(child);
 		}
-		else if (child->name == IMPORT_DIRECTIVE)
+		else if (child->name == INCLUDE_DIRECTIVE)
 		{
 			generateIncludeDirective(child);
 		}
@@ -55,9 +55,21 @@ void codeGenerator::iterativeGenerate(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
-		else if (child->name == FMT_PRINTLN)
+		else if (child->name == "PRINT_DECLARATION")
 		{
 			generateStdCout(child);
+		}
+		else if (child->name == "SCAN_DECLARATION")
+		{
+			generateStdCin(child);
+		}
+		else if (child->name == "ERROR_DECLARATION")
+		{
+			generateStdCerr(child);
+		}
+		else if (child->name == OPEN_FILE)
+		{
+			generateOpenFile(child);
 		}
 		else
 		{
@@ -92,7 +104,7 @@ void codeGenerator::generateFunctionCall(ASTNode* node)
 				if (_code.back() == WHITESPACE)
 				{
 					_code.pop_back();
-					if (_code.back() == COMMA)
+					if (_code.back() == COMMA_CHAR)
 					{
 						_code.pop_back();
 					}
@@ -140,7 +152,7 @@ void codeGenerator::generateBlock(ASTNode* node)
 			generatePointerDeclaration(child);
 		}
 		else if (child->name == IF_STATEMENT || child->name == ELSE_IF_STATEMENT || child->name == ELSE_STATEMENT ||
-			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT)
+			child->name == WHILE_STATEMENT || child->name == FOR_STATEMENT || child->name == FOREACH_STATEMENT)
 		{
 			_countTab++;
 			generateStatement(child);
@@ -153,9 +165,21 @@ void codeGenerator::generateBlock(ASTNode* node)
 		{
 			generateArrayDeclaration(child);
 		}
-		else if (child->name == FMT_PRINTLN)
+		else if (child->name == "PRINT_DECLARATION")
 		{
 			generateStdCout(child);
+		}
+		else if (child->name == "SCAN_DECLARATION")
+		{
+			generateStdCin(child);
+		}
+		else if (child->name == "ERROR_DECLARATION")
+		{
+			generateStdCerr(child);
+		}
+		else if (child->name == OPEN_FILE)
+		{
+			generateOpenFile(child);
 		}
 		else
 		{
@@ -172,14 +196,19 @@ void codeGenerator::generateIncludeDirective(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
-		if (child->name == IMPORT)
+		if (child->name == INCLUDE_KEYWORD)
 		{
 			_code += "import ";
 		}
 		else if (child->name == IDENTIFIER)
 		{
 			_code += '"';
-			_code += child->value;
+			if (child->value == "iostream")
+				_code += "fmt";
+			else if (child->value == "fstream")
+				_code += "os";
+			else if ((child->value == "cmath") || (child->value == "math"))
+				_code += "math";
 			_code += '"';
 		}
 	}
@@ -190,9 +219,60 @@ void codeGenerator::generateStdCout(ASTNode* node)
 {
 	for (ASTNode* child : node->children)
 	{
-		if (child->name == PRINTLN)
+		if (child->name == "PRINT")
 		{
-			_code += "fmt.Println";
+			_code += "fmt.Print";
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			_code += "(";
+			_code += child->value;
+			_code += '")';
+		}
+	}
+}
+
+void codeGenerator::generateStdCin(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == "SCAN")
+		{
+			_code += "fmt.Scan";
+		}
+		if (child->name == IDENTIFIER)
+		{
+			_code += "(&";
+			_code += child->value;
+			_code += '")';
+		}
+	}
+}
+
+void codeGenerator::generateStdCerr(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == "ERROR")
+		{
+			_code += "fmt.Errorf";
+		}
+		if (child->name == STRING_LITERAL)
+		{
+			_code += "(";
+			_code += child->value;
+			_code += '")';
+		}
+	}
+}
+
+void codeGenerator::generateOpenFile(ASTNode* node)
+{
+	for (ASTNode* child : node->children)
+	{
+		if (child->name == IDENTIFIER)
+		{
+			_code += child->value + " := os.Create";
 		}
 		if (child->name == STRING_LITERAL)
 		{

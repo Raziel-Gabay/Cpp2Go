@@ -50,30 +50,13 @@ int main()
 {
 
 	std::string code = readCodeFromFile();
-	std::cout << code << std::endl;
 	lexer::preprocessing(code);
-	std::cout << code << std::endl;
 	tokensVector tokenStream;
 	try
 	{
-		// Start the timer
-		auto start = std::chrono::high_resolution_clock::now();
-
-		tokenStream = lexer::createTokenStream(code);
-
-		// End the timer
-		auto end = std::chrono::high_resolution_clock::now();
-
-		// Calculate the duration
-		std::chrono::duration<double> duration = end - start;
-
-		// Print the duration in seconds
-		std::cout << "Execution time: " << duration.count() << " seconds." << std::endl;
-
+		 tokenStream = lexer::createTokenStream(code);
 		 parser p = parser(tokenStream); 
-		 printAST(p.getAST());  
 		 AstTranslator translator = AstTranslator(p.getAST());
-		 printAST(translator.getAST());
 		 codeGenerator goCode = codeGenerator(translator.getAST());
 		 std::cout << goCode.getCode() << std::endl;
 		 writeToDestFile(goCode.getCode());

@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-
+typedef std::pair<std::string, std::string> token;
 
 
 class ASTNode
@@ -16,6 +16,7 @@ public:
 
 	// Constructor
 	ASTNode(const std::string& nodeName, const std::string& nodeValue = "");
+	ASTNode(token t);
 	ASTNode(ASTNode* otherAst);
 	// Destructor
 	~ASTNode();

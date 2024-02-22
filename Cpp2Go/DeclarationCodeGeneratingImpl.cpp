@@ -32,7 +32,7 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 			if (_code.back() == WHITESPACE)
 			{
 				_code.pop_back();
-				if (_code.back() == COMMA)
+				if (_code.back() == COMMA_CHAR)
 				{
 					_code.pop_back();
 				}
@@ -50,7 +50,7 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 					if (_code.back() == WHITESPACE)
 					{
 						_code.pop_back();
-						if (_code.back() == COMMA)
+						if (_code.back() == COMMA_CHAR)
 						{
 							_code.pop_back();
 						}

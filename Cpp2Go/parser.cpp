@@ -17,6 +17,10 @@ parser::~parser()
 
 ASTNode* parser::parseProgram()
 {
+	if (_tokensStream.front().second != HASHTAG_OPERATOR)
+	{
+		throw std::runtime_error("ERROR: this code is not valid!");
+	}
 	ASTNode* programNode = new ASTNode("PROGRAM");
 	while (_currentPosition < _tokensStream.size())
 	{
@@ -84,6 +88,18 @@ ASTNode* parser::parseProgram()
 		{
 			parseStdCout(programNode);
 		}
+		else if (currToken.second == STD_CIN_DECLARATION)
+		{
+			parseStdCin(programNode);
+		}
+		else if (currToken.second == STD_CERR_DECLARATION)
+		{
+			parseStdCerr(programNode);
+		}
+		else if (currToken.second == OFSTREAM_KEYWORD)
+		{
+			parseOpenFile(programNode);
+		}
 		else
 		{
 			parseExpression(programNode);
@@ -99,7 +115,7 @@ void parser::parseFunctionCall(ASTNode* head)
 {
 	token currToken = getCurrentToken();
 	ASTNode* functionCallNode = new ASTNode("FUNCTION_CALL");
-	ASTNode* functionNameNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* functionNameNode = new ASTNode(currToken);
 	head->addChild(functionCallNode);
 	functionCallNode->addChild(functionNameNode);
 	_functionCalls.push_back(currToken.first);
@@ -112,7 +128,7 @@ void parser::parseFunctionCall(ASTNode* head)
 		{
 			ASTNode* parameterNode = new ASTNode(PARAMETER);
 			functionCallNode->addChild(parameterNode);
-			ASTNode* identifierOrLiteralNode = new ASTNode(currToken.second, currToken.first);
+			ASTNode* identifierOrLiteralNode = new ASTNode(currToken);
 			parameterNode->addChild(identifierOrLiteralNode);
 			consumeToken();
 			currToken = getCurrentToken();
@@ -149,7 +165,7 @@ void parser::parseStruct(ASTNode* head)
 	token currToken = getCurrentToken();
 	ASTNode* structNode = new ASTNode("STRUCT");
 	ASTNode* membersNode = new ASTNode("MEMBERS");
-	ASTNode* structKeywordNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* structKeywordNode = new ASTNode(currToken);
 	head->addChild(structNode);
 	structNode->addChild(structKeywordNode);
 
@@ -158,7 +174,7 @@ void parser::parseStruct(ASTNode* head)
 	if (currToken.second == IDENTIFIER)
 	{
 		// create idetifier node and add it to the head node
-		ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+		ASTNode* identifierNode = new ASTNode(currToken);
 		structNode->addChild(identifierNode);
 		structNode->addChild(membersNode);
 		consumeToken();
@@ -182,7 +198,7 @@ void parser::parseStruct(ASTNode* head)
 			if (currToken.second == IDENTIFIER)
 			{
 				// create idetifier node and add it to the head node
-				ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+				ASTNode* identifierNode = new ASTNode(currToken);
 				declarationNode->addChild(identifierNode);
 				consumeToken();
 				currToken = getCurrentToken();
@@ -286,6 +302,18 @@ void parser::parseBlock(ASTNode* head, int num_of_locals)
 		{
 			parseStdCout(head);
 		}
+		else if (currToken.second == STD_CIN_DECLARATION)
+		{
+			parseStdCin(head);
+		}
+		else if (currToken.second == STD_CERR_DECLARATION)
+		{
+			parseStdCerr(head);
+		}
+		else if (currToken.second == OFSTREAM_KEYWORD)
+		{
+			parseOpenFile(head);
+		}
 		else
 		{
 			parseExpression(head);
@@ -302,7 +330,7 @@ void parser::parseIncludeDirective(ASTNode* head)
 	//create an include directive node
 	ASTNode* includeDirectiveNode = new ASTNode(INCLUDE_DIRECTIVE);
 
-	ASTNode* includeKeyWordNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* includeKeyWordNode = new ASTNode(currToken);
 
 	head->addChild(includeDirectiveNode);
 	includeDirectiveNode->addChild(includeKeyWordNode);
@@ -316,7 +344,7 @@ void parser::parseIncludeDirective(ASTNode* head)
 	consumeToken();
 	currToken = getCurrentToken();
 
-	ASTNode* libaryNameNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* libaryNameNode = new ASTNode(currToken);
 	includeDirectiveNode->addChild(libaryNameNode);
 
 	consumeToken();
@@ -345,15 +373,108 @@ void parser::parseStdCout(ASTNode* head)
 	if (getCurrentToken().second != INSERTION_OPERATOR)
 		throw std::runtime_error("excepcted the operator: '<<'");
 
-	ASTNode* stdCoutDeclarationNode = new ASTNode("STD_COUT");
+	ASTNode* stdCoutDeclarationNode = new ASTNode("PRINT");
 	stdCoutnode->addChild(stdCoutDeclarationNode);
-
-	
 
 	consumeToken();
 	currToken = getCurrentToken();
-	ASTNode* stringLiteralNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* stringLiteralNode = new ASTNode(currToken);
 	stdCoutnode->addChild(stringLiteralNode);
+}
+
+void parser::parseStdCin(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create std cin node and add it to the head node
+	ASTNode* stdCinNode = new ASTNode(STD_CIN_DECLARATION);
+	head->addChild(stdCinNode);
+
+	ASTNode* stdCinDeclarationNode = new ASTNode("SCAN");
+	stdCinNode->addChild(stdCinDeclarationNode);
+
+	if (getCurrentToken().second != STD_CIN_DECLARATION)
+		throw std::runtime_error("excepcted: 'std::cin'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_SHIFT_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '>>'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != IDENTIFIER)
+		throw std::runtime_error("excepcted identifier");
+
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	stdCinNode->addChild(identifierNode);
+}
+
+void parser::parseStdCerr(ASTNode* head)
+{
+	token currToken = getCurrentToken();
+
+	//create std cerr node and add it to the head node
+	ASTNode* stdCerrnode = new ASTNode(STD_CERR_DECLARATION);
+	head->addChild(stdCerrnode);
+
+	ASTNode* stdCerrDeclarationNode = new ASTNode("ERROR");
+	stdCerrnode->addChild(stdCerrDeclarationNode);
+
+	if (getCurrentToken().second != STD_CERR_DECLARATION)
+		throw std::runtime_error("excepcted: 'std::cerr'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != INSERTION_OPERATOR)
+		throw std::runtime_error("excepcted the operator: '<<'");
+
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* stringLiteralNode = new ASTNode(currToken);
+	stdCerrnode->addChild(stringLiteralNode);
+}
+
+void parser::parseOpenFile(ASTNode* head)
+{
+	consumeToken();
+	token currToken = getCurrentToken();
+
+	//create file node and add it to the head node
+	ASTNode* openFileNode = new ASTNode(OPEN_FILE);
+	head->addChild(openFileNode);
+
+	ASTNode* identifierNode = new ASTNode(currToken.second, currToken.first);
+	openFileNode->addChild(identifierNode);
+
+	if (getCurrentToken().second != IDENTIFIER)
+		throw std::runtime_error("excepcted identifier");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != LEFT_PARENTHESIS)
+		throw std::runtime_error("excepcted: '('");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	ASTNode* pathNode = new ASTNode(currToken.second, currToken.first);
+	openFileNode->addChild(pathNode);
+
+	if (getCurrentToken().second != STRING_LITERAL)
+		throw std::runtime_error("excepcted string ");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	if (getCurrentToken().second != RIGHT_PARENTHESIS)
+		throw std::runtime_error("excepcted: ')'");
+	consumeToken();
+	currToken = getCurrentToken();
+
+	parseSemicolon();
 }
 
 void parser::parseType(std::string& datatype, ASTNode* head)
@@ -366,7 +487,7 @@ void parser::parseType(std::string& datatype, ASTNode* head)
 	consumeToken();
 	datatype = currToken.second.substr(currToken.second.find("_") + 1);
 	//create ast node
-	ASTNode* dataTypeNode = new ASTNode(currToken.second, currToken.first);
+	ASTNode* dataTypeNode = new ASTNode(currToken);
 	head->addChild(dataTypeNode);
 }
 
