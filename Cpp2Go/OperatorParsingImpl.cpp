@@ -307,7 +307,7 @@ void parser::parseTernaryOperator(std::string datatype, ASTNode* head)
 
 	if (currToken.second != TERNARY_OPERATOR)
 	{
-		if (datatype == BOOL)
+		if (datatype == "BOOL")
 		{
 			head->addChild(conditionNode);
 			return;

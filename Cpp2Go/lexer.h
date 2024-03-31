@@ -34,6 +34,7 @@ class lexer
 public:
 	static void preprocessing(std::string &sourceCode);
 	static void deleteTab(std::string& sourceCode);
+	static void deleteOtherNewLine(std::string& sourceCode);
 	static void deleteNewLine(std::string& sourceCode);
 	static bool handleIdentifiers(std::string IdetifierToken);
 	static bool handleIntLiteralValue(std::string intDataTypeToken);

@@ -4,6 +4,7 @@
 #include "codeGenerator.h"
 #include <chrono>
 #include <fstream>
+#include <restinio/all.hpp>
 
 void printAST(const ASTNode* node, int depth = 0) {
 	if (node) {
@@ -46,24 +47,68 @@ void writeToDestFile(std::string goCode)
 	}
 }
 
-int main()
-{
-
-	std::string code = readCodeFromFile();
+std::string translate(std::string& code) {
 	lexer::preprocessing(code);
 	tokensVector tokenStream;
-	try
-	{
-		 tokenStream = lexer::createTokenStream(code);
-		 parser p = parser(tokenStream); 
-		 AstTranslator translator = AstTranslator(p.getAST());
-		 codeGenerator goCode = codeGenerator(translator.getAST());
-		 std::cout << goCode.getCode() << std::endl;
-		 writeToDestFile(goCode.getCode());
+	tokenStream = lexer::createTokenStream(code);
+	parser p = parser(tokenStream);
+	AstTranslator translator = AstTranslator(p.getAST());
+	codeGenerator goCode = codeGenerator(translator.getAST());
+	return goCode.getCode();
+}
+
+int main(int argc, char **argv)
+{
+	if (argc > 1 && std::string(argv[1]) == "-s") {
+		restinio::run(
+			restinio::on_this_thread()
+			.port(8080)
+			.address("localhost")
+			.request_handler([](auto req) {
+				if (restinio::http_method_post() == req->header().method() && req->header().request_target() == "/") {
+					// Process POST request
+					// Assuming the body is plain text
+					auto body = req->body();
+					std::string goCode = "";
+					try {
+						goCode = translate(body);
+					}
+					catch (const std::exception& e)
+					{
+						std::cerr << e.what();
+					}
+
+					// You can process the body here, e.g., parsing JSON, handling form data, etc.
+
+					// Respond to the client
+					req->create_response()
+						.append_header(restinio::http_field::content_type, "text/plain")
+						.set_body(goCode)
+						.done();
+
+					return restinio::request_accepted();
+				}
+
+				// For other requests or paths
+				return restinio::request_rejected();
+				})
+		);
 	}
-	catch (const std::exception& e)
-	{
-		std::cerr << e.what();
+	else {
+		std::string code = readCodeFromFile();
+		try
+		{
+			std::string goCode = translate(code);
+			std::cout << goCode << std::endl;
+			writeToDestFile(goCode);
+		}
+		catch (const std::exception& e)
+		{
+			std::cerr << e.what();
+		}
 	}
+	
+	
+	
 	return 0;
 }
