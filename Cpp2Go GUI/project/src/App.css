@@ -14,6 +14,27 @@ textarea{
   color: white;
   background-color:rgb(31, 31, 31)
 }
+
+.code-container {
+  text-align: left;
+  color: white;
+  background-color:rgb(31, 31, 31);
+}
+
+.cm-activeLine {
+  background-color: rgb(31, 31, 31) !important;
+}
+
+.cm-activeLineGutter{
+  background-color: rgb(31, 31, 31) !important;
+}
+.cm-gutter{
+  background-color: rgb(31, 31, 31) !important;
+}
+.cm-cursor{
+  border-color: white !important;
+}
+
 button {
   align-items: center;
   appearance: none;
