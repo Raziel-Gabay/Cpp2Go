@@ -1,15 +1,24 @@
 {
   "name": "project",
   "private": true,
-  "version": "0.0.0",
+  "version": "5.0.0",
+  "description": "A GUI application for transpiling C++ code to Go code.",
+  "authors": [
+    "Raziel Gabay <razielg3306@gmail.com>",
+    "Shilo Cohen <shilocohen02@gmail.com>"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "@types/highlight.js": "^10.1.0",
+    "electron-squirrel-startup": "^1.0.0",
     "file-save": "^0.2.0",
     "file-saver": "^2.0.5",
     "fs-extra": "^11.2.0",
@@ -20,6 +29,13 @@
     "react-dom": "^17.0.0"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.3.1",
+    "@electron-forge/maker-deb": "^7.3.1",
+    "@electron-forge/maker-rpm": "^7.3.1",
+    "@electron-forge/maker-squirrel": "^7.3.1",
+    "@electron-forge/maker-zip": "^7.3.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
+    "@electron-forge/plugin-fuses": "^7.3.1",
     "@types/file-saver": "^2.0.7",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
@@ -27,7 +43,8 @@
     "@typescript-eslint/parser": "^6.6.0",
     "@vitejs/plugin-react": "^4.0.4",
     "electron": "^26.1.0",
-    "electron-builder": "^24.6.4",
+    "electron-builder": "^24.13.3",
+    "electron-prebuilt-compile": "^8.2.0",
     "eslint": "^8.48.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",

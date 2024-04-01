@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow , ipcMain} from 'electron'
 import path from 'node:path'
 
 // The built directory structure
@@ -26,6 +26,7 @@ function createWindow() {
     },
   })
 
+  win.maximize();
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
