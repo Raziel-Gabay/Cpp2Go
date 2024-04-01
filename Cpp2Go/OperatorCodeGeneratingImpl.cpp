@@ -3,7 +3,11 @@
 
 void codeGenerator::generateExpression(ASTNode* node)
 {
-	_code += node->children.front()->value + " " + node->value + " " + node->children.back()->value;
+	_code += node->children.front()->value + " " + node->value + " ";
+	if (node->children.back()->name.find("OPERATOR") != std::string::npos && node->children.back()->name != ADDRESS_OF_OPERATOR)
+		generateExpression(node->children.back());
+	else
+		_code += node->children.back()->value;
 	if (node->children.back()->name == ADDRESS_OF_OPERATOR)
 	{
 		if (node->children.back()->children.size() > 0)

@@ -396,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+**/*.VC.db
+**/*.VC.db-shm
+**/*.VC.db-wal
+**/*.VC.opendb
+/Cpp2Go/.vs/Cpp2Go/v17/Browse.VC.db

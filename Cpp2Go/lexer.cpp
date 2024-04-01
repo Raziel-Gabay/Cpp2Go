@@ -71,12 +71,18 @@ tokensMap mapOfTokens =
 void lexer::preprocessing(std::string& sourceCode)
 {
 	deleteTab(sourceCode);
+	deleteCaretReturn(sourceCode);
 	deleteNewLine(sourceCode);
 }
 
 void lexer::deleteTab(std::string& sourceCode)
 {
 	sourceCode.erase(std::remove(sourceCode.begin(), sourceCode.end(), '\t'), sourceCode.cend());
+}
+
+void lexer::deleteCaretReturn(std::string& sourceCode)
+{
+	sourceCode.erase(std::remove(sourceCode.begin(), sourceCode.end(), '\r'), sourceCode.cend());
 }
 
 void lexer::deleteNewLine(std::string& sourceCode)

@@ -244,8 +244,21 @@ void parser::parseAssignmentOperator(const std::string& op, ASTNode* head)
 	}
 	else if (getCurrentToken().second.find(LITERAL) != std::string::npos)
 	{
-		ASTNode* literalNode = new ASTNode(currToken);
-		head->addChild(literalNode);
+		consumeToken();
+		currToken = getCurrentToken();
+		unconsumeToken();
+		if (isBinaryOperator(currToken))
+		{
+			parseExpression(head);
+			unconsumeToken();
+		}
+		else
+		{
+			currToken = getCurrentToken();
+			ASTNode* literalNode = new ASTNode(currToken);
+			head->addChild(literalNode);
+		}
+		
 	}
 	
 	
@@ -307,7 +320,7 @@ void parser::parseTernaryOperator(std::string datatype, ASTNode* head)
 
 	if (currToken.second != TERNARY_OPERATOR)
 	{
-		if (datatype == BOOL)
+		if (datatype == "BOOL")
 		{
 			head->addChild(conditionNode);
 			return;
