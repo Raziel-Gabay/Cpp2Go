@@ -75,15 +75,16 @@ int main(int argc, char **argv)
 					}
 					catch (const std::exception& e)
 					{
-						std::cerr << e.what();
+						goCode = e.what();
 					}
 
 					// You can process the body here, e.g., parsing JSON, handling form data, etc.
 
 					// Respond to the client
 					req->create_response()
+						.append_header(restinio::http_field::access_control_allow_origin, "*")
 						.append_header(restinio::http_field::content_type, "text/plain")
-						.set_body(goCode)
+						.set_body(goCode)	
 						.done();
 
 					return restinio::request_accepted();

@@ -1,0 +1,1 @@
+Cpp2Go.exe -s

@@ -42,7 +42,10 @@ void codeGenerator::generateFunctionDeclaration(ASTNode* node)
 		else if (child->name == BLOCK)
 		{
 			if (node->children[1]->value == "main")
+			{
 				_code += ")";
+				_code.insert(0, "package main\n");
+			}
 			else if (node->children.size() > 2)
 			{
 				if (node->children[node->children.size() - 2]->name != RETURN_VALUE)
@@ -88,25 +91,25 @@ void codeGenerator::generatePointerDeclaration(ASTNode* node)
 
 void codeGenerator::generateArrayDeclaration(ASTNode* node)
 {
-	_code += "var ";
 	for (ASTNode* child : node->children)
 	{
 		if (child->name == IDENTIFIER)
 		{
 			_code += child->value + " ";
 		}
-	}
-	for (ASTNode* child : node->children)
-	{
-		if (child->name == ARRAY_LENGTH)
+		else if (child->name == SHORT_ASSIGNMENT_OPERATOR)
+		{
+			_code += child->value + " ";
+		}
+		else if (child->name == ARRAY_LENGTH)
 		{
 			_code += '[';
 			_code += child->children.back()->value;
 			_code += ']';
 		}
-		if (child->name.find("DATATYPE") != std::string::npos)
+		else if (child->name.find("DATATYPE") != std::string::npos)
 		{
-			_code += child->value + " ";
+			_code += child->value + "{}";
 		}
 	}
 }

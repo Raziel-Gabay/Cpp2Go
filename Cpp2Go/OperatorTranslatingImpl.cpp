@@ -12,7 +12,10 @@ void AstTranslator::translateExpression(ASTNode* sourceNode, ASTNode*& destNode)
 		return;
 	}
 	opNode->addChild(frontNode);
-	opNode->addChild(backNode);
+	if (sourceNode->children.back()->name.find("OPERATOR") != std::string::npos && sourceNode->children.back()->name != ADDRESS_OF_OPERATOR)
+		translateExpression(sourceNode->children.back(), opNode);
+	else
+		opNode->addChild(backNode);
 
 	if (sourceNode->value == "~")
 	{

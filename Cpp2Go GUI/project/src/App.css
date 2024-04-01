@@ -15,26 +15,34 @@ textarea{
   background-color:rgb(31, 31, 31)
 }
 
-.code-container {
+
+.react-codemirror2 .CodeMirror {
+  height: 450px !important;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 5px;
   text-align: left;
   color: white;
-  background-color:rgb(31, 31, 31);
+  background-color: rgb(31, 31, 31);
 }
 
-.cm-activeLine {
-  background-color: rgb(31, 31, 31) !important;
+.CodeMirror-gutter {
+  background-color: rgb(31, 31, 31);
 }
 
-.cm-activeLineGutter{
-  background-color: rgb(31, 31, 31) !important;
-}
-.cm-gutter{
-  background-color: rgb(31, 31, 31) !important;
-}
-.cm-cursor{
+.CodeMirror-cursor {
   border-color: white !important;
 }
 
+/* Text color based on provided theme */
+.error-theme .CodeMirror {
+  color: inherit;
+}
+
+/* Red color for text with 'ERROR:' prefix */
+.error-theme .cm-error {
+  color: red;
+}
 button {
   align-items: center;
   appearance: none;

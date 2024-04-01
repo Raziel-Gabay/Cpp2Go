@@ -1,4 +1,4 @@
-#include "AstTranslator.h"
+	#include "AstTranslator.h"
 
 
 void AstTranslator::translateVariableDeclaration(ASTNode* sourceNode, ASTNode*& destNode)
@@ -69,8 +69,10 @@ void AstTranslator::translateFunctionDeclaration(ASTNode* sourceNode, ASTNode*& 
 		else if (cppChild->name == PARAMETER)
 		{
 			ASTNode* parameterNode = new ASTNode(cppChild);
-			ASTNode* parameterChildNode = new ASTNode(cppChild->children.front());
-			parameterNode->addChild(parameterChildNode);
+			ASTNode* parameterDatatypeNode = new ASTNode(cppChild->children.front());
+			ASTNode* parameterIdentifierNode = new ASTNode(cppChild->children.back());
+			parameterNode->addChild(parameterDatatypeNode);
+			parameterNode->addChild(parameterIdentifierNode);
 			functionDeclarationNode->addChild(parameterNode);
 		}
 		else if (cppChild->name == BLOCK)
@@ -86,21 +88,29 @@ void AstTranslator::translateArrayDeclaration(ASTNode* sourceNode, ASTNode*& des
 {
 	ASTNode* arrayDeclarationNode = new ASTNode(sourceNode);
 	destNode->addChild(arrayDeclarationNode);
+	ASTNode* datatypeNode = new ASTNode(sourceNode->children[1]);
+	ASTNode* arrayLengthNode = nullptr;
+	ASTNode* intLiteralNode = nullptr;
+
 	for (ASTNode* cppChild : sourceNode->children)
 	{
 		if (cppChild->name == ARRAY_LENGTH)
 		{
-			ASTNode* arrayLengthNode = new ASTNode(cppChild);
-
-			ASTNode* intLiteralNode = new ASTNode(cppChild->children.front());
+			arrayLengthNode = new ASTNode(cppChild);
+			intLiteralNode = new ASTNode(cppChild->children.front());
 			arrayLengthNode->addChild(intLiteralNode);
-			arrayDeclarationNode->addChild(arrayLengthNode);
 		}
 		else if (cppChild->name == IDENTIFIER)
 		{
 			ASTNode* ArrayNameNode = new ASTNode(cppChild);
 			arrayDeclarationNode->addChild(ArrayNameNode);
 			_identifiers.insert(cppChild->value);
+
+			ASTNode* shortAssignmentNode = new ASTNode(SHORT_ASSIGNMENT_OPERATOR, ":=");
+			arrayDeclarationNode->addChild(shortAssignmentNode);
+
+			arrayDeclarationNode->addChild(arrayLengthNode);
+			arrayDeclarationNode->addChild(datatypeNode);
 		}
 	}
 }

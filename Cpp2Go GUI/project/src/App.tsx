@@ -1,6 +1,5 @@
 import './App.css'
 import CodeArea from './components/codeArea'
-
 function App() {
 
   return (

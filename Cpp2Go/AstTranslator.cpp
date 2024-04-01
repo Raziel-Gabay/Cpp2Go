@@ -105,13 +105,14 @@ void AstTranslator::translateStruct(ASTNode* sourceNode, ASTNode*& destNode)
 		{
 			ASTNode* membersNode = new ASTNode("MEMBERS");
 			structNode->addChild(membersNode);
+
 			for (ASTNode* member : cppChild->children)
 			{
 				if (member->name == VARIABLE_DECLARATION)
 				{
 					ASTNode* goMember = new ASTNode(member);
+					goMember->addChild(new ASTNode(member->children.back()));
 					translateType(member->children.front(), goMember);
-					std::reverse(goMember->children.begin(), goMember->children.end());
 					membersNode->addChild(goMember);
 				}
 			}
@@ -277,6 +278,7 @@ void AstTranslator::translateOpenFile(ASTNode* sourceNode, ASTNode*& destNode)
 void AstTranslator::translateFunctionCall(ASTNode* sourceNode, ASTNode*& destNode)
 {
 	ASTNode* functionCallNode = new ASTNode(sourceNode);
+	destNode->addChild(functionCallNode);
 	for (ASTNode* cppChild : sourceNode->children)
 	{
 		if (cppChild->name == IDENTIFIER)
